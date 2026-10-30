@@ -211,6 +211,18 @@ export default function AppraisalLetterModal({ letterData, company, onClose }) {
                             <td className="p-1.5 text-right text-slate-500">-</td>
                           </tr>
                           <tr>
+                            <td className="p-1.5 font-sans text-slate-800">Network & Internet Bill</td>
+                            <td className="p-1.5 text-right">{(currentStruct.networkAllowance || 1000)?.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+                            <td className="p-1.5 text-right font-bold text-slate-900">{(revisedStruct.networkAllowance || 1000)?.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+                            <td className="p-1.5 text-right text-slate-500">-</td>
+                          </tr>
+                          <tr>
+                            <td className="p-1.5 font-sans text-slate-800">Other Allowance</td>
+                            <td className="p-1.5 text-right">{(currentStruct.otherAllowance || 1000)?.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+                            <td className="p-1.5 text-right font-bold text-slate-900">{(revisedStruct.otherAllowance || 1000)?.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+                            <td className="p-1.5 text-right text-slate-500">-</td>
+                          </tr>
+                          <tr>
                             <td className="p-1.5 font-sans text-slate-800">Special Allowance</td>
                             <td className="p-1.5 text-right">{currentStruct.specialAllowance?.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
                             <td className="p-1.5 text-right font-bold text-slate-900">{revisedStruct.specialAllowance?.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>

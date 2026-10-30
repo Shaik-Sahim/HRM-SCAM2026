@@ -82,31 +82,49 @@ function numberToWords(amount, currency = 'INR') {
 
 /**
  * Deconstruct annual CTC into monthly salary structure components
- * Follows the official Profuse Transtech Solutions structure:
- * - Basic Pay: 60% of CTC
- * - HRA: 40% of Basic Pay (24% of CTC)
+ * Standard Salary Breakdown:
+ * - Basic Salary: 50% of CTC
+ * - HRA: 40% of Basic Pay (20% of CTC)
  * - Conveyance Allowance: ₹9,600/yr (₹800/mo)
  * - Medical Allowance: ₹15,000/yr (₹1,250/mo)
+ *   (Conveyance & Medical combined = ₹24,600/yr, ₹2,050/mo)
+ * - Network & Internet Bill: ₹12,000/yr (₹1,000/mo)
+ * - Other Allowance: ₹12,000/yr (₹1,000/mo)
  * - Special Allowance: Balance to match Gross CTC
  */
 function calculateSalaryStructure(annualCTC, statutorySettings = {}) {
   const ctc = Math.max(0, Number(annualCTC) || 0);
   const monthlyCTC = Number((ctc / 12).toFixed(2));
 
-  // Component ratios based on Profuse template standard
-  const basicAnnual = Math.round(ctc * 0.60);
+  // Component breakdown:
+  // 1. Basic Salary (50% of CTC)
+  const basicAnnual = Math.round(ctc * 0.50);
+
+  // 2. House Rent Allowance (40% of Basic Salary)
   const hraAnnual = Math.round(basicAnnual * 0.40);
+
+  // 3. Conveyance & Medical Allowances
   const conveyanceAnnual = ctc > 100000 ? 9600 : 0;
   const medicalAnnual = ctc > 100000 ? 15000 : 0;
+
+  // 4. Network Bill & Other Allowances
+  const networkAllowanceAnnual = ctc > 150000 ? 12000 : 0;
+  const otherAllowanceAnnual = ctc > 150000 ? 12000 : 0;
   
-  // Special Allowance is the balancing figure
-  const specialAllowanceAnnual = Math.max(0, ctc - (basicAnnual + hraAnnual + conveyanceAnnual + medicalAnnual));
+  // 5. Special Allowance is the balancing figure
+  const fixedAnnualSum = basicAnnual + hraAnnual + conveyanceAnnual + medicalAnnual + networkAllowanceAnnual + otherAllowanceAnnual;
+  const specialAllowanceAnnual = Math.max(0, ctc - fixedAnnualSum);
 
   const basicMonthly = Number((basicAnnual / 12).toFixed(2));
   const hraMonthly = Number((hraAnnual / 12).toFixed(2));
   const conveyanceMonthly = Number((conveyanceAnnual / 12).toFixed(2));
   const medicalMonthly = Number((medicalAnnual / 12).toFixed(2));
-  const specialAllowanceMonthly = Number((specialAllowanceAnnual / 12).toFixed(2));
+  const networkAllowanceMonthly = Number((networkAllowanceAnnual / 12).toFixed(2));
+  const otherAllowanceMonthly = Number((otherAllowanceAnnual / 12).toFixed(2));
+
+  // Ensure monthly components balance precisely to monthlyCTC
+  const fixedMonthlySum = Number((basicMonthly + hraMonthly + conveyanceMonthly + medicalMonthly + networkAllowanceMonthly + otherAllowanceMonthly).toFixed(2));
+  const specialAllowanceMonthly = Math.max(0, Number((monthlyCTC - fixedMonthlySum).toFixed(2)));
 
   return {
     annualCTC: ctc,
@@ -116,6 +134,9 @@ function calculateSalaryStructure(annualCTC, statutorySettings = {}) {
       hra: hraAnnual,
       conveyance: conveyanceAnnual,
       medical: medicalAnnual,
+      conveyanceMedical: conveyanceAnnual + medicalAnnual,
+      networkAllowance: networkAllowanceAnnual,
+      otherAllowance: otherAllowanceAnnual,
       specialAllowance: specialAllowanceAnnual,
       gross: ctc
     },
@@ -124,6 +145,9 @@ function calculateSalaryStructure(annualCTC, statutorySettings = {}) {
       hra: hraMonthly,
       conveyance: conveyanceMonthly,
       medical: medicalMonthly,
+      conveyanceMedical: Number((conveyanceMonthly + medicalMonthly).toFixed(2)),
+      networkAllowance: networkAllowanceMonthly,
+      otherAllowance: otherAllowanceMonthly,
       specialAllowance: specialAllowanceMonthly,
       gross: monthlyCTC
     }
@@ -159,6 +183,8 @@ function processMonthlyPayroll(employee, attendance, adjustments = {}, statutory
   const earnedHRA = Math.round(m.hra * prorationRatio);
   const earnedConveyance = Math.round(m.conveyance * prorationRatio);
   const earnedMedical = Math.round(m.medical * prorationRatio);
+  const earnedNetwork = Math.round((m.networkAllowance || 0) * prorationRatio);
+  const earnedOther = Math.round((m.otherAllowance || 0) * prorationRatio);
   const earnedSpecial = Math.round(m.specialAllowance * prorationRatio);
 
   // Overtime computation: hourly rate = (Basic / totalDays / 8) * overtimeRateMultiplier (1.5x)
@@ -169,10 +195,11 @@ function processMonthlyPayroll(employee, attendance, adjustments = {}, statutory
   const bonus = Number(adjustments.bonus) || 0;
   const incentive = Number(adjustments.incentive) || 0;
   const arrears = Number(adjustments.arrears) || 0;
-  const otherAllowances = Number(adjustments.otherAllowances) || 0;
+  const otherAdjustments = Number(adjustments.otherAllowances) || 0;
 
   const totalGrossEarnings = earnedBasic + earnedHRA + earnedConveyance + earnedMedical + 
-                             earnedSpecial + overtimePay + bonus + incentive + arrears + otherAllowances;
+                             earnedNetwork + earnedOther + earnedSpecial + overtimePay + 
+                             bonus + incentive + arrears + otherAdjustments;
 
   // Statutory Deductions
   // 1. Employee Provident Fund (PF): 12% of basic (capped at ₹1,800 or actual)
@@ -242,12 +269,14 @@ function processMonthlyPayroll(employee, attendance, adjustments = {}, statutory
       hra: earnedHRA,
       conveyance: earnedConveyance,
       medical: earnedMedical,
+      networkAllowance: earnedNetwork,
+      otherAllowance: earnedOther,
       specialAllowance: earnedSpecial,
       overtime: overtimePay,
       bonus,
       incentive,
       arrears,
-      otherAllowances,
+      otherAllowances: otherAdjustments,
       totalGross: totalGrossEarnings
     },
     deductions: {

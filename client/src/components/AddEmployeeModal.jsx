@@ -252,35 +252,41 @@ export default function AddEmployeeModal({ company, onClose, onEmployeeCreated }
 
             {/* Calculated Breakdown Cards */}
             {structurePreview && (
-              <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 pt-2 text-xs">
-                <div className="p-2.5 rounded-lg bg-slate-900 border border-slate-800">
-                  <span className="text-[10px] text-slate-400 block">Monthly Basic (45%)</span>
+              <div className="grid grid-cols-2 sm:grid-cols-6 gap-2 pt-2 text-xs">
+                <div className="p-2 rounded-lg bg-slate-900 border border-slate-800">
+                  <span className="text-[10px] text-slate-400 block">Basic (50%)</span>
                   <span className="font-mono font-bold text-slate-200">
                     {currencySymbol}{structurePreview.monthly.basic?.toLocaleString()}
                   </span>
                 </div>
-                <div className="p-2.5 rounded-lg bg-slate-900 border border-slate-800">
-                  <span className="text-[10px] text-slate-400 block">Monthly HRA (50% Basic)</span>
+                <div className="p-2 rounded-lg bg-slate-900 border border-slate-800">
+                  <span className="text-[10px] text-slate-400 block">HRA (40% Basic)</span>
                   <span className="font-mono font-bold text-slate-200">
                     {currencySymbol}{structurePreview.monthly.hra?.toLocaleString()}
                   </span>
                 </div>
-                <div className="p-2.5 rounded-lg bg-slate-900 border border-slate-800">
-                  <span className="text-[10px] text-slate-400 block">Special Allowance</span>
+                <div className="p-2 rounded-lg bg-slate-900 border border-slate-800">
+                  <span className="text-[10px] text-slate-400 block">Conv & Med</span>
+                  <span className="font-mono font-bold text-slate-200">
+                    {currencySymbol}{(structurePreview.monthly.conveyance + structurePreview.monthly.medical)?.toLocaleString()}
+                  </span>
+                </div>
+                <div className="p-2 rounded-lg bg-slate-900 border border-slate-800">
+                  <span className="text-[10px] text-slate-400 block">Network & Other</span>
+                  <span className="font-mono font-bold text-slate-200">
+                    {currencySymbol}{((structurePreview.monthly.networkAllowance || 1000) + (structurePreview.monthly.otherAllowance || 1000))?.toLocaleString()}
+                  </span>
+                </div>
+                <div className="p-2 rounded-lg bg-slate-900 border border-slate-800">
+                  <span className="text-[10px] text-slate-400 block">Special Allow</span>
                   <span className="font-mono font-bold text-slate-200">
                     {currencySymbol}{structurePreview.monthly.specialAllowance?.toLocaleString()}
                   </span>
                 </div>
-                <div className="p-2.5 rounded-lg bg-slate-900 border border-slate-800">
+                <div className="p-2 rounded-lg bg-slate-900 border border-slate-800">
                   <span className="text-[10px] text-slate-400 block">Gross Monthly</span>
                   <span className="font-mono font-bold text-brand-400">
                     {currencySymbol}{structurePreview.monthlyCTC?.toLocaleString()}
-                  </span>
-                </div>
-                <div className="p-2.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 col-span-2 sm:col-span-1">
-                  <span className="text-[10px] text-emerald-300 block">Est. Net Take Home</span>
-                  <span className="font-mono font-bold text-emerald-400">
-                    ~{currencySymbol}{Math.max(0, structurePreview.monthlyCTC - Math.round(structurePreview.monthly.basic * 0.12) - 200 - formData.monthlyTDS).toLocaleString()}
                   </span>
                 </div>
               </div>

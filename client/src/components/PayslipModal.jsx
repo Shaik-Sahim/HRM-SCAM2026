@@ -292,6 +292,14 @@ export default function PayslipModal({ payslip, company, onClose }) {
                           <span className="font-mono font-medium">{currencySymbol}{payslip.earnings?.medical?.toLocaleString()}</span>
                         </div>
                         <div className="flex justify-between px-3 py-1">
+                          <span className="text-slate-600">Network & Internet Bill</span>
+                          <span className="font-mono font-medium">{currencySymbol}{(payslip.earnings?.networkAllowance || 1000)?.toLocaleString()}</span>
+                        </div>
+                        <div className="flex justify-between px-3 py-1">
+                          <span className="text-slate-600">Other Allowance</span>
+                          <span className="font-mono font-medium">{currencySymbol}{(payslip.earnings?.otherAllowance || 1000)?.toLocaleString()}</span>
+                        </div>
+                        <div className="flex justify-between px-3 py-1">
                           <span className="text-slate-600">Special / Flexi Allowance</span>
                           <span className="font-mono font-medium">{currencySymbol}{payslip.earnings?.specialAllowance?.toLocaleString()}</span>
                         </div>
@@ -463,16 +471,22 @@ export default function PayslipModal({ payslip, company, onClose }) {
                         <td className="py-1.5 text-right font-mono">{currencySymbol}{payslip.deductions?.esi?.toLocaleString()}</td>
                       </tr>
                       <tr>
-                        <td className="py-1.5 text-slate-700">Conveyance Allowance</td>
-                        <td className="py-1.5 text-right font-mono">{currencySymbol}{payslip.earnings?.conveyance?.toLocaleString()}</td>
+                        <td className="py-1.5 text-slate-700">Conveyance & Medical</td>
+                        <td className="py-1.5 text-right font-mono">{currencySymbol}{((payslip.earnings?.conveyance || 0) + (payslip.earnings?.medical || 0))?.toLocaleString()}</td>
                         <td className="py-1.5 pl-6 text-slate-700">Professional Tax (PT)</td>
                         <td className="py-1.5 text-right font-mono">{currencySymbol}{payslip.deductions?.professionalTax?.toLocaleString()}</td>
                       </tr>
                       <tr>
-                        <td className="py-1.5 text-slate-700">Special Allowances</td>
-                        <td className="py-1.5 text-right font-mono">{currencySymbol}{payslip.earnings?.specialAllowance?.toLocaleString()}</td>
+                        <td className="py-1.5 text-slate-700">Network & Other Allowance</td>
+                        <td className="py-1.5 text-right font-mono">{currencySymbol}{((payslip.earnings?.networkAllowance || 1000) + (payslip.earnings?.otherAllowance || 1000))?.toLocaleString()}</td>
                         <td className="py-1.5 pl-6 text-slate-700">Tax Deducted at Source (TDS)</td>
                         <td className="py-1.5 text-right font-mono">{currencySymbol}{payslip.deductions?.tds?.toLocaleString()}</td>
+                      </tr>
+                      <tr>
+                        <td className="py-1.5 text-slate-700">Special Allowances</td>
+                        <td className="py-1.5 text-right font-mono">{currencySymbol}{payslip.earnings?.specialAllowance?.toLocaleString()}</td>
+                        <td className="py-1.5 pl-6 text-slate-700">Other Deductions</td>
+                        <td className="py-1.5 text-right font-mono">{currencySymbol}{((payslip.deductions?.advanceDeduction || 0) + (payslip.deductions?.otherDeductions || 0))?.toLocaleString()}</td>
                       </tr>
                     </tbody>
                     <tfoot>
@@ -545,10 +559,12 @@ export default function PayslipModal({ payslip, company, onClose }) {
                       <div>
                         <div className="bg-slate-100 font-bold p-1.5 border-b border-slate-300 text-center uppercase text-[10px]">Gross Earnings</div>
                         <div className="p-2.5 space-y-1">
-                          <div className="flex justify-between"><span>Basic Pay</span><span className="font-mono">{currencySymbol}{payslip.earnings?.basic?.toLocaleString()}</span></div>
-                          <div className="flex justify-between"><span>HRA</span><span className="font-mono">{currencySymbol}{payslip.earnings?.hra?.toLocaleString()}</span></div>
+                          <div className="flex justify-between"><span>Basic Pay (50%)</span><span className="font-mono">{currencySymbol}{payslip.earnings?.basic?.toLocaleString()}</span></div>
+                          <div className="flex justify-between"><span>HRA (40% Basic)</span><span className="font-mono">{currencySymbol}{payslip.earnings?.hra?.toLocaleString()}</span></div>
                           <div className="flex justify-between"><span>Conveyance</span><span className="font-mono">{currencySymbol}{payslip.earnings?.conveyance?.toLocaleString()}</span></div>
                           <div className="flex justify-between"><span>Medical</span><span className="font-mono">{currencySymbol}{payslip.earnings?.medical?.toLocaleString()}</span></div>
+                          <div className="flex justify-between"><span>Network & Internet Bill</span><span className="font-mono">{currencySymbol}{(payslip.earnings?.networkAllowance || 1000)?.toLocaleString()}</span></div>
+                          <div className="flex justify-between"><span>Other Allowance</span><span className="font-mono">{currencySymbol}{(payslip.earnings?.otherAllowance || 1000)?.toLocaleString()}</span></div>
                           <div className="flex justify-between"><span>Special Allowance</span><span className="font-mono">{currencySymbol}{payslip.earnings?.specialAllowance?.toLocaleString()}</span></div>
                         </div>
                       </div>

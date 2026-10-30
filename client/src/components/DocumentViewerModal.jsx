@@ -629,14 +629,14 @@ export default function DocumentViewerModal({ document, company, onClose }) {
                       <table className="w-full text-[11.5px]">
                         <tbody className="divide-y divide-slate-800 font-mono">
                           <tr>
-                            <td className="p-2.5 font-sans text-slate-900">Basic Pay</td>
-                            <td className="p-2.5 text-right">{struct?.monthly?.basic?.toLocaleString('en-IN', { minimumFractionDigits: 2 }) || '47,000.00'}</td>
-                            <td className="p-2.5 text-right">{struct?.annual?.basic?.toLocaleString('en-IN', { minimumFractionDigits: 2 }) || '5,64,000.00'}</td>
+                            <td className="p-2.5 font-sans text-slate-900">Basic Pay (50%)</td>
+                            <td className="p-2.5 text-right">{struct?.monthly?.basic?.toLocaleString('en-IN', { minimumFractionDigits: 2 }) || '39,166.67'}</td>
+                            <td className="p-2.5 text-right">{struct?.annual?.basic?.toLocaleString('en-IN', { minimumFractionDigits: 2 }) || '4,70,000.00'}</td>
                           </tr>
                           <tr>
-                            <td className="p-2.5 font-sans text-slate-900">HRA</td>
-                            <td className="p-2.5 text-right">{struct?.monthly?.hra?.toLocaleString('en-IN', { minimumFractionDigits: 2 }) || '18,800.00'}</td>
-                            <td className="p-2.5 text-right">{struct?.annual?.hra?.toLocaleString('en-IN', { minimumFractionDigits: 2 }) || '2,25,600.00'}</td>
+                            <td className="p-2.5 font-sans text-slate-900">HRA (40% Basic)</td>
+                            <td className="p-2.5 text-right">{struct?.monthly?.hra?.toLocaleString('en-IN', { minimumFractionDigits: 2 }) || '15,666.67'}</td>
+                            <td className="p-2.5 text-right">{struct?.annual?.hra?.toLocaleString('en-IN', { minimumFractionDigits: 2 }) || '1,88,000.00'}</td>
                           </tr>
                           <tr>
                             <td className="p-2.5 font-sans text-slate-900">Conveyance Allowance</td>
@@ -649,9 +649,19 @@ export default function DocumentViewerModal({ document, company, onClose }) {
                             <td className="p-2.5 text-right">{struct?.annual?.medical?.toLocaleString('en-IN', { minimumFractionDigits: 2 }) || '15,000.00'}</td>
                           </tr>
                           <tr>
+                            <td className="p-2.5 font-sans text-slate-900">Network & Internet Bill</td>
+                            <td className="p-2.5 text-right">{(struct?.monthly?.networkAllowance ?? 1000)?.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+                            <td className="p-2.5 text-right">{(struct?.annual?.networkAllowance ?? 12000)?.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+                          </tr>
+                          <tr>
+                            <td className="p-2.5 font-sans text-slate-900">Other Allowance</td>
+                            <td className="p-2.5 text-right">{(struct?.monthly?.otherAllowance ?? 1000)?.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+                            <td className="p-2.5 text-right">{(struct?.annual?.otherAllowance ?? 12000)?.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+                          </tr>
+                          <tr>
                             <td className="p-2.5 font-sans text-slate-900">Special Allowance</td>
-                            <td className="p-2.5 text-right">{struct?.monthly?.specialAllowance?.toLocaleString('en-IN', { minimumFractionDigits: 2 }) || '10,483.33'}</td>
-                            <td className="p-2.5 text-right">{struct?.annual?.specialAllowance?.toLocaleString('en-IN', { minimumFractionDigits: 2 }) || '1,25,800.00'}</td>
+                            <td className="p-2.5 text-right">{struct?.monthly?.specialAllowance?.toLocaleString('en-IN', { minimumFractionDigits: 2 }) || '19,450.00'}</td>
+                            <td className="p-2.5 text-right">{struct?.annual?.specialAllowance?.toLocaleString('en-IN', { minimumFractionDigits: 2 }) || '2,33,400.00'}</td>
                           </tr>
                           <tr className="bg-slate-100 font-bold border-t-2 border-slate-800">
                             <td className="p-2.5 font-sans text-slate-900">Gross Pay</td>

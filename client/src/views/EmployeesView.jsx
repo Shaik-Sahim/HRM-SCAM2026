@@ -239,11 +239,11 @@ export default function EmployeesView({
                 </div>
                 <div className="divide-y divide-slate-800/60 p-2 space-y-1">
                   <div className="flex justify-between py-1 text-slate-300">
-                    <span>Basic Salary (45%)</span>
+                    <span>Basic Salary (50%)</span>
                     <span className="font-mono font-medium">{currencySymbol}{viewProfileEmp.salaryStructure?.monthly?.basic?.toLocaleString()}</span>
                   </div>
                   <div className="flex justify-between py-1 text-slate-300">
-                    <span>House Rent Allowance (50% Basic)</span>
+                    <span>House Rent Allowance (40% Basic)</span>
                     <span className="font-mono font-medium">{currencySymbol}{viewProfileEmp.salaryStructure?.monthly?.hra?.toLocaleString()}</span>
                   </div>
                   <div className="flex justify-between py-1 text-slate-300">
@@ -253,6 +253,14 @@ export default function EmployeesView({
                   <div className="flex justify-between py-1 text-slate-300">
                     <span>Medical Allowance</span>
                     <span className="font-mono font-medium">{currencySymbol}{viewProfileEmp.salaryStructure?.monthly?.medical?.toLocaleString()}</span>
+                  </div>
+                  <div className="flex justify-between py-1 text-slate-300">
+                    <span>Network & Internet Bill</span>
+                    <span className="font-mono font-medium">{currencySymbol}{(viewProfileEmp.salaryStructure?.monthly?.networkAllowance || 1000)?.toLocaleString()}</span>
+                  </div>
+                  <div className="flex justify-between py-1 text-slate-300">
+                    <span>Other Allowance</span>
+                    <span className="font-mono font-medium">{currencySymbol}{(viewProfileEmp.salaryStructure?.monthly?.otherAllowance || 1000)?.toLocaleString()}</span>
                   </div>
                   <div className="flex justify-between py-1 text-slate-300">
                     <span>Special Allowance (Balancing)</span>

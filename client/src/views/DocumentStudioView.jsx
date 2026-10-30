@@ -390,20 +390,28 @@ export default function DocumentStudioView({ employees, company, onViewDocument 
                       </div>
                       <div className="divide-y divide-slate-800/50 p-2 space-y-1">
                         <div className="flex justify-between py-1 text-slate-400">
-                          <span>Basic Salary (45%)</span>
-                          <span className="font-mono text-slate-200">{currencySymbol}{offerPreviewCTC.monthly.basic?.toLocaleString()}</span>
+                          <span>Basic Salary (50%)</span>
+                          <span className="font-mono text-slate-200">{currencySymbol}{offerPreviewCTC.monthly.basic?.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
                         </div>
                         <div className="flex justify-between py-1 text-slate-400">
-                          <span>HRA (50% Basic)</span>
-                          <span className="font-mono text-slate-200">{currencySymbol}{offerPreviewCTC.monthly.hra?.toLocaleString()}</span>
+                          <span>HRA (40% Basic)</span>
+                          <span className="font-mono text-slate-200">{currencySymbol}{offerPreviewCTC.monthly.hra?.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
                         </div>
                         <div className="flex justify-between py-1 text-slate-400">
                           <span>Conveyance & Medical</span>
-                          <span className="font-mono text-slate-200">{currencySymbol}{(offerPreviewCTC.monthly.conveyance + offerPreviewCTC.monthly.medical)?.toLocaleString()}</span>
+                          <span className="font-mono text-slate-200">{currencySymbol}{(offerPreviewCTC.monthly.conveyance + offerPreviewCTC.monthly.medical)?.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
+                        </div>
+                        <div className="flex justify-between py-1 text-slate-400">
+                          <span>Network & Internet Bill</span>
+                          <span className="font-mono text-slate-200">{currencySymbol}{(offerPreviewCTC.monthly.networkAllowance || 1000)?.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
+                        </div>
+                        <div className="flex justify-between py-1 text-slate-400">
+                          <span>Other Allowance</span>
+                          <span className="font-mono text-slate-200">{currencySymbol}{(offerPreviewCTC.monthly.otherAllowance || 1000)?.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
                         </div>
                         <div className="flex justify-between py-1 text-slate-400">
                           <span>Special Allowance</span>
-                          <span className="font-mono text-slate-200">{currencySymbol}{offerPreviewCTC.monthly.specialAllowance?.toLocaleString()}</span>
+                          <span className="font-mono text-slate-200">{currencySymbol}{offerPreviewCTC.monthly.specialAllowance?.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
                         </div>
                       </div>
                       <div className="bg-slate-950/80 px-3 py-2 border-t border-slate-800 font-bold text-brand-400 flex justify-between">

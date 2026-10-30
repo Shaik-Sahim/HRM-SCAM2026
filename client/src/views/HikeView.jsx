@@ -387,16 +387,34 @@ export default function HikeView({
                   </thead>
                   <tbody className="divide-y divide-slate-800/60 font-mono">
                     <tr>
-                      <td className="py-2 px-3 font-sans text-slate-300">Basic Salary (45%)</td>
+                      <td className="py-2 px-3 font-sans text-slate-300">Basic Salary (50%)</td>
                       <td className="py-2 px-3 text-right text-slate-400">{currencySymbol}{simulation.currentStructure?.monthly?.basic?.toLocaleString()}</td>
                       <td className="py-2 px-3 text-right text-slate-200 font-bold">{currencySymbol}{simulation.revisedStructure?.monthly?.basic?.toLocaleString()}</td>
                       <td className="py-2 px-3 text-right text-emerald-400">+{currencySymbol}{(simulation.revisedStructure?.monthly?.basic - simulation.currentStructure?.monthly?.basic)?.toLocaleString()}</td>
                     </tr>
                     <tr>
-                      <td className="py-2 px-3 font-sans text-slate-300">House Rent Allowance (HRA)</td>
+                      <td className="py-2 px-3 font-sans text-slate-300">House Rent Allowance (40% Basic)</td>
                       <td className="py-2 px-3 text-right text-slate-400">{currencySymbol}{simulation.currentStructure?.monthly?.hra?.toLocaleString()}</td>
                       <td className="py-2 px-3 text-right text-slate-200 font-bold">{currencySymbol}{simulation.revisedStructure?.monthly?.hra?.toLocaleString()}</td>
                       <td className="py-2 px-3 text-right text-emerald-400">+{currencySymbol}{(simulation.revisedStructure?.monthly?.hra - simulation.currentStructure?.monthly?.hra)?.toLocaleString()}</td>
+                    </tr>
+                    <tr>
+                      <td className="py-2 px-3 font-sans text-slate-300">Conveyance & Medical</td>
+                      <td className="py-2 px-3 text-right text-slate-400">{currencySymbol}{((simulation.currentStructure?.monthly?.conveyance || 0) + (simulation.currentStructure?.monthly?.medical || 0))?.toLocaleString()}</td>
+                      <td className="py-2 px-3 text-right text-slate-200 font-bold">{currencySymbol}{((simulation.revisedStructure?.monthly?.conveyance || 0) + (simulation.revisedStructure?.monthly?.medical || 0))?.toLocaleString()}</td>
+                      <td className="py-2 px-3 text-right text-slate-500">-</td>
+                    </tr>
+                    <tr>
+                      <td className="py-2 px-3 font-sans text-slate-300">Network & Internet Bill</td>
+                      <td className="py-2 px-3 text-right text-slate-400">{currencySymbol}{(simulation.currentStructure?.monthly?.networkAllowance || 1000)?.toLocaleString()}</td>
+                      <td className="py-2 px-3 text-right text-slate-200 font-bold">{currencySymbol}{(simulation.revisedStructure?.monthly?.networkAllowance || 1000)?.toLocaleString()}</td>
+                      <td className="py-2 px-3 text-right text-slate-500">-</td>
+                    </tr>
+                    <tr>
+                      <td className="py-2 px-3 font-sans text-slate-300">Other Allowance</td>
+                      <td className="py-2 px-3 text-right text-slate-400">{currencySymbol}{(simulation.currentStructure?.monthly?.otherAllowance || 1000)?.toLocaleString()}</td>
+                      <td className="py-2 px-3 text-right text-slate-200 font-bold">{currencySymbol}{(simulation.revisedStructure?.monthly?.otherAllowance || 1000)?.toLocaleString()}</td>
+                      <td className="py-2 px-3 text-right text-slate-500">-</td>
                     </tr>
                     <tr>
                       <td className="py-2 px-3 font-sans text-slate-300">Special Allowance</td>

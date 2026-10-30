@@ -26,12 +26,8 @@ function calculateHike(currentCTC, hikeDetails, statutorySettings = {}) {
   const currentStructure = calculateSalaryStructure(current, statutorySettings);
   const revisedStructure = calculateSalaryStructure(revisedCTC, statutorySettings);
 
-  const monthlyCurrentGross = currentStructure.monthly.basic + currentStructure.monthly.hra + 
-                              currentStructure.monthly.conveyance + currentStructure.monthly.medical + 
-                              currentStructure.monthly.specialAllowance;
-  const monthlyRevisedGross = revisedStructure.monthly.basic + revisedStructure.monthly.hra + 
-                              revisedStructure.monthly.conveyance + revisedStructure.monthly.medical + 
-                              revisedStructure.monthly.specialAllowance;
+  const monthlyCurrentGross = currentStructure.monthly.gross || Number((current / 12).toFixed(2));
+  const monthlyRevisedGross = revisedStructure.monthly.gross || Number((revisedCTC / 12).toFixed(2));
 
   const monthlyHikeDifference = monthlyRevisedGross - monthlyCurrentGross;
 
