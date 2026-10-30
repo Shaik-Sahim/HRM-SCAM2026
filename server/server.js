@@ -36,6 +36,16 @@ app.use(cors());
 app.use(express.json());
 
 // In-memory persistent database with auto-hydration
+const employeesJsonPath = path.join(__dirname, 'data', 'employees.json');
+
+function persistEmployees() {
+  try {
+    fs.writeFileSync(employeesJsonPath, JSON.stringify(db.employees, null, 2), 'utf8');
+  } catch (err) {
+    console.error('Error persisting employees to employees.json:', err);
+  }
+}
+
 let db = {
   company: { ...initialCompany },
   statutory: { ...initialStatutory },
@@ -202,8 +212,8 @@ app.get('/api/employees/:id', (req, res) => {
 
 app.post('/api/employees', (req, res) => {
   const data = req.body;
-  if (!data.fullName || !data.annualCTC) {
-    return res.status(400).json({ error: 'Full name and annual CTC are required' });
+  if (!data.fullName || (!data.annualCTC && !data.customSalary && !data.salaryStructure)) {
+    return res.status(400).json({ error: 'Full name and salary details are required' });
   }
 
   let empId = data.id ? String(data.id).trim().toUpperCase() : '';
@@ -226,27 +236,41 @@ app.post('/api/employees', (req, res) => {
     empId = generateUniqueEmployeeId(db.employees);
   }
 
+  const annualCTC = Number(data.annualCTC) || (data.salaryStructure?.annual?.gross ? Number(data.salaryStructure.annual.gross) : 600000);
+
   const newEmp = {
     id: empId,
     fullName: data.fullName.trim(),
     email: data.email || `${data.fullName.toLowerCase().replace(/\s+/g, '.')}@margeylabs.com`,
     phone: data.phone || '+91 99000 00000',
+    dateOfBirth: data.dateOfBirth || data.dob || '1992-05-15',
+    dateOfJoining: data.dateOfJoining || new Date().toISOString().split('T')[0],
+    groupDOJ: data.groupDOJ || data.groupDoj || data.dateOfJoining || new Date().toISOString().split('T')[0],
+    pfNumber: data.pfNumber || data.pfNo || 'MH/BAN/43477',
+    location: data.location || data.workLocation || 'BANGALORE 04',
     department: data.department || 'Engineering',
     designation: data.designation || 'Specialist',
-    dateOfJoining: data.dateOfJoining || new Date().toISOString().split('T')[0],
     status: data.status || 'Active',
     employmentType: data.employmentType || 'Full-Time',
-    annualCTC: Number(data.annualCTC) || 600000,
+    annualCTC: annualCTC,
     panNumber: data.panNumber || 'ABCDE1234F',
     uanNumber: data.uanNumber || '101900000000',
     bankName: data.bankName || 'HDFC Bank',
     bankAccountNumber: data.bankAccountNumber || '501000000000',
     ifscCode: data.ifscCode || 'HDFC0001234',
-    monthlyTDS: Number(data.monthlyTDS) || 0
+    monthlyTDS: Number(data.monthlyTDS) || 0,
+    customSalary: data.customSalary || null
   };
 
-  newEmp.salaryStructure = calculateSalaryStructure(newEmp.annualCTC, db.statutory);
+  // If user provided custom monthly salary breakdown, calculate or preserve it precisely
+  if (data.salaryStructure && data.salaryStructure.monthly) {
+    newEmp.salaryStructure = data.salaryStructure;
+  } else {
+    newEmp.salaryStructure = calculateSalaryStructure(newEmp.annualCTC, db.statutory, data.customSalary);
+  }
+
   db.employees.push(newEmp);
+  persistEmployees();
 
   res.status(201).json(newEmp);
 });
@@ -276,27 +300,34 @@ app.put('/api/employees/:id', (req, res) => {
     }
   }
 
-  if (req.body.annualCTC && Number(req.body.annualCTC) !== existing.annualCTC) {
+  if (req.body.salaryStructure && req.body.salaryStructure.monthly) {
+    updated.salaryStructure = req.body.salaryStructure;
+    if (req.body.salaryStructure.annual?.gross) {
+      updated.annualCTC = req.body.salaryStructure.annual.gross;
+    }
+  } else if (req.body.annualCTC && Number(req.body.annualCTC) !== existing.annualCTC) {
     updated.annualCTC = Number(req.body.annualCTC);
-    updated.salaryStructure = calculateSalaryStructure(updated.annualCTC, db.statutory);
+    updated.salaryStructure = calculateSalaryStructure(updated.annualCTC, db.statutory, req.body.customSalary || existing.customSalary);
   }
 
   db.employees[index] = updated;
+  persistEmployees();
   res.json(updated);
 });
 
 app.delete('/api/employees/:id', (req, res) => {
-  const index = db.employees.findIndex(e => e.id === req.params.id);
+  const index = db.employees.findIndex(e => String(e.id).toUpperCase() === String(req.params.id).toUpperCase());
   if (index === -1) return res.status(404).json({ error: 'Employee not found' });
   const removed = db.employees.splice(index, 1);
+  persistEmployees();
   res.json({ success: true, removed: removed[0] });
 });
 
 // Salary Structure Calculator Endpoint (Preview without saving)
 app.post('/api/salary/calculate', (req, res) => {
-  const { annualCTC } = req.body;
-  if (!annualCTC) return res.status(400).json({ error: 'annualCTC is required' });
-  const structure = calculateSalaryStructure(annualCTC, db.statutory);
+  const { annualCTC, customSalary } = req.body;
+  if (!annualCTC && !customSalary) return res.status(400).json({ error: 'annualCTC or customSalary is required' });
+  const structure = calculateSalaryStructure(annualCTC, db.statutory, customSalary);
   res.json(structure);
 });
 

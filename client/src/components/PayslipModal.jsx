@@ -33,6 +33,26 @@ function getFinancialYearMonths(monthYearStr) {
   return 3;
 }
 
+function formatDateToDDMMYYYY(val) {
+  if (!val) return '';
+  const s = String(val).trim();
+  if (/^\d{2}[\/\-]\d{2}[\/\-]\d{4}$/.test(s)) {
+    return s.replace(/-/g, '/');
+  }
+  if (/^\d{4}-\d{2}-\d{2}/.test(s)) {
+    const [y, m, d] = s.slice(0, 10).split('-');
+    return `${d}/${m}/${y}`;
+  }
+  const d = new Date(val);
+  if (!isNaN(d.getTime())) {
+    const day = String(d.getDate()).padStart(2, '0');
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const year = d.getFullYear();
+    return `${day}/${month}/${year}`;
+  }
+  return s;
+}
+
 export default function PayslipModal({ payslip, company, onClose }) {
   const [template, setTemplate] = useState('executive'); // 'executive' (Reference Audit) | 'modern' | 'classic'
   const [includeStamp, setIncludeStamp] = useState(false);
@@ -46,15 +66,15 @@ export default function PayslipModal({ payslip, company, onClose }) {
   const monthsPassed = getFinancialYearMonths(payslip.monthYear || payslip.monthName);
 
   // Employee Metadata
-  const empCode = payslip.employeeId || '17844';
-  const empName = payslip.employeeName || 'VEMULACHEDU SHALINI';
-  const dob = payslip.dateOfBirth || payslip.employee?.dateOfBirth || '27/11/1990';
-  const doj = payslip.dateOfJoining || payslip.employee?.dateOfJoining || '04/09/2019';
-  const designation = payslip.designation || 'SENIOR SYSTEMS ANALYST';
-  const pfNo = payslip.pfNumber || payslip.employee?.pfNumber || 'MH/BAN/43477';
-  const location = payslip.location || 'BANGALORE 04';
+  const empCode = payslip.employeeId || payslip.employee?.id || 'ML7330';
+  const empName = payslip.employeeName || payslip.employee?.fullName || 'VEMULACHEDU SHALINI';
+  const dob = formatDateToDDMMYYYY(payslip.dateOfBirth || payslip.employee?.dateOfBirth || payslip.employee?.dob) || '27/11/1990';
+  const doj = formatDateToDDMMYYYY(payslip.dateOfJoining || payslip.employee?.dateOfJoining || payslip.employee?.doj) || '04/09/2019';
+  const designation = payslip.designation || payslip.employee?.designation || 'SENIOR SYSTEMS ANALYST';
+  const pfNo = payslip.pfNumber || payslip.employee?.pfNumber || payslip.employee?.pfNo || 'MH/BAN/43477';
+  const location = payslip.location || payslip.employee?.location || payslip.employee?.workLocation || 'BANGALORE 04';
   const uan = payslip.uanNumber || payslip.employee?.uanNumber || '101406788347';
-  const groupDoj = payslip.groupDoj || doj;
+  const groupDoj = formatDateToDDMMYYYY(payslip.groupDOJ || payslip.groupDoj || payslip.employee?.groupDOJ || payslip.employee?.groupDoj || payslip.dateOfJoining || payslip.employee?.dateOfJoining) || doj;
 
   const totalDays = Number(payslip.attendance?.totalWorkingDays) || 30;
   const lwpDays = Number(payslip.attendance?.unpaidLeaves || payslip.deductions?.lossOfPayDays) || 0;

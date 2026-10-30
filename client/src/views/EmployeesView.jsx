@@ -218,30 +218,42 @@ export default function EmployeesView({
             </div>
 
             <div className="space-y-4 text-xs">
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 p-3 rounded-xl bg-slate-950/60 border border-slate-800">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 p-3 rounded-xl bg-slate-950/60 border border-slate-800">
                 <div>
                   <span className="text-slate-400 block text-[10px] uppercase">Employee ID</span>
                   <span className="font-mono font-bold text-cyan-300">{viewProfileEmp.id}</span>
                 </div>
                 <div>
-                  <span className="text-slate-400 block text-[10px] uppercase">Date of Joining</span>
+                  <span className="text-slate-400 block text-[10px] uppercase">Date of Birth (DOB)</span>
+                  <span className="text-slate-200">{viewProfileEmp.dateOfBirth || viewProfileEmp.dob || 'NA'}</span>
+                </div>
+                <div>
+                  <span className="text-slate-400 block text-[10px] uppercase">Date of Joining (DOJ)</span>
                   <span className="text-slate-200">{viewProfileEmp.dateOfJoining}</span>
+                </div>
+                <div>
+                  <span className="text-slate-400 block text-[10px] uppercase">Group DOJ</span>
+                  <span className="text-slate-200">{viewProfileEmp.groupDOJ || viewProfileEmp.dateOfJoining}</span>
+                </div>
+                <div>
+                  <span className="text-slate-400 block text-[10px] uppercase">PF Number</span>
+                  <span className="font-mono text-slate-200">{viewProfileEmp.pfNumber || 'NA'}</span>
+                </div>
+                <div>
+                  <span className="text-slate-400 block text-[10px] uppercase">Work Location</span>
+                  <span className="text-slate-200">{viewProfileEmp.location || 'BANGALORE 04'}</span>
                 </div>
                 <div>
                   <span className="text-slate-400 block text-[10px] uppercase">Annual CTC</span>
                   <span className="font-mono font-bold text-brand-400">{currencySymbol}{viewProfileEmp.annualCTC?.toLocaleString()}</span>
                 </div>
                 <div>
-                  <span className="text-slate-400 block text-[10px] uppercase">Bank Account</span>
-                  <span className="font-mono text-slate-200">{viewProfileEmp.bankName} - {viewProfileEmp.bankAccountNumber}</span>
-                </div>
-                <div>
-                  <span className="text-slate-400 block text-[10px] uppercase">IFSC Code</span>
-                  <span className="font-mono text-slate-200">{viewProfileEmp.ifscCode}</span>
-                </div>
-                <div>
                   <span className="text-slate-400 block text-[10px] uppercase">PAN / UAN</span>
                   <span className="font-mono text-slate-200">{viewProfileEmp.panNumber || 'NA'} / {viewProfileEmp.uanNumber || 'NA'}</span>
+                </div>
+                <div className="sm:col-span-4">
+                  <span className="text-slate-400 block text-[10px] uppercase">Bank Account & IFSC</span>
+                  <span className="font-mono text-slate-200">{viewProfileEmp.bankName} - {viewProfileEmp.bankAccountNumber} ({viewProfileEmp.ifscCode})</span>
                 </div>
               </div>
 

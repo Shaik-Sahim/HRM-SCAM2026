@@ -92,43 +92,72 @@ function numberToWords(amount, currency = 'INR') {
  * - Other Allowance: ₹12,000/yr (₹1,000/mo)
  * - Special Allowance: Balance to match Gross CTC
  */
-function calculateSalaryStructure(annualCTC, statutorySettings = {}) {
+function calculateSalaryStructure(annualCTC, statutorySettings = {}, customMonthly = null) {
   const ctc = Math.max(0, Number(annualCTC) || 0);
   const monthlyCTC = Number((ctc / 12).toFixed(2));
 
-  // Component breakdown:
-  // 1. Basic Salary (50% of CTC)
-  const basicAnnual = Math.round(ctc * 0.50);
+  let basicMonthly, hraMonthly, conveyanceMonthly, medicalMonthly, networkAllowanceMonthly, otherAllowanceMonthly, specialAllowanceMonthly;
 
-  // 2. House Rent Allowance (40% of Basic Salary)
-  const hraAnnual = Math.round(basicAnnual * 0.40);
+  if (customMonthly && (customMonthly.basic !== undefined || customMonthly.isCustom)) {
+    // Custom salary package explicitly defined by HR
+    basicMonthly = Number(Number(customMonthly.basic || 0).toFixed(2));
+    hraMonthly = Number(Number(customMonthly.hra || 0).toFixed(2));
+    conveyanceMonthly = Number(Number(customMonthly.conveyance || 0).toFixed(2));
+    medicalMonthly = Number(Number(customMonthly.medical || 0).toFixed(2));
+    networkAllowanceMonthly = Number(Number(customMonthly.networkAllowance || 0).toFixed(2));
+    otherAllowanceMonthly = Number(Number(customMonthly.otherAllowance || 0).toFixed(2));
 
-  // 3. Conveyance & Medical Allowances (Traveling Allowance: ₹2,000/mo, Medical: ₹1,500/mo)
-  const conveyanceAnnual = ctc > 100000 ? 24000 : 0;
-  const medicalAnnual = ctc > 100000 ? 18000 : 0;
+    if (customMonthly.specialAllowance !== undefined && customMonthly.specialAllowance !== null) {
+      specialAllowanceMonthly = Number(Number(customMonthly.specialAllowance).toFixed(2));
+    } else {
+      const fixedMonthlySum = Number((basicMonthly + hraMonthly + conveyanceMonthly + medicalMonthly + networkAllowanceMonthly + otherAllowanceMonthly).toFixed(2));
+      specialAllowanceMonthly = Math.max(0, Number((monthlyCTC - fixedMonthlySum).toFixed(2)));
+    }
+  } else {
+    // Component breakdown (Standard Margey Labs formula):
+    // 1. Basic Salary (50% of CTC)
+    const basicAnnual = Math.round(ctc * 0.50);
 
-  // 4. Internet Allowance & Food Allowances (Internet: ₹1,500/mo, Food: ₹2,000/mo)
-  const networkAllowanceAnnual = ctc > 150000 ? 18000 : 0;
-  const otherAllowanceAnnual = ctc > 150000 ? 24000 : 0;
-  
-  // 5. Special Allowance is the balancing figure
-  const fixedAnnualSum = basicAnnual + hraAnnual + conveyanceAnnual + medicalAnnual + networkAllowanceAnnual + otherAllowanceAnnual;
-  const specialAllowanceAnnual = Math.max(0, ctc - fixedAnnualSum);
+    // 2. House Rent Allowance (40% of Basic Salary)
+    const hraAnnual = Math.round(basicAnnual * 0.40);
 
-  const basicMonthly = Number((basicAnnual / 12).toFixed(2));
-  const hraMonthly = Number((hraAnnual / 12).toFixed(2));
-  const conveyanceMonthly = Number((conveyanceAnnual / 12).toFixed(2));
-  const medicalMonthly = Number((medicalAnnual / 12).toFixed(2));
-  const networkAllowanceMonthly = Number((networkAllowanceAnnual / 12).toFixed(2));
-  const otherAllowanceMonthly = Number((otherAllowanceAnnual / 12).toFixed(2));
+    // 3. Conveyance & Medical Allowances (Traveling: ₹2,000/mo, Medical: ₹1,500/mo)
+    const conveyanceAnnual = ctc > 100000 ? 24000 : 0;
+    const medicalAnnual = ctc > 100000 ? 18000 : 0;
 
-  // Ensure monthly components balance precisely to monthlyCTC
-  const fixedMonthlySum = Number((basicMonthly + hraMonthly + conveyanceMonthly + medicalMonthly + networkAllowanceMonthly + otherAllowanceMonthly).toFixed(2));
-  const specialAllowanceMonthly = Math.max(0, Number((monthlyCTC - fixedMonthlySum).toFixed(2)));
+    // 4. Internet Allowance & Other Allowance (Internet: ₹1,500/mo, Other: ₹2,000/mo)
+    const networkAllowanceAnnual = ctc > 150000 ? 18000 : 0;
+    const otherAllowanceAnnual = ctc > 150000 ? 24000 : 0;
+    
+    // 5. Special Allowance is the balancing figure
+    const fixedAnnualSum = basicAnnual + hraAnnual + conveyanceAnnual + medicalAnnual + networkAllowanceAnnual + otherAllowanceAnnual;
+    const specialAllowanceAnnual = Math.max(0, ctc - fixedAnnualSum);
+
+    basicMonthly = Number((basicAnnual / 12).toFixed(2));
+    hraMonthly = Number((hraAnnual / 12).toFixed(2));
+    conveyanceMonthly = Number((conveyanceAnnual / 12).toFixed(2));
+    medicalMonthly = Number((medicalAnnual / 12).toFixed(2));
+    networkAllowanceMonthly = Number((networkAllowanceAnnual / 12).toFixed(2));
+    otherAllowanceMonthly = Number((otherAllowanceAnnual / 12).toFixed(2));
+
+    // Ensure monthly components balance precisely to monthlyCTC
+    const fixedMonthlySum = Number((basicMonthly + hraMonthly + conveyanceMonthly + medicalMonthly + networkAllowanceMonthly + otherAllowanceMonthly).toFixed(2));
+    specialAllowanceMonthly = Math.max(0, Number((monthlyCTC - fixedMonthlySum).toFixed(2)));
+  }
+
+  const basicAnnual = Math.round(basicMonthly * 12);
+  const hraAnnual = Math.round(hraMonthly * 12);
+  const conveyanceAnnual = Math.round(conveyanceMonthly * 12);
+  const medicalAnnual = Math.round(medicalMonthly * 12);
+  const networkAllowanceAnnual = Math.round(networkAllowanceMonthly * 12);
+  const otherAllowanceAnnual = Math.round(otherAllowanceMonthly * 12);
+  const specialAllowanceAnnual = Math.round(specialAllowanceMonthly * 12);
+  const computedGrossMonthly = Number((basicMonthly + hraMonthly + conveyanceMonthly + medicalMonthly + networkAllowanceMonthly + otherAllowanceMonthly + specialAllowanceMonthly).toFixed(2));
+  const computedGrossAnnual = Math.round(computedGrossMonthly * 12);
 
   return {
-    annualCTC: ctc,
-    monthlyCTC,
+    annualCTC: computedGrossAnnual || ctc,
+    monthlyCTC: computedGrossMonthly || monthlyCTC,
     annual: {
       basic: basicAnnual,
       hra: hraAnnual,
@@ -138,7 +167,7 @@ function calculateSalaryStructure(annualCTC, statutorySettings = {}) {
       networkAllowance: networkAllowanceAnnual,
       otherAllowance: otherAllowanceAnnual,
       specialAllowance: specialAllowanceAnnual,
-      gross: ctc
+      gross: computedGrossAnnual
     },
     monthly: {
       basic: basicMonthly,
@@ -149,7 +178,7 @@ function calculateSalaryStructure(annualCTC, statutorySettings = {}) {
       networkAllowance: networkAllowanceMonthly,
       otherAllowance: otherAllowanceMonthly,
       specialAllowance: specialAllowanceMonthly,
-      gross: monthlyCTC
+      gross: computedGrossMonthly
     }
   };
 }
@@ -249,6 +278,11 @@ function processMonthlyPayroll(employee, attendance, adjustments = {}, statutory
     employeeName: employee.fullName,
     department: employee.department,
     designation: employee.designation,
+    dateOfBirth: employee.dateOfBirth || employee.dob || '',
+    dateOfJoining: employee.dateOfJoining || employee.doj || '',
+    groupDOJ: employee.groupDOJ || employee.groupDoj || employee.dateOfJoining || employee.doj || '',
+    pfNumber: employee.pfNumber || employee.pfNo || 'MH/BAN/43477',
+    location: employee.location || employee.workLocation || 'BANGALORE 04',
     panNumber: employee.panNumber,
     bankAccountNumber: employee.bankAccountNumber,
     bankName: employee.bankName,
@@ -293,7 +327,8 @@ function processMonthlyPayroll(employee, attendance, adjustments = {}, statutory
     netPay,
     netPayInWords: numberToWords(netPay, statutorySettings.currency || 'INR'),
     currency: statutorySettings.currency || 'INR',
-    processedAt: new Date().toISOString()
+    processedAt: new Date().toISOString(),
+    employee: employee
   };
 }
 

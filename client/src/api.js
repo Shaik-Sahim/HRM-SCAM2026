@@ -64,11 +64,11 @@ export async function deleteEmployee(id) {
   return res.json();
 }
 
-export async function calculateSalaryStructure(annualCTC) {
+export async function calculateSalaryStructure(annualCTC, customSalary = null) {
   const res = await fetch(`${API_BASE}/salary/calculate`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ annualCTC })
+    body: JSON.stringify({ annualCTC, customSalary })
   });
   if (!res.ok) throw new Error('Failed to calculate structure');
   return res.json();

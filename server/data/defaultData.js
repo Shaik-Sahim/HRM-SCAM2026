@@ -1,3 +1,5 @@
+const fs = require('fs');
+const path = require('path');
 const { calculateSalaryStructure } = require('../services/payrollEngine');
 
 const statutorySettings = {
@@ -42,7 +44,11 @@ const rawEmployees = [
     phone: "+91 98765 43210",
     department: "Engineering",
     designation: "Lead Software Architect",
-    dateOfJoining: "2022-03-15",
+    dateOfBirth: "1990-11-27",
+    dateOfJoining: "2019-09-04",
+    groupDOJ: "2019-09-04",
+    pfNumber: "MH/BAN/43477",
+    location: "BANGALORE 04",
     status: "Active",
     employmentType: "Full-Time",
     annualCTC: 2400000,
@@ -60,7 +66,11 @@ const rawEmployees = [
     phone: "+91 98234 56789",
     department: "Product & Design",
     designation: "Senior Staff Product Designer",
-    dateOfJoining: "2022-06-01",
+    dateOfBirth: "1993-05-14",
+    dateOfJoining: "2020-06-01",
+    groupDOJ: "2020-06-01",
+    pfNumber: "MH/BAN/43478",
+    location: "BANGALORE 04",
     status: "Active",
     employmentType: "Full-Time",
     annualCTC: 1800000,
@@ -78,7 +88,11 @@ const rawEmployees = [
     phone: "+91 97654 32109",
     department: "Engineering",
     designation: "Senior Full Stack Engineer",
-    dateOfJoining: "2023-01-10",
+    dateOfBirth: "1995-08-22",
+    dateOfJoining: "2021-01-10",
+    groupDOJ: "2021-01-10",
+    pfNumber: "MH/BAN/43479",
+    location: "BANGALORE 04",
     status: "Active",
     employmentType: "Full-Time",
     annualCTC: 1350000,
@@ -96,7 +110,11 @@ const rawEmployees = [
     phone: "+91 96543 21098",
     department: "Human Resources",
     designation: "Lead HR Business Partner",
-    dateOfJoining: "2023-04-12",
+    dateOfBirth: "1994-03-30",
+    dateOfJoining: "2021-04-12",
+    groupDOJ: "2021-04-12",
+    pfNumber: "MH/BAN/43480",
+    location: "BANGALORE 04",
     status: "Active",
     employmentType: "Full-Time",
     annualCTC: 960000,
@@ -114,7 +132,11 @@ const rawEmployees = [
     phone: "+91 95432 10987",
     department: "Sales & Growth",
     designation: "Enterprise Sales Director",
-    dateOfJoining: "2021-11-01",
+    dateOfBirth: "1988-12-05",
+    dateOfJoining: "2019-11-01",
+    groupDOJ: "2019-11-01",
+    pfNumber: "MH/BAN/43481",
+    location: "BANGALORE 04",
     status: "Active",
     employmentType: "Full-Time",
     annualCTC: 2800000,
@@ -132,7 +154,11 @@ const rawEmployees = [
     phone: "+91 94321 09876",
     department: "Engineering",
     designation: "QA Automation Lead",
-    dateOfJoining: "2023-08-20",
+    dateOfBirth: "1996-07-19",
+    dateOfJoining: "2022-08-20",
+    groupDOJ: "2022-08-20",
+    pfNumber: "MH/BAN/43482",
+    location: "BANGALORE 04",
     status: "Active",
     employmentType: "Full-Time",
     annualCTC: 1200000,
@@ -150,7 +176,11 @@ const rawEmployees = [
     phone: "+91 93210 98765",
     department: "Cloud & DevOps",
     designation: "Senior Site Reliability Engineer",
-    dateOfJoining: "2022-09-05",
+    dateOfBirth: "1993-10-11",
+    dateOfJoining: "2021-09-05",
+    groupDOJ: "2021-09-05",
+    pfNumber: "MH/BAN/43483",
+    location: "BANGALORE 04",
     status: "Active",
     employmentType: "Full-Time",
     annualCTC: 1550000,
@@ -168,7 +198,11 @@ const rawEmployees = [
     phone: "+91 92109 87654",
     department: "Finance & Accounts",
     designation: "Senior Financial Analyst",
-    dateOfJoining: "2023-02-18",
+    dateOfBirth: "1995-02-14",
+    dateOfJoining: "2022-02-18",
+    groupDOJ: "2022-02-18",
+    pfNumber: "MH/BAN/43484",
+    location: "BANGALORE 04",
     status: "Active",
     employmentType: "Full-Time",
     annualCTC: 1100000,
@@ -186,7 +220,11 @@ const rawEmployees = [
     phone: "+91 91098 76543",
     department: "Marketing",
     designation: "Brand & Growth Lead",
-    dateOfJoining: "2023-09-01",
+    dateOfBirth: "1994-06-25",
+    dateOfJoining: "2022-09-01",
+    groupDOJ: "2022-09-01",
+    pfNumber: "MH/BAN/43485",
+    location: "BANGALORE 04",
     status: "Active",
     employmentType: "Full-Time",
     annualCTC: 1150000,
@@ -204,7 +242,11 @@ const rawEmployees = [
     phone: "+91 90987 65432",
     department: "Engineering",
     designation: "Associate Full Stack Developer",
-    dateOfJoining: "2024-01-15",
+    dateOfBirth: "1998-11-03",
+    dateOfJoining: "2023-01-15",
+    groupDOJ: "2023-01-15",
+    pfNumber: "MH/BAN/43486",
+    location: "BANGALORE 04",
     status: "Active",
     employmentType: "Full-Time",
     annualCTC: 750000,
@@ -217,9 +259,35 @@ const rawEmployees = [
   }
 ];
 
-const employees = rawEmployees.map(emp => ({
+// Persistent file-backed employees list
+const employeesJsonPath = path.join(__dirname, 'employees.json');
+let baseEmployees = rawEmployees;
+
+if (fs.existsSync(employeesJsonPath)) {
+  try {
+    const fileContent = fs.readFileSync(employeesJsonPath, 'utf8');
+    const parsed = JSON.parse(fileContent);
+    if (Array.isArray(parsed) && parsed.length > 0) {
+      baseEmployees = parsed;
+    }
+  } catch (err) {
+    console.error('Error loading employees.json in defaultData:', err);
+  }
+} else {
+  try {
+    const initialList = rawEmployees.map(emp => ({
+      ...emp,
+      salaryStructure: calculateSalaryStructure(emp.annualCTC, statutorySettings)
+    }));
+    fs.writeFileSync(employeesJsonPath, JSON.stringify(initialList, null, 2), 'utf8');
+  } catch (err) {
+    console.error('Error seeding initial employees.json:', err);
+  }
+}
+
+const employees = baseEmployees.map(emp => ({
   ...emp,
-  salaryStructure: calculateSalaryStructure(emp.annualCTC, statutorySettings)
+  salaryStructure: emp.salaryStructure || calculateSalaryStructure(emp.annualCTC, statutorySettings, emp.customSalary)
 }));
 
 // Default monthly attendance matrix for current month (e.g. October 2026, 30 days)

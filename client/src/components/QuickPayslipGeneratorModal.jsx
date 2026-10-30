@@ -331,22 +331,36 @@ export default function QuickPayslipGeneratorModal({ employees, company, onClose
 
           {/* Employee Mini Card */}
           {selectedEmployee && (
-            <div className="p-3 rounded-xl bg-slate-800/40 border border-slate-700/60 flex items-center justify-between text-xs">
-              <div>
-                <span className="text-slate-400">Designation: </span>
-                <span className="font-semibold text-slate-200">{selectedEmployee.designation}</span>
+            <div className="p-3 rounded-xl bg-slate-800/50 border border-slate-700/80 space-y-2 text-xs">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="px-1.5 py-0.5 rounded bg-cyan-500/20 text-cyan-300 font-mono font-bold text-[10px]">
+                    {selectedEmployee.id}
+                  </span>
+                  <span className="font-bold text-white text-xs">{selectedEmployee.fullName}</span>
+                  <span className="text-slate-400">({selectedEmployee.designation})</span>
+                </div>
+                <div className="font-mono text-xs font-bold text-brand-400">
+                  {currencySymbol}{selectedEmployee.annualCTC?.toLocaleString()} /yr
+                </div>
               </div>
-              <div>
-                <span className="text-slate-400">Annual CTC: </span>
-                <span className="font-bold text-brand-400 font-mono">
-                  {currencySymbol}{selectedEmployee.annualCTC?.toLocaleString()}
-                </span>
-              </div>
-              <div>
-                <span className="text-slate-400">Monthly Base: </span>
-                <span className="font-semibold text-slate-200 font-mono">
-                  {currencySymbol}{Math.round(selectedEmployee.annualCTC / 12).toLocaleString()}
-                </span>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 border-t border-slate-700/50 text-[10.5px]">
+                <div>
+                  <span className="text-slate-400">DOB: </span>
+                  <span className="text-slate-200 font-mono">{selectedEmployee.dateOfBirth || selectedEmployee.dob || '27/11/1990'}</span>
+                </div>
+                <div>
+                  <span className="text-slate-400">DOJ: </span>
+                  <span className="text-slate-200 font-mono">{selectedEmployee.dateOfJoining || '04/09/2019'}</span>
+                </div>
+                <div>
+                  <span className="text-slate-400">PF No: </span>
+                  <span className="text-slate-200 font-mono">{selectedEmployee.pfNumber || 'MH/BAN/43477'}</span>
+                </div>
+                <div>
+                  <span className="text-slate-400">Location: </span>
+                  <span className="text-slate-200 font-mono">{selectedEmployee.location || 'BANGALORE 04'}</span>
+                </div>
               </div>
             </div>
           )}
