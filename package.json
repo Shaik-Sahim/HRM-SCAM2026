@@ -1,5 +1,5 @@
 {
-  "name": "omnia-hrm-payroll",
+  "name": "margey-hrm-payroll",
   "version": "1.0.0",
   "description": "Enterprise Human Resource Management, Payroll, Attendance, Compensation Hikes & Payslip Engine",
   "main": "server/server.js",

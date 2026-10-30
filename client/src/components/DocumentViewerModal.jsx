@@ -69,7 +69,7 @@ export default function DocumentViewerModal({ document, company, onClose }) {
 
   const handlePrint = () => {
     if (!printRef.current) return;
-    const title = `${document.title || 'Profuse Document'} - ${candidateName}`;
+    const title = `${document.title || 'Margey Labs Document'} - ${candidateName}`;
     printDocument(printRef.current, title);
   };
 
@@ -107,7 +107,7 @@ export default function DocumentViewerModal({ document, company, onClose }) {
         pdf.addImage(imgData, 'JPEG', 0, 0, 210, 297, undefined, 'FAST');
       }
 
-      pdf.save(`Profuse_${document.type.toUpperCase()}_${candidateName.replace(/\s+/g, '_')}.pdf`);
+      pdf.save(`Margey_${document.type.toUpperCase()}_${candidateName.replace(/\s+/g, '_')}.pdf`);
     } catch (err) {
       console.error('Error exporting PDF:', err);
       alert('Error generating PDF: ' + err.message);
@@ -145,7 +145,7 @@ export default function DocumentViewerModal({ document, company, onClose }) {
                 </span>
               </h2>
               <p className="text-[11px] text-slate-400">
-                Profuse Official Template • {candidateName}
+                Margey Labs Official Template • {candidateName}
               </p>
             </div>
           </div>
@@ -262,7 +262,7 @@ export default function DocumentViewerModal({ document, company, onClose }) {
                       </p>
 
                       <p>
-                        We are delighted to confirm your offer of employment at <strong>Profuse Transtech Solutions Pvt Ltd</strong>:
+                        We are delighted to confirm your offer of employment at <strong>Margey Labs Pvt Ltd</strong>:
                       </p>
 
                       <div className="space-y-1 font-sans pl-1 text-[12px]">
@@ -282,7 +282,7 @@ export default function DocumentViewerModal({ document, company, onClose }) {
                       </p>
 
                       <p className="text-slate-800 text-justify">
-                        You will be in probation for {document.employment?.probationMonths || 6} months. Your employment is effective from the date of your joining and your initial posting will be at our {document.employment?.workLocation || 'Bangalore office'}. Not with standing your initial place of posting, the Company reserves the right to transfer / depute / second your service to any other division/location/department/segment/branch/unit/associated concern under the ownership of the Company or Group (Profuse), if and when required.
+                        You will be in probation for {document.employment?.probationMonths || 6} months. Your employment is effective from the date of your joining and your initial posting will be at our {document.employment?.workLocation || 'Bangalore office'}. Not with standing your initial place of posting, the Company reserves the right to transfer / depute / second your service to any other division/location/department/segment/branch/unit/associated concern under the ownership of the Company or Group (Margey Labs), if and when required.
                       </p>
 
                       <p className="font-bold text-slate-900">
@@ -298,7 +298,7 @@ export default function DocumentViewerModal({ document, company, onClose }) {
                       </ul>
 
                       <p className="text-slate-800 text-justify">
-                        If the terms and conditions stated in the offer are acceptable, please sign the duplicate/digital copy of this letter as a token of your acceptance and return it to us indicating your proposed date of joining within {document.employment?.acceptanceDays || 3} days of receipt of this offer. For Profuse Transtech Solutions Pvt Ltd.,
+                        If the terms and conditions stated in the offer are acceptable, please sign the duplicate/digital copy of this letter as a token of your acceptance and return it to us indicating your proposed date of joining within {document.employment?.acceptanceDays || 3} days of receipt of this offer. For Margey Labs Pvt Ltd.,
                       </p>
                     </div>
 
@@ -327,14 +327,14 @@ export default function DocumentViewerModal({ document, company, onClose }) {
                         </h2>
 
                         <p className="text-[11.5px] leading-relaxed text-slate-800 mb-3 text-justify">
-                          You shall be governed by the following terms and Conditions of Service during your employment with Profuse Transtech Solution Private Limited (hereafter referred to as the "Company"), and those that may be amended from time to time.
+                          You shall be governed by the following terms and Conditions of Service during your employment with Margey Labs Private Limited (hereafter referred to as the "Company"), and those that may be amended from time to time.
                         </p>
 
                         <div className="space-y-2.5 text-[11.5px] leading-relaxed text-slate-800 font-sans">
                           <div>
                             <h3 className="font-bold text-slate-900 text-[12px] mb-0.5">1. Statement of facts</h3>
                             <p className="text-justify">
-                              The company has made the offer of employment on the basis of the bonafide statements and facts provided by you. A background verification will be conducted which is a mandatory requirement for all employees of Profuse Transtech to continue with this engagement.
+                              The company has made the offer of employment on the basis of the bonafide statements and facts provided by you. A background verification will be conducted which is a mandatory requirement for all employees of Margey Labs to continue with this engagement.
                             </p>
                           </div>
 
@@ -410,7 +410,7 @@ export default function DocumentViewerModal({ document, company, onClose }) {
                             <h3 className="font-bold text-slate-900 text-[12px] mb-0.5">5. Place of work</h3>
                             <ul className="list-disc pl-5 space-y-1 text-justify">
                               <li>
-                                You will be in employment at Company premises or as directed by the Company or Company officials, but, as and when necessary you may work at other Profuse group Company's offices.
+                                You will be in employment at Company premises or as directed by the Company or Company officials, but, as and when necessary you may work at other Margey Labs group Company's offices.
                               </li>
                               <li>
                                 The Company reserves the right to transfer on a temporary or permanent basis to the other job functions or departments within the Company and assign such other duties as may be deemed fit in the interest of the Company.
@@ -675,7 +675,7 @@ export default function DocumentViewerModal({ document, company, onClose }) {
                     {/* Candidate Acceptance Box */}
                     <div className="space-y-5 text-xs text-slate-800 mt-6">
                       <p className="text-justify leading-relaxed text-[11.5px]">
-                        I have read and understood the terms of the Offer Letter and accept the above-mentioned terms and conditions of employment with the Profuse Transtech Solutions Private Limited.
+                        I have read and understood the terms of the Offer Letter and accept the above-mentioned terms and conditions of employment with the Margey Labs Private Limited.
                       </p>
 
                       <div className="pt-12 flex flex-col items-end">
@@ -715,7 +715,7 @@ export default function DocumentViewerModal({ document, company, onClose }) {
                     </p>
 
                     <p>
-                      This is to certify that <strong>{document.employee?.fullName || candidateName}</strong> (Employee ID: <strong>{document.employee?.id || 'EMP001'}</strong>) was employed with <strong>Profuse Transtech Solutions Private Limited</strong> from <strong>{expJoiningDate}</strong> to <strong>{expRelievingDate}</strong>.
+                      This is to certify that <strong>{document.employee?.fullName || candidateName}</strong> (Employee ID: <strong>{document.employee?.id || 'EMP001'}</strong>) was employed with <strong>Margey Labs Private Limited</strong> from <strong>{expJoiningDate}</strong> to <strong>{expRelievingDate}</strong>.
                     </p>
 
                     <p>
@@ -732,7 +732,7 @@ export default function DocumentViewerModal({ document, company, onClose }) {
                     </p>
 
                     <p>
-                      We take this opportunity to appreciate their contributions to Profuse Transtech Solutions and wish them grand success in all future professional and personal endeavors.
+                      We take this opportunity to appreciate their contributions to Margey Labs and wish them grand success in all future professional and personal endeavors.
                     </p>
                   </div>
 
@@ -774,7 +774,7 @@ export default function DocumentViewerModal({ document, company, onClose }) {
                     </p>
 
                     <p className="text-justify">
-                      With reference to your formal letter of resignation dated <strong>{relResignationDate}</strong>, we wish to confirm that your resignation from the services of <strong>Profuse Transtech Solutions Pvt Ltd</strong> as <strong>{designation}</strong> has been formally accepted.
+                      With reference to your formal letter of resignation dated <strong>{relResignationDate}</strong>, we wish to confirm that your resignation from the services of <strong>Margey Labs Pvt Ltd</strong> as <strong>{designation}</strong> has been formally accepted.
                     </p>
 
                     <p className="text-justify">
@@ -791,7 +791,7 @@ export default function DocumentViewerModal({ document, company, onClose }) {
                     </div>
 
                     <p className="text-justify">
-                      We thank you for your services during your tenure with Profuse Transtech Solutions and wish you the very best in all your future endeavors.
+                      We thank you for your services during your tenure with Margey Labs and wish you the very best in all your future endeavors.
                     </p>
                   </div>
 

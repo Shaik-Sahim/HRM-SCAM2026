@@ -1,4 +1,4 @@
-// OmniaHRM Document Engine - Official Profuse Transtech Solutions Template
+// Margey HRM Document Engine - Official Margey Labs Pvt Ltd Template
 const { calculateSalaryStructure, numberToWords } = require('./payrollEngine');
 
 function calculateTenure(startDateStr, endDateStr) {
@@ -78,7 +78,7 @@ function formatOrdinalDate(dateStr) {
 }
 
 /**
- * Generate Offer Letter adhering to the official Profuse template
+ * Generate Offer Letter adhering to the official Margey Labs template
  */
 function generateOfferLetter(data, company, statutorySettings = {}) {
   const ctc = Number(data.annualCTC) || 940000;
@@ -86,7 +86,7 @@ function generateOfferLetter(data, company, statutorySettings = {}) {
   const currencySymbol = company.currency === 'USD' ? '$' : 'INR';
 
   const refSeq = Math.floor(1000 + Math.random() * 9000);
-  const refId = data.id || `Profuse/EMP/${new Date().getFullYear()}/PTS${refSeq}`;
+  const refId = data.id || `MARGEY/OFFER/${new Date().getFullYear()}/ML${refSeq}`;
   const issueDate = data.issueDate || new Date().toISOString().split('T')[0];
 
   return {
@@ -121,12 +121,12 @@ function generateOfferLetter(data, company, statutorySettings = {}) {
       inWords: numberToWords(ctc, 'INR')
     },
     company: {
-      name: company.name || 'Profuse Transtech Solutions Pvt Ltd',
-      legalName: company.legalName || 'PROFUSE TRANSTECH SOLUTIONS PRIVATE LIMITED',
+      name: company.name || 'Margey Labs Pvt Ltd',
+      legalName: company.legalName || 'MARGEY LABS PRIVATE LIMITED',
       address: company.address || '6th Floor, Gamma Block, Sigma Soft Tech Park, Varthur Hobli, Bangalore-560066.',
       phone: company.phone || '080-95883256',
-      email: company.email || 'hr@protps.com',
-      website: company.website || 'www.protps.com',
+      email: company.email || 'hr@margeylabs.com',
+      website: company.website || 'www.margeylabs.com',
       signatoryName: company.signatoryName || 'Murali K',
       signatoryTitle: company.signatoryTitle || 'Manager - Human Resources'
     }
@@ -134,11 +134,11 @@ function generateOfferLetter(data, company, statutorySettings = {}) {
 }
 
 /**
- * Generate Experience Certificate adhering to the official Profuse template
+ * Generate Experience Certificate adhering to the official Margey Labs template
  */
 function generateExperienceLetter(data, company) {
   const refSeq = Math.floor(1000 + Math.random() * 9000);
-  const refId = data.id || `Profuse/EXP/${new Date().getFullYear()}/PTS${refSeq}`;
+  const refId = data.id || `MARGEY/EXP/${new Date().getFullYear()}/ML${refSeq}`;
   const issueDate = data.issueDate || new Date().toISOString().split('T')[0];
   const tenure = calculateTenure(data.dateOfJoining, data.relievingDate);
 
@@ -156,7 +156,7 @@ function generateExperienceLetter(data, company) {
     formattedJoiningDate: formattedJoining,
     formattedRelievingDate: formattedRelieving,
     employee: {
-      id: data.employeeId || 'PTS1307',
+      id: data.employeeId || 'ML1307',
       fullName: data.employeeName,
       designation: data.designation,
       department: data.department,
@@ -170,12 +170,12 @@ function generateExperienceLetter(data, company) {
       formattedRelievingDate: formattedRelieving
     },
     company: {
-      name: company.name || 'Profuse Transtech Solutions Pvt Ltd',
-      legalName: company.legalName || 'PROFUSE TRANSTECH SOLUTIONS PRIVATE LIMITED',
+      name: company.name || 'Margey Labs Pvt Ltd',
+      legalName: company.legalName || 'MARGEY LABS PRIVATE LIMITED',
       address: company.address || '6th Floor, Gamma Block, Sigma Soft Tech Park, Varthur Hobli, Bangalore-560066.',
       phone: company.phone || '080-95883256',
-      email: company.email || 'hr@protps.com',
-      website: company.website || 'www.protps.com',
+      email: company.email || 'hr@margeylabs.com',
+      website: company.website || 'www.margeylabs.com',
       signatoryName: company.signatoryName || 'Murali K',
       signatoryTitle: company.signatoryTitle || 'Manager - Human Resources'
     },
@@ -183,25 +183,25 @@ function generateExperienceLetter(data, company) {
     responsibilitiesSummary: data.responsibilitiesSummary || 'Contributed with distinction towards software development, project delivery, and cross-functional technology initiatives.',
     bodyText: `TO WHOMSOEVER IT MAY CONCERN
 
-This is to certify that ${data.employeeName} (Emp ID: ${data.employeeId || 'PTS1307'}) was employed with Profuse Transtech Solutions Pvt Ltd from ${formattedJoining} to ${formattedRelieving}, serving our organization for a tenure of ${tenure}.
+This is to certify that ${data.employeeName} (Emp ID: ${data.employeeId || 'ML1307'}) was employed with Margey Labs Pvt Ltd from ${formattedJoining} to ${formattedRelieving}, serving our organization for a tenure of ${tenure}.
 
 During the period of their employment, ${data.employeeName} worked in the capacity of ${data.designation} within our ${data.department || 'Technology'} division at our Bangalore office.
 
 Core Area of Contribution:
 ${data.responsibilitiesSummary || 'Exhibited technical leadership in software engineering, demonstrated high quality craftsmanship, and complied diligently with company policies.'}
 
-During their association with Profuse Transtech Solutions, we found them to be sincere, hardworking, honest, and result-oriented. Their character and conduct have been evaluated as "${data.conductRating || 'Exemplary & Diligent'}".
+During their association with Margey Labs Pvt Ltd, we found them to be sincere, hardworking, honest, and result-oriented. Their character and conduct have been evaluated as "${data.conductRating || 'Exemplary & Diligent'}".
 
 We wish ${data.employeeName} all the best and continued success in all their future endeavors.`
   };
 }
 
 /**
- * Generate Relieving Letter adhering to the official Profuse template
+ * Generate Relieving Letter adhering to the official Margey Labs template
  */
 function generateRelievingLetter(data, company) {
   const refSeq = Math.floor(1000 + Math.random() * 9000);
-  const refId = data.id || `Profuse/REL/${new Date().getFullYear()}/PTS${refSeq}`;
+  const refId = data.id || `MARGEY/REL/${new Date().getFullYear()}/ML${refSeq}`;
   const issueDate = data.issueDate || new Date().toISOString().split('T')[0];
 
   const formattedResignation = formatOrdinalDate(data.resignationDate || data.dateOfJoining);
@@ -216,7 +216,7 @@ function generateRelievingLetter(data, company) {
     formattedResignationDate: formattedResignation,
     formattedRelievingDate: formattedRelieving,
     employee: {
-      id: data.employeeId || 'PTS1307',
+      id: data.employeeId || 'ML1307',
       fullName: data.employeeName,
       designation: data.designation,
       department: data.department,
@@ -228,12 +228,12 @@ function generateRelievingLetter(data, company) {
       formattedRelievingDate: formattedRelieving
     },
     company: {
-      name: company.name || 'Profuse Transtech Solutions Pvt Ltd',
-      legalName: company.legalName || 'PROFUSE TRANSTECH SOLUTIONS PRIVATE LIMITED',
+      name: company.name || 'Margey Labs Pvt Ltd',
+      legalName: company.legalName || 'MARGEY LABS PRIVATE LIMITED',
       address: company.address || '6th Floor, Gamma Block, Sigma Soft Tech Park, Varthur Hobli, Bangalore-560066.',
       phone: company.phone || '080-95883256',
-      email: company.email || 'hr@protps.com',
-      website: company.website || 'www.protps.com',
+      email: company.email || 'hr@margeylabs.com',
+      website: company.website || 'www.margeylabs.com',
       signatoryName: company.signatoryName || 'Murali K',
       signatoryTitle: company.signatoryTitle || 'Manager - Human Resources'
     },
@@ -243,7 +243,7 @@ function generateRelievingLetter(data, company) {
 
 Sub: Relieving Letter & Acceptance of Resignation
 
-With reference to your resignation letter dated ${formattedResignation}, we wish to advise that your resignation has been accepted by the management of Profuse Transtech Solutions Pvt Ltd.
+With reference to your resignation letter dated ${formattedResignation}, we wish to advise that your resignation has been accepted by the management of Margey Labs Pvt Ltd.
 
 You are formally relieved from the services and duties of the Company as ${data.designation} with effect from the close of business hours on ${formattedRelieving}.
 
@@ -252,7 +252,7 @@ Clearance & Departmental Handover:
 2. ${data.settlementDetails || 'Your Full and Final settlement has been reconciled according to company policy with no outstanding liabilities.'}
 3. Non-Disclosure & IP: Please be advised that your obligations regarding Confidentiality, Non-Disclosure of trade secrets, and Non-Solicitation continue to remain in full force post-employment as per your appointment terms.
 
-We thank you for your contributions during your tenure with Profuse Transtech Solutions and wish you every success in your future professional endeavors.`
+We thank you for your contributions during your tenure with Margey Labs Pvt Ltd and wish you every success in your future professional endeavors.`
   };
 }
 

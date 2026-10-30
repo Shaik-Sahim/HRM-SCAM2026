@@ -2,7 +2,7 @@
  * Robust A4 Document Printing via Hidden Iframe
  * Prevents pop-up blockers, modal scroll duplication, and unstyled canvas glitches.
  */
-export function printDocument(element, title = 'Profuse Document') {
+export function printDocument(element, title = 'Margey Document') {
   if (!element) {
     window.print();
     return;

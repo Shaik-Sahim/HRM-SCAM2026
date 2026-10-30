@@ -92,11 +92,11 @@ export default function Sidebar({ activeTab, setActiveTab, company, stats }) {
       {/* Footer Profile & Legal Info */}
       <div className="p-4 border-t border-slate-800/80 bg-slate-950/40">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-amber-500/20 border border-amber-500/40 flex items-center justify-center font-bold text-xs text-amber-400">
-            PTS
+          <div className="w-8 h-8 rounded-lg bg-cyan-500/20 border border-cyan-500/40 flex items-center justify-center p-1">
+            <img src="/margey-icon.png" alt="Margey" className="w-6 h-6 object-contain" />
           </div>
           <div className="overflow-hidden">
-            <p className="text-xs font-semibold text-slate-200 truncate">{company?.name || 'Profuse Transtech Solutions'}</p>
+            <p className="text-xs font-semibold text-slate-200 truncate">{company?.name || 'Margey Labs Pvt Ltd'}</p>
             <p className="text-[10px] text-slate-400 truncate">CIN: {company?.cin || 'U72900KA2020PTC139876'}</p>
           </div>
         </div>

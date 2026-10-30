@@ -1,6 +1,6 @@
-# OmniaHRM - Enterprise Payroll, Attendance, Compensation & Document Studio
+# Margey Labs HRM - Enterprise Payroll, Attendance, Compensation & Document Studio
 
-**OmniaHRM** is a comprehensive, enterprise-grade Human Resource Management (HRM) system designed for end-to-end workforce operations: attendance tracking, compliant payroll proration, compensation hike appraisals, high-fidelity payslips, and a complete **HR Document Studio** for issuing **Offer Letters**, **Experience Certificates**, and **Relieving Orders**.
+**Margey Labs HRM** is a comprehensive, enterprise-grade Human Resource Management (HRM) system designed for Margey Labs Pvt Ltd end-to-end workforce operations: attendance tracking, compliant payroll proration, compensation hike appraisals, high-fidelity payslips, and a complete **HR Document Studio** for issuing **Offer Letters**, **Experience Certificates**, and **Relieving Orders**.
 
 ---
 

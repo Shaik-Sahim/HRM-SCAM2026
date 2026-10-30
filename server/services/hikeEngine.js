@@ -81,7 +81,7 @@ function generateAppraisalLetter(employee, hikeResult, company) {
     year: 'numeric'
   });
 
-  const refId = `Profuse/APP/${new Date().getFullYear()}/PTS${String(Math.floor(1000 + Math.random() * 9000))}`;
+  const refId = `MARGEY/APP/${new Date().getFullYear()}/ML${String(Math.floor(1000 + Math.random() * 9000))}`;
 
   return {
     letterRef: refId,
@@ -93,17 +93,17 @@ function generateAppraisalLetter(employee, hikeResult, company) {
     employee: {
       name: employee.fullName,
       fullName: employee.fullName,
-      id: employee.id || 'PTS1307',
+      id: employee.id || 'ML1307',
       designation: employee.designation,
       department: employee.department
     },
     company: {
-      name: company.name || 'Profuse Transtech Solutions Pvt Ltd',
-      legalName: company.legalName || 'PROFUSE TRANSTECH SOLUTIONS PRIVATE LIMITED',
+      name: company.name || 'Margey Labs Pvt Ltd',
+      legalName: company.legalName || 'MARGEY LABS PRIVATE LIMITED',
       address: company.address || '6th Floor, Gamma Block, Sigma Soft Tech Park, Varthur Hobli, Bangalore-560066.',
       phone: company.phone || '080-95883256',
-      email: company.email || 'hr@protps.com',
-      website: company.website || 'www.protps.com',
+      email: company.email || 'hr@margeylabs.com',
+      website: company.website || 'www.margeylabs.com',
       signatoryName: company.signatoryName || 'Murali K',
       signatoryTitle: company.signatoryTitle || 'Manager - Human Resources'
     },
@@ -120,30 +120,35 @@ function generateAppraisalLetter(employee, hikeResult, company) {
       currentStructure: hikeResult.currentStructure,
       revisedStructure: hikeResult.revisedStructure
     },
-    subject: `Annual Performance Review & Salary Revision - ${new Date().getFullYear()}`,
-    content: `Dear ${employee.fullName},
+    subject: 'Salary Revision and Appreciation for Your Contributions',
+    content: `HIKE LETTER
+Date: ${dateToday}
+To,
+${employee.fullName}
+${employee.designation || 'Team Member'}
+Employee ID: ${employee.id || 'ML1307'}
 
-Huge Congratulations!
+Subject: Salary Revision and Appreciation for Your Contributions
 
-We are delighted to confirm your compensation review at Profuse Transtech Solutions Pvt Ltd for the performance cycle ${hikeResult.reviewPeriod}.
+Dear ${employee.fullName},
 
-Your overall performance rating has been evaluated as "${hikeResult.rating}". The management deeply appreciates your sustained dedication, excellence, and valuable contributions to the growth of the company.
+It gives us immense pleasure to inform you that your salary has been revised in recognition of your dedication, commitment, and exceptional contribution to the organization. Your professionalism, responsibility, and positive attitude have significantly contributed to the success of our team.
 
-In recognition of your performance and valued contribution, we are pleased to revise your Annual Total Compensation effective ${effectiveFormatted}:
+As a token of our appreciation, we are pleased to revise your compensation package as follows:
 
-  • Previous Annual CTC: INR ${hikeResult.currentCTC.toLocaleString('en-IN')}
-  • Revised Annual CTC:  INR ${hikeResult.revisedCTC.toLocaleString('en-IN')}
-  • Hike Percentage:     +${hikeResult.hikePercentage}% (+INR ${hikeResult.hikeAmount.toLocaleString('en-IN')} per annum)
-  • Revised Monthly Gross: INR ${hikeResult.revisedStructure.monthly.gross.toLocaleString('en-IN')}
-  ${hikeResult.arrearsPayable > 0 ? `• Retroactive Arrears (${hikeResult.retroactiveMonths} months): INR ${hikeResult.arrearsPayable.toLocaleString('en-IN')} (to be disbursed in upcoming payroll)` : ''}
+Revised Annual CTC: INR ${hikeResult.revisedCTC.toLocaleString('en-IN')} (+${hikeResult.hikePercentage}% Hike)
+Revised Monthly Gross: INR ${hikeResult.revisedStructure.monthly.gross.toLocaleString('en-IN')}
 
-${hikeResult.remarks}
+Management is pleased to effect the following changes in your terms of employment with effective from ${effectiveFormatted}. This revision reflects our confidence in your abilities and our appreciation for the value you bring to the organization. We sincerely thank you for your hard work and dedication. We look forward to your continued growth and contribution in achieving greater milestones together.
 
-However, the structure of your compensation may be altered / changed from time to time based on Company's policy. All other terms and conditions of your employment agreement will remain unchanged. Your salary details are strictly private and confidential and should not be disclosed or discussed with others.
+All other terms and conditions of your employment shall remain unchanged.
 
-Best Wishes,
-Yours Sincerely,
-For Profuse Transtech Solutions Pvt Ltd.`
+Congratulations on this well-deserved salary revision. We wish you continued success in your professional journey with us.
+
+With Appreciation,
+For MARGEY LABS PVT LIMITED
+Authorized Signatory
+Human Resources Department`
   };
 }
 

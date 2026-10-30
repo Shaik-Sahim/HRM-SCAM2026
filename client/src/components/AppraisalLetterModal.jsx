@@ -3,9 +3,9 @@ import { X, Printer, Download, Award, CheckCircle2, Mail } from 'lucide-react';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { 
-  ProfuseHeader, 
-  ProfuseFooter, 
-  ProfuseSignatoryBlock 
+  MargeyHeader, 
+  MargeyFooter, 
+  MargeySignatoryBlock 
 } from './ProfuseLetterhead';
 import { printDocument } from '../utils/printDocument';
 
@@ -17,9 +17,16 @@ export default function AppraisalLetterModal({ letterData, company, onClose }) {
   if (!letterData) return null;
   const { letter, hike } = letterData;
 
+  const empName = letter?.employee?.fullName || letter?.employee?.name || 'Employee';
+  const designation = letter?.employee?.designation || 'Software Engineer';
+  const employeeId = letter?.employee?.id || 'EMP001';
+  const hikeDetails = letter?.hikeDetails || hike || {};
+  const currentStruct = hikeDetails.currentStructure?.monthly;
+  const revisedStruct = hikeDetails.revisedStructure?.monthly;
+
   const handlePrint = () => {
     if (!printRef.current) return;
-    const title = `Salary Revision Letter - ${letter?.employee?.fullName || letter?.employee?.name || ''}`;
+    const title = `Hike Letter - ${empName}`;
     printDocument(printRef.current, title);
   };
 
@@ -48,8 +55,7 @@ export default function AppraisalLetterModal({ letterData, company, onClose }) {
       const imgData = canvas.toDataURL('image/jpeg', 0.98);
       pdf.addImage(imgData, 'JPEG', 0, 0, 210, 297, undefined, 'FAST');
 
-      const empName = letter?.employee?.fullName || letter?.employee?.name || 'Employee';
-      pdf.save(`Profuse_Appraisal_${empName.replace(/\s+/g, '_')}.pdf`);
+      pdf.save(`Margey_Hike_Letter_${empName.replace(/\s+/g, '_')}.pdf`);
     } catch (err) {
       console.error('PDF error:', err);
       alert('Error generating PDF: ' + err.message);
@@ -63,10 +69,7 @@ export default function AppraisalLetterModal({ letterData, company, onClose }) {
     setTimeout(() => setEmailSent(false), 3000);
   };
 
-  const empName = letter?.employee?.fullName || letter?.employee?.name || 'Valued Team Member';
-  const hikeDetails = letter?.hikeDetails || hike || {};
-  const currentStruct = hikeDetails.currentStructure?.monthly;
-  const revisedStruct = hikeDetails.revisedStructure?.monthly;
+  const formattedDate = letter?.issuedDate || `Date: ${new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' })}`;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/85 backdrop-blur-sm overflow-y-auto">
@@ -78,7 +81,7 @@ export default function AppraisalLetterModal({ letterData, company, onClose }) {
               <Award className="w-4 h-4" />
             </div>
             <div>
-              <h3 className="text-sm font-bold text-white">Salary Revision & Appraisal Letter</h3>
+              <h3 className="text-sm font-bold text-white">Official Hike Letter</h3>
               <p className="text-[11px] text-slate-400">{empName} • {letter?.letterRef || letter?.id}</p>
             </div>
           </div>
@@ -124,7 +127,7 @@ export default function AppraisalLetterModal({ letterData, company, onClose }) {
           </div>
         </div>
 
-        {/* Printable Letter Sheet (Pure Flat Clean White Paper - No Shadows, No Rounded Corners) */}
+        {/* Printable Letter Sheet (A4 Pure White) */}
         <div className="overflow-y-auto p-4 sm:p-6 flex justify-center bg-slate-950">
           <div ref={printRef} className="printable-area w-full max-w-3xl font-sans">
             <div
@@ -132,124 +135,132 @@ export default function AppraisalLetterModal({ letterData, company, onClose }) {
               style={{ width: '210mm', minHeight: '296mm', height: '296mm' }}
             >
               <div>
-                <ProfuseHeader
+                <MargeyHeader
                   refId={letter?.letterRef || letter?.id}
-                  dateStr={letter?.issuedDate || `Dated: ${new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' })}`}
+                  dateStr={formattedDate}
                   isConfidential={true}
                 />
 
+                {/* Title */}
                 <div className="text-center my-2">
-                  <h2 className="text-sm font-bold text-slate-900 underline decoration-slate-900 decoration-1 underline-offset-4 tracking-wide font-sans">
-                    Salary Revision & Appraisal Letter
+                  <h2 className="text-base font-bold text-slate-900 tracking-wider uppercase font-sans">
+                    HIKE LETTER
                   </h2>
                 </div>
 
-                <div className="space-y-2 text-[11px] leading-[1.38] text-slate-800 font-sans">
-                  <p className="font-bold text-slate-900 text-xs">
+                {/* Date & Addressee */}
+                <div className="text-[11.5px] text-slate-900 font-sans mb-3 space-y-0.5">
+                  <p className="font-semibold">{formattedDate}</p>
+                  <div className="pt-1 leading-snug">
+                    <p className="font-semibold">To,</p>
+                    <p className="font-bold text-slate-900">{empName}</p>
+                    <p className="text-slate-800">{designation}</p>
+                    <p className="text-slate-800">Employee ID: <span className="font-mono font-semibold">{employeeId}</span></p>
+                  </div>
+                </div>
+
+                {/* Subject */}
+                <div className="mb-2.5">
+                  <p className="text-[12px] font-bold text-slate-900">
+                    Subject: Salary Revision and Appreciation for Your Contributions
+                  </p>
+                </div>
+
+                {/* Body Text */}
+                <div className="space-y-2 text-[11px] leading-[1.4] text-slate-800 font-sans text-justify">
+                  <p className="font-semibold text-slate-900">
                     Dear {empName},
                   </p>
 
-                  <p className="font-semibold text-slate-900">
-                    Huge Congratulations!
+                  <p>
+                    It gives us immense pleasure to inform you that your salary has been revised in recognition of your dedication, commitment, and exceptional contribution to the organization. Your professionalism, responsibility, and positive attitude have significantly contributed to the success of our team.
                   </p>
 
-                  <p className="text-justify">
-                    On behalf of the leadership team at <strong>Profuse Transtech Solutions Pvt Ltd</strong>, we are delighted to convey your annual performance evaluation and compensation review results for the cycle <strong>{hikeDetails.reviewPeriod || 'Annual Appraisal'}</strong>.
+                  <p>
+                    As a token of our appreciation, we are pleased to revise your compensation package as follows:
                   </p>
 
-                  <p className="text-justify">
-                    Your overall performance rating has been evaluated as <strong>"{hikeDetails.rating || 'Exceeds Expectations'}"</strong>. The management deeply appreciates your sustained dedication, leadership, and exemplary contributions toward our mission.
-                  </p>
-
-                  <div className="p-2.5 bg-slate-50 border border-slate-200 rounded text-[11px] space-y-0.5 font-sans">
-                    <p className="font-bold text-slate-900 text-xs">Revised Compensation Summary:</p>
-                    <p>• <strong>Previous Annual CTC:</strong> INR {hikeDetails.previousCTC?.toLocaleString('en-IN')}</p>
-                    <p>• <strong>Revised Annual CTC:</strong> INR {hikeDetails.revisedCTC?.toLocaleString('en-IN')}</p>
-                    <p>• <strong>Hike Increment:</strong> +{hikeDetails.hikePercentage}% (+INR {hikeDetails.hikeAmount?.toLocaleString('en-IN')} per annum)</p>
-                    <p>• <strong>Effective Date:</strong> {hikeDetails.effectiveDate}</p>
-                    {hikeDetails.arrearsPayable > 0 && (
-                      <p className="text-amber-800 font-bold">• <strong>Retroactive Arrears ({hikeDetails.retroactiveMonths} months):</strong> INR {hikeDetails.arrearsPayable?.toLocaleString('en-IN')}</p>
-                    )}
+                  {/* 3-Column Earnings Table */}
+                  <div className="my-2">
+                    <table className="w-full text-[10.5px] border border-slate-400">
+                      <thead className="bg-slate-100 text-slate-900 uppercase text-[9.5px] font-bold border-b border-slate-400">
+                        <tr>
+                          <th className="p-1.5 text-left border-r border-slate-300">EARNINGS</th>
+                          <th className="p-1.5 text-right border-r border-slate-300">CURRENT SALARY (₹)</th>
+                          <th className="p-1.5 text-right text-slate-900">REVISED SALARY (₹)</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-300 font-mono">
+                        <tr>
+                          <td className="p-1.5 font-sans font-medium text-slate-800 border-r border-slate-300">Basic Pay</td>
+                          <td className="p-1.5 text-right border-r border-slate-300">{(currentStruct?.basic || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                          <td className="p-1.5 text-right font-bold text-slate-900">{(revisedStruct?.basic || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                        </tr>
+                        <tr>
+                          <td className="p-1.5 font-sans font-medium text-slate-800 border-r border-slate-300">HRA</td>
+                          <td className="p-1.5 text-right border-r border-slate-300">{(currentStruct?.hra || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                          <td className="p-1.5 text-right font-bold text-slate-900">{(revisedStruct?.hra || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                        </tr>
+                        <tr>
+                          <td className="p-1.5 font-sans font-medium text-slate-800 border-r border-slate-300">Traveling Allowance</td>
+                          <td className="p-1.5 text-right border-r border-slate-300">{(currentStruct?.conveyance || 800).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                          <td className="p-1.5 text-right font-bold text-slate-900">{(revisedStruct?.conveyance || 800).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                        </tr>
+                        <tr>
+                          <td className="p-1.5 font-sans font-medium text-slate-800 border-r border-slate-300">Medical Allowance</td>
+                          <td className="p-1.5 text-right border-r border-slate-300">{(currentStruct?.medical || 1250).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                          <td className="p-1.5 text-right font-bold text-slate-900">{(revisedStruct?.medical || 1250).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                        </tr>
+                        <tr>
+                          <td className="p-1.5 font-sans font-medium text-slate-800 border-r border-slate-300">Internet Allowance</td>
+                          <td className="p-1.5 text-right border-r border-slate-300">{(currentStruct?.networkAllowance || 1000).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                          <td className="p-1.5 text-right font-bold text-slate-900">{(revisedStruct?.networkAllowance || 1000).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                        </tr>
+                        <tr>
+                          <td className="p-1.5 font-sans font-medium text-slate-800 border-r border-slate-300">Food Allowance</td>
+                          <td className="p-1.5 text-right border-r border-slate-300">{(currentStruct?.otherAllowance || 1000).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                          <td className="p-1.5 text-right font-bold text-slate-900">{(revisedStruct?.otherAllowance || 1000).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                        </tr>
+                        <tr>
+                          <td className="p-1.5 font-sans font-medium text-slate-800 border-r border-slate-300">Special Allowance</td>
+                          <td className="p-1.5 text-right border-r border-slate-300">{(currentStruct?.specialAllowance || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                          <td className="p-1.5 text-right font-bold text-slate-900">{(revisedStruct?.specialAllowance || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                        </tr>
+                        <tr className="bg-slate-100 font-bold border-t-2 border-slate-400">
+                          <td className="p-1.5 font-sans text-slate-900 border-r border-slate-300">Gross Pay</td>
+                          <td className="p-1.5 text-right border-r border-slate-300">{(currentStruct?.gross || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                          <td className="p-1.5 text-right font-bold text-slate-900">{(revisedStruct?.gross || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                        </tr>
+                      </tbody>
+                    </table>
                   </div>
 
-                  {/* Compensation Breakup Table */}
-                  {currentStruct && revisedStruct && (
-                    <div className="mt-2">
-                      <p className="font-bold text-[11px] text-slate-900 mb-1">Revised Monthly Compensation Breakup (INR):</p>
-                      <table className="w-full text-[10.5px] border border-slate-300">
-                        <thead className="bg-slate-100 text-slate-800 uppercase text-[9.5px] font-bold border-b border-slate-300">
-                          <tr>
-                            <th className="p-1.5 text-left">Salary Component</th>
-                            <th className="p-1.5 text-right">Previous (/mo)</th>
-                            <th className="p-1.5 text-right text-amber-700">Revised (/mo)</th>
-                            <th className="p-1.5 text-right text-emerald-700">Increment</th>
-                          </tr>
-                        </thead>
-                        <tbody className="divide-y divide-slate-200 font-mono">
-                          <tr>
-                            <td className="p-1.5 font-sans text-slate-800">Basic Pay</td>
-                            <td className="p-1.5 text-right">{currentStruct.basic?.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
-                            <td className="p-1.5 text-right font-bold text-slate-900">{revisedStruct.basic?.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
-                            <td className="p-1.5 text-right text-emerald-700">+{(revisedStruct.basic - currentStruct.basic)?.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
-                          </tr>
-                          <tr>
-                            <td className="p-1.5 font-sans text-slate-800">HRA</td>
-                            <td className="p-1.5 text-right">{currentStruct.hra?.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
-                            <td className="p-1.5 text-right font-bold text-slate-900">{revisedStruct.hra?.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
-                            <td className="p-1.5 text-right text-emerald-700">+{(revisedStruct.hra - currentStruct.hra)?.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
-                          </tr>
-                          <tr>
-                            <td className="p-1.5 font-sans text-slate-800">Conveyance Allowance</td>
-                            <td className="p-1.5 text-right">{currentStruct.conveyance?.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
-                            <td className="p-1.5 text-right font-bold text-slate-900">{revisedStruct.conveyance?.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
-                            <td className="p-1.5 text-right text-slate-500">-</td>
-                          </tr>
-                          <tr>
-                            <td className="p-1.5 font-sans text-slate-800">Medical Allowance</td>
-                            <td className="p-1.5 text-right">{currentStruct.medical?.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
-                            <td className="p-1.5 text-right font-bold text-slate-900">{revisedStruct.medical?.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
-                            <td className="p-1.5 text-right text-slate-500">-</td>
-                          </tr>
-                          <tr>
-                            <td className="p-1.5 font-sans text-slate-800">Network & Internet Bill</td>
-                            <td className="p-1.5 text-right">{(currentStruct.networkAllowance || 1000)?.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
-                            <td className="p-1.5 text-right font-bold text-slate-900">{(revisedStruct.networkAllowance || 1000)?.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
-                            <td className="p-1.5 text-right text-slate-500">-</td>
-                          </tr>
-                          <tr>
-                            <td className="p-1.5 font-sans text-slate-800">Other Allowance</td>
-                            <td className="p-1.5 text-right">{(currentStruct.otherAllowance || 1000)?.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
-                            <td className="p-1.5 text-right font-bold text-slate-900">{(revisedStruct.otherAllowance || 1000)?.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
-                            <td className="p-1.5 text-right text-slate-500">-</td>
-                          </tr>
-                          <tr>
-                            <td className="p-1.5 font-sans text-slate-800">Special Allowance</td>
-                            <td className="p-1.5 text-right">{currentStruct.specialAllowance?.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
-                            <td className="p-1.5 text-right font-bold text-slate-900">{revisedStruct.specialAllowance?.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
-                            <td className="p-1.5 text-right text-emerald-700">+{(revisedStruct.specialAllowance - currentStruct.specialAllowance)?.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
-                          </tr>
-                          <tr className="bg-slate-100 font-bold border-t-2 border-slate-300">
-                            <td className="p-1.5 font-sans text-slate-900">Total Monthly Gross</td>
-                            <td className="p-1.5 text-right">{currentStruct.gross?.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
-                            <td className="p-1.5 text-right text-amber-700 font-bold">{revisedStruct.gross?.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
-                            <td className="p-1.5 text-right text-emerald-700 font-bold">+{(revisedStruct.gross - currentStruct.gross)?.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </div>
-                  )}
+                  <p>
+                    Management is pleased to effect the following changes in your terms of employment with effective from <strong>{hikeDetails.effectiveDate || '01st October 2026'}</strong>. This revision reflects our confidence in your abilities and our appreciation for the value you bring to the organization. We sincerely thank you for your hard work and dedication. We look forward to your continued growth and contribution in achieving greater milestones together.
+                  </p>
 
-                  <p className="text-slate-700 text-justify text-[10.5px]">
-                    However, the structure of your compensation may be altered / changed from time to time based on Company's policy. All other terms and conditions of your employment agreement remain unchanged. Your salary details are strictly private and confidential and should not be disclosed or discussed with others.
+                  <p>
+                    All other terms and conditions of your employment shall remain unchanged.
+                  </p>
+
+                  <p>
+                    Congratulations on this well-deserved salary revision. We wish you continued success in your professional journey with us.
                   </p>
                 </div>
 
-                <div className="mt-2">
-                  <ProfuseSignatoryBlock align="left" />
+                {/* Signatory Section */}
+                <div className="mt-3">
+                  <p className="text-[11px] font-medium text-slate-800">With Appreciation,</p>
+                  <p className="text-[11.5px] font-bold text-slate-900 mt-0.5">For MARGEY LABS PVT LIMITED</p>
+                  <div className="mt-1">
+                    <MargeySignatoryBlock align="left" stampSize={85} />
+                  </div>
                 </div>
               </div>
 
-              <ProfuseFooter />
+              <div className="mt-2">
+                <MargeyFooter />
+              </div>
             </div>
           </div>
         </div>

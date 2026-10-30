@@ -44,20 +44,20 @@ export default function Navbar({
       <div className="flex items-center justify-between gap-4">
         {/* Brand & Company Identity */}
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500 via-orange-500 to-amber-600 flex items-center justify-center shadow-lg shadow-amber-500/20 text-white font-extrabold text-xl tracking-wider ring-1 ring-amber-400/30">
-            P
+          <div className="w-10 h-10 rounded-xl bg-slate-900 border border-cyan-500/30 flex items-center justify-center shadow-lg shadow-cyan-500/10 p-1">
+            <img src="/margey-icon.png" alt="Margey Labs" className="w-8 h-8 object-contain" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="font-bold text-white text-base tracking-tight">Pro<span className="text-amber-400">fuse</span> <span className="text-xs text-slate-400 font-normal">HRM</span></span>
+              <span className="font-bold text-white text-base tracking-tight">Margey <span className="text-cyan-400">Labs</span> <span className="text-xs text-slate-400 font-normal">HRM</span></span>
               <span className="text-[10px] font-semibold uppercase px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 flex items-center gap-1">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
                 Engine Active
               </span>
             </div>
             <p className="text-xs text-slate-400 font-medium flex items-center gap-1.5 truncate max-w-xs md:max-w-md">
-              <Building2 className="w-3.5 h-3.5 text-amber-500" />
-              {company?.name || 'Profuse Transtech Solutions Pvt Ltd'}
+              <Building2 className="w-3.5 h-3.5 text-cyan-400" />
+              {company?.name || 'Margey Labs Pvt Ltd'}
             </p>
           </div>
         </div>
