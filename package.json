@@ -1,0 +1,16 @@
+{
+  "name": "omnia-hrm-payroll",
+  "version": "1.0.0",
+  "description": "Enterprise Human Resource Management, Payroll, Attendance, Compensation Hikes & Payslip Engine",
+  "main": "server/server.js",
+  "scripts": {
+    "start": "node server/server.js",
+    "server": "node --watch server/server.js",
+    "client": "npm --prefix client run dev",
+    "build": "npm --prefix client run build"
+  },
+  "keywords": ["hrm", "payroll", "payslip", "attendance", "compensation", "hike-calculator"],
+  "author": "Deepmind Antigravity",
+  "license": "MIT"
+}
+
