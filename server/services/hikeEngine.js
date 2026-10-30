@@ -88,7 +88,7 @@ function generateAppraisalLetter(employee, hikeResult, company) {
     id: refId,
     type: 'appraisal',
     title: 'Salary Revision & Appraisal Letter',
-    issuedDate: `Dated: ${dateToday}`,
+    issuedDate: `Date: ${dateToday}`,
     issueDate: new Date().toISOString().split('T')[0],
     employee: {
       name: employee.fullName,

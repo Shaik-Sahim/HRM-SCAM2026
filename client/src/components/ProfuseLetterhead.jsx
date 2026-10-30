@@ -29,7 +29,7 @@ export function ProfuseHeader({ refId, dateStr, isConfidential = true }) {
             </span>
             {dateStr && (
               <p className="text-[11.5px] font-bold text-slate-900 mt-0.5 font-sans">
-                {dateStr.startsWith('Dated:') ? dateStr : `Dated: ${dateStr}`}
+                {dateStr.startsWith('Dated:') || dateStr.startsWith('Date:') ? dateStr : `Dated: ${dateStr}`}
               </p>
             )}
           </div>
@@ -48,15 +48,18 @@ export const MargeyHeader = ProfuseHeader;
 
 export function ProfuseFooter() {
   return (
-    <div className="w-full pt-2 mt-auto text-center border-t border-slate-200 select-none shrink-0 font-sans">
-      <h3 className="text-xs font-extrabold uppercase tracking-wide text-cyan-600 font-sans">
-        MARGEY LABS PVT. LTD.
-      </h3>
-      <p className="text-[9.5px] text-slate-700 font-medium mt-0.5 font-sans">
-        4th Floor, GR Arcade, Marathahalli, Bengaluru – 560037
+    <div 
+      className="w-full pt-2 mt-auto text-center border-t-2 border-[#548DD4] select-none shrink-0"
+      style={{ fontFamily: "'Cambria', 'Georgia', 'Times New Roman', serif" }}
+    >
+      <p className="text-[10px] text-[#595959] leading-[1.4] text-center">
+        <strong className="font-bold text-[#333333]">MARGEY LABS PVT. LTD.</strong> | CIN: U58200KA2024PTC191015 | 4th Floor, GR Arcade, Marathahalli,
       </p>
-      <p className="text-[9.5px] text-slate-600 font-mono mt-0.5">
-        CIN: U58200KA2024PTC191015 &nbsp;|&nbsp; Phone: +91 86608 03099, +91 9100588005 &nbsp;|&nbsp; Email: info@margeylabs.com &nbsp;|&nbsp; margeylabs.com
+      <p className="text-[10px] text-[#595959] leading-[1.4] text-center">
+        Bengaluru – 560037 | +91 86608 03099 | +91 9100588005 |
+      </p>
+      <p className="text-[10px] text-[#595959] leading-[1.4] text-center">
+        info@margeylabs.com | margeylabs.com
       </p>
     </div>
   );
