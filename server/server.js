@@ -164,13 +164,38 @@ app.put('/api/company', (req, res) => {
   res.json({ success: true, company: db.company, statutory: db.statutory });
 });
 
+// Helper: Generate guaranteed unique alphanumeric employee ID
+function generateUniqueEmployeeId(existingEmployees = []) {
+  const prefix = 'ML';
+  const existingIds = new Set(existingEmployees.map(e => String(e.id || '').toUpperCase()));
+  const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  for (let attempt = 0; attempt < 10000; attempt++) {
+    let code = '';
+    for (let i = 0; i < 4; i++) {
+      code += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    const candidate = `${prefix}${code}`;
+    if (!existingIds.has(candidate)) {
+      return candidate;
+    }
+  }
+  // Fallback timestamp-based alphanumeric unique code
+  return `${prefix}${Date.now().toString(36).toUpperCase()}`;
+}
+
 // Employees CRUD
 app.get('/api/employees', (req, res) => {
   res.json(db.employees);
 });
 
+// Endpoint to generate a fresh unique alphanumeric Employee ID
+app.get('/api/employees/generate-id', (req, res) => {
+  const newId = generateUniqueEmployeeId(db.employees);
+  res.json({ id: newId });
+});
+
 app.get('/api/employees/:id', (req, res) => {
-  const emp = db.employees.find(e => e.id === req.params.id);
+  const emp = db.employees.find(e => String(e.id).toUpperCase() === String(req.params.id).toUpperCase());
   if (!emp) return res.status(404).json({ error: 'Employee not found' });
   res.json(emp);
 });
@@ -181,11 +206,30 @@ app.post('/api/employees', (req, res) => {
     return res.status(400).json({ error: 'Full name and annual CTC are required' });
   }
 
-  const newId = `EMP${String(db.employees.length + 1).padStart(3, '0')}`;
+  let empId = data.id ? String(data.id).trim().toUpperCase() : '';
+
+  if (empId) {
+    // Validate alphanumeric (letters, numbers, hyphens/underscores, 3 to 20 chars)
+    if (!/^[A-Z0-9_-]{3,20}$/.test(empId)) {
+      return res.status(400).json({ 
+        error: 'Employee ID must be alphanumeric (3 to 20 characters, letters and numbers only).' 
+      });
+    }
+    // Validate uniqueness against existing employees
+    const exists = db.employees.some(e => String(e.id).toUpperCase() === empId);
+    if (exists) {
+      return res.status(400).json({ 
+        error: `Employee ID "${empId}" is already assigned. Employee ID must be unique.` 
+      });
+    }
+  } else {
+    empId = generateUniqueEmployeeId(db.employees);
+  }
+
   const newEmp = {
-    id: data.id || newId,
-    fullName: data.fullName,
-    email: data.email || `${data.fullName.toLowerCase().replace(/\s+/g, '.')}@apexglobal.tech`,
+    id: empId,
+    fullName: data.fullName.trim(),
+    email: data.email || `${data.fullName.toLowerCase().replace(/\s+/g, '.')}@margeylabs.com`,
     phone: data.phone || '+91 99000 00000',
     department: data.department || 'Engineering',
     designation: data.designation || 'Specialist',
@@ -208,11 +252,29 @@ app.post('/api/employees', (req, res) => {
 });
 
 app.put('/api/employees/:id', (req, res) => {
-  const index = db.employees.findIndex(e => e.id === req.params.id);
+  const index = db.employees.findIndex(e => String(e.id).toUpperCase() === String(req.params.id).toUpperCase());
   if (index === -1) return res.status(404).json({ error: 'Employee not found' });
 
   const existing = db.employees[index];
   const updated = { ...existing, ...req.body };
+
+  if (req.body.id) {
+    const candidateId = String(req.body.id).trim().toUpperCase();
+    if (candidateId !== String(existing.id).toUpperCase()) {
+      if (!/^[A-Z0-9_-]{3,20}$/.test(candidateId)) {
+        return res.status(400).json({ 
+          error: 'Employee ID must be alphanumeric (3 to 20 characters, letters and numbers only).' 
+        });
+      }
+      const duplicate = db.employees.some((e, i) => i !== index && String(e.id).toUpperCase() === candidateId);
+      if (duplicate) {
+        return res.status(400).json({ 
+          error: `Employee ID "${candidateId}" already exists. Employee ID must be unique.` 
+        });
+      }
+      updated.id = candidateId;
+    }
+  }
 
   if (req.body.annualCTC && Number(req.body.annualCTC) !== existing.annualCTC) {
     updated.annualCTC = Number(req.body.annualCTC);

@@ -1,9 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import { X, UserPlus, Calculator, DollarSign, Building, AlertCircle } from 'lucide-react';
-import { createEmployee, calculateSalaryStructure } from '../api';
+import { X, UserPlus, Calculator, DollarSign, Building, AlertCircle, RefreshCw, CheckCircle2 } from 'lucide-react';
+import { createEmployee, calculateSalaryStructure, getUniqueEmployeeId } from '../api';
 
-export default function AddEmployeeModal({ company, onClose, onEmployeeCreated }) {
+function generateRandomAlphanumericId(existingList = []) {
+  const prefix = 'ML';
+  const taken = new Set((existingList || []).map(e => String(e.id || '').toUpperCase()));
+  const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  for (let attempt = 0; attempt < 5000; attempt++) {
+    let code = '';
+    for (let i = 0; i < 4; i++) {
+      code += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    const candidate = `${prefix}${code}`;
+    if (!taken.has(candidate)) return candidate;
+  }
+  return `${prefix}${Math.floor(1000 + Math.random() * 9000)}`;
+}
+
+export default function AddEmployeeModal({ company, employees = [], onClose, onEmployeeCreated }) {
   const [formData, setFormData] = useState({
+    id: generateRandomAlphanumericId(employees),
     fullName: '',
     email: '',
     phone: '',
@@ -21,9 +37,41 @@ export default function AddEmployeeModal({ company, onClose, onEmployeeCreated }
 
   const [structurePreview, setStructurePreview] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [isRegenerating, setIsRegenerating] = useState(false);
   const [error, setError] = useState(null);
 
   const currencySymbol = company?.currency === 'USD' ? '$' : '₹';
+
+  // Fetch verified unique ID from backend on mount
+  useEffect(() => {
+    getUniqueEmployeeId()
+      .then(res => {
+        if (res && res.id) {
+          setFormData(prev => ({ ...prev, id: res.id }));
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  const handleRegenerateId = async () => {
+    setIsRegenerating(true);
+    try {
+      const res = await getUniqueEmployeeId();
+      if (res && res.id) {
+        setFormData(prev => ({ ...prev, id: res.id }));
+        setIsRegenerating(false);
+        return;
+      }
+    } catch (e) {
+      // fallback to client-side generation
+    }
+    setFormData(prev => ({ ...prev, id: generateRandomAlphanumericId(employees) }));
+    setIsRegenerating(false);
+  };
+
+  const idNormalized = String(formData.id || '').trim().toUpperCase();
+  const isAlphanumeric = /^[A-Z0-9_-]{3,20}$/.test(idNormalized);
+  const isDuplicate = (employees || []).some(e => String(e.id || '').toUpperCase() === idNormalized);
 
   useEffect(() => {
     if (formData.annualCTC > 0) {
@@ -43,6 +91,18 @@ export default function AddEmployeeModal({ company, onClose, onEmployeeCreated }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!idNormalized) {
+      setError('Employee ID is required');
+      return;
+    }
+    if (!isAlphanumeric) {
+      setError('Employee ID must be alphanumeric (3 to 20 characters, letters and numbers only)');
+      return;
+    }
+    if (isDuplicate) {
+      setError(`Employee ID "${idNormalized}" already belongs to an existing employee. Please generate or enter a unique alphanumeric ID.`);
+      return;
+    }
     if (!formData.fullName || !formData.annualCTC) {
       setError('Please provide full name and annual CTC');
       return;
@@ -52,7 +112,11 @@ export default function AddEmployeeModal({ company, onClose, onEmployeeCreated }
     setError(null);
 
     try {
-      const created = await createEmployee(formData);
+      const created = await createEmployee({
+        ...formData,
+        id: idNormalized,
+        fullName: formData.fullName.trim()
+      });
       onEmployeeCreated(created);
     } catch (err) {
       setError(err.message || 'Failed to create employee');
@@ -71,7 +135,7 @@ export default function AddEmployeeModal({ company, onClose, onEmployeeCreated }
             </div>
             <div>
               <h3 className="text-base font-bold text-white">Onboard New Employee</h3>
-              <p className="text-xs text-slate-400">Configure profile, banking details and salary structure</p>
+              <p className="text-xs text-slate-400">Configure profile, unique alphanumeric ID, and salary structure</p>
             </div>
           </div>
           <button onClick={onClose} className="p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition-colors">
@@ -89,6 +153,52 @@ export default function AddEmployeeModal({ company, onClose, onEmployeeCreated }
 
           {/* Section: Basic Info */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
+            {/* Employee ID (Unique Alphanumeric) */}
+            <div>
+              <div className="flex items-center justify-between mb-1">
+                <label className="text-slate-300 font-semibold flex items-center gap-1">
+                  Employee ID *
+                </label>
+                <button
+                  type="button"
+                  onClick={handleRegenerateId}
+                  disabled={isRegenerating}
+                  className="text-[10px] text-brand-400 hover:text-brand-300 flex items-center gap-1 hover:underline transition-colors"
+                  title="Generate new unique alphanumeric ID"
+                >
+                  <RefreshCw className={`w-3 h-3 ${isRegenerating ? 'animate-spin' : ''}`} />
+                  Auto-Gen
+                </button>
+              </div>
+              <input
+                type="text"
+                name="id"
+                required
+                value={formData.id}
+                onChange={(e) => setFormData(prev => ({ ...prev, id: e.target.value.toUpperCase() }))}
+                placeholder="e.g. ML7330"
+                className={`w-full bg-slate-800 border ${
+                  !idNormalized || !isAlphanumeric || isDuplicate
+                    ? 'border-rose-500/70 focus:border-rose-500'
+                    : 'border-slate-700 focus:border-brand-500'
+                } rounded-lg px-3 py-2 text-white font-mono uppercase tracking-wider font-bold`}
+              />
+              <div className="mt-1 text-[10px]">
+                {!idNormalized && <span className="text-rose-400 font-medium">Employee ID required</span>}
+                {idNormalized && !isAlphanumeric && (
+                  <span className="text-rose-400 font-medium">Alphanumeric letters & digits (3-20 chars)</span>
+                )}
+                {idNormalized && isAlphanumeric && isDuplicate && (
+                  <span className="text-rose-400 font-medium">Already assigned to another employee</span>
+                )}
+                {idNormalized && isAlphanumeric && !isDuplicate && (
+                  <span className="text-emerald-400 font-semibold flex items-center gap-0.5">
+                    <CheckCircle2 className="w-3 h-3" /> Unique Alphanumeric ID
+                  </span>
+                )}
+              </div>
+            </div>
+
             <div>
               <label className="text-slate-300 font-semibold block mb-1">Full Name *</label>
               <input
@@ -101,6 +211,7 @@ export default function AddEmployeeModal({ company, onClose, onEmployeeCreated }
                 className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white"
               />
             </div>
+
             <div>
               <label className="text-slate-300 font-semibold block mb-1">Work Email</label>
               <input
@@ -108,18 +219,7 @@ export default function AddEmployeeModal({ company, onClose, onEmployeeCreated }
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                placeholder="aditi@apexglobal.tech"
-                className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white"
-              />
-            </div>
-            <div>
-              <label className="text-slate-300 font-semibold block mb-1">Phone Number</label>
-              <input
-                type="text"
-                name="phone"
-                value={formData.phone}
-                onChange={handleChange}
-                placeholder="+91 98765 00000"
+                placeholder="aditi@margeylabs.com"
                 className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white"
               />
             </div>
@@ -141,6 +241,7 @@ export default function AddEmployeeModal({ company, onClose, onEmployeeCreated }
                 <option value="Marketing">Marketing</option>
               </select>
             </div>
+
             <div>
               <label className="text-slate-300 font-semibold block mb-1">Designation *</label>
               <input
@@ -153,6 +254,19 @@ export default function AddEmployeeModal({ company, onClose, onEmployeeCreated }
                 className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white"
               />
             </div>
+
+            <div>
+              <label className="text-slate-300 font-semibold block mb-1">Phone Number</label>
+              <input
+                type="text"
+                name="phone"
+                value={formData.phone}
+                onChange={handleChange}
+                placeholder="+91 98765 00000"
+                className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white"
+              />
+            </div>
+
             <div>
               <label className="text-slate-300 font-semibold block mb-1">Date of Joining</label>
               <input

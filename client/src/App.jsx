@@ -244,6 +244,7 @@ export default function App() {
       {addEmpOpen && (
         <AddEmployeeModal
           company={company}
+          employees={employees}
           onClose={() => setAddEmpOpen(false)}
           onEmployeeCreated={handleEmployeeCreated}
         />

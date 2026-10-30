@@ -130,7 +130,10 @@ export default function EmployeesView({
                         </div>
                         <div>
                           <p className="font-bold text-slate-100">{emp.fullName}</p>
-                          <p className="text-[11px] text-slate-400 font-mono">{emp.id} • {emp.email}</p>
+                          <p className="text-[11px] text-slate-400 font-mono flex items-center gap-1.5 mt-0.5">
+                            <span className="px-1.5 py-0.5 rounded bg-cyan-500/15 text-cyan-300 font-bold border border-cyan-500/30 text-[10px] tracking-wider">{emp.id}</span>
+                            <span>{emp.email}</span>
+                          </p>
                         </div>
                       </div>
                     </td>
@@ -200,7 +203,10 @@ export default function EmployeesView({
                 </div>
                 <div>
                   <h3 className="font-bold text-base text-white">{viewProfileEmp.fullName}</h3>
-                  <p className="text-xs text-slate-400">{viewProfileEmp.designation} • {viewProfileEmp.department}</p>
+                  <p className="text-xs text-slate-400 font-mono">
+                    <span className="text-cyan-300 font-bold mr-1.5">ID: {viewProfileEmp.id}</span>
+                    • {viewProfileEmp.designation} • {viewProfileEmp.department}
+                  </p>
                 </div>
               </div>
               <button
@@ -212,7 +218,19 @@ export default function EmployeesView({
             </div>
 
             <div className="space-y-4 text-xs">
-              <div className="grid grid-cols-2 gap-3 p-3 rounded-xl bg-slate-950/60 border border-slate-800">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 p-3 rounded-xl bg-slate-950/60 border border-slate-800">
+                <div>
+                  <span className="text-slate-400 block text-[10px] uppercase">Employee ID</span>
+                  <span className="font-mono font-bold text-cyan-300">{viewProfileEmp.id}</span>
+                </div>
+                <div>
+                  <span className="text-slate-400 block text-[10px] uppercase">Date of Joining</span>
+                  <span className="text-slate-200">{viewProfileEmp.dateOfJoining}</span>
+                </div>
+                <div>
+                  <span className="text-slate-400 block text-[10px] uppercase">Annual CTC</span>
+                  <span className="font-mono font-bold text-brand-400">{currencySymbol}{viewProfileEmp.annualCTC?.toLocaleString()}</span>
+                </div>
                 <div>
                   <span className="text-slate-400 block text-[10px] uppercase">Bank Account</span>
                   <span className="font-mono text-slate-200">{viewProfileEmp.bankName} - {viewProfileEmp.bankAccountNumber}</span>
@@ -222,12 +240,8 @@ export default function EmployeesView({
                   <span className="font-mono text-slate-200">{viewProfileEmp.ifscCode}</span>
                 </div>
                 <div>
-                  <span className="text-slate-400 block text-[10px] uppercase">Date of Joining</span>
-                  <span className="text-slate-200">{viewProfileEmp.dateOfJoining}</span>
-                </div>
-                <div>
-                  <span className="text-slate-400 block text-[10px] uppercase">Annual CTC</span>
-                  <span className="font-mono font-bold text-brand-400">{currencySymbol}{viewProfileEmp.annualCTC?.toLocaleString()}</span>
+                  <span className="text-slate-400 block text-[10px] uppercase">PAN / UAN</span>
+                  <span className="font-mono text-slate-200">{viewProfileEmp.panNumber || 'NA'} / {viewProfileEmp.uanNumber || 'NA'}</span>
                 </div>
               </div>
 

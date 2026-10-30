@@ -38,7 +38,7 @@ const rawEmployees = [
   {
     id: "EMP001",
     fullName: "Aarav Sharma",
-    email: "aarav.sharma@apexglobal.tech",
+    email: "aarav.sharma@margeylabs.com",
     phone: "+91 98765 43210",
     department: "Engineering",
     designation: "Lead Software Architect",
@@ -56,7 +56,7 @@ const rawEmployees = [
   {
     id: "EMP002",
     fullName: "Priya Nair",
-    email: "priya.nair@apexglobal.tech",
+    email: "priya.nair@margeylabs.com",
     phone: "+91 98234 56789",
     department: "Product & Design",
     designation: "Senior Staff Product Designer",
@@ -74,7 +74,7 @@ const rawEmployees = [
   {
     id: "EMP003",
     fullName: "Rohan Verma",
-    email: "rohan.verma@apexglobal.tech",
+    email: "rohan.verma@margeylabs.com",
     phone: "+91 97654 32109",
     department: "Engineering",
     designation: "Senior Full Stack Engineer",
@@ -92,7 +92,7 @@ const rawEmployees = [
   {
     id: "EMP004",
     fullName: "Ananya Patel",
-    email: "ananya.patel@apexglobal.tech",
+    email: "ananya.patel@margeylabs.com",
     phone: "+91 96543 21098",
     department: "Human Resources",
     designation: "Lead HR Business Partner",
@@ -110,7 +110,7 @@ const rawEmployees = [
   {
     id: "EMP005",
     fullName: "Vikram Malhotra",
-    email: "vikram.malhotra@apexglobal.tech",
+    email: "vikram.malhotra@margeylabs.com",
     phone: "+91 95432 10987",
     department: "Sales & Growth",
     designation: "Enterprise Sales Director",
@@ -128,7 +128,7 @@ const rawEmployees = [
   {
     id: "EMP006",
     fullName: "Meera Krishnan",
-    email: "meera.krishnan@apexglobal.tech",
+    email: "meera.krishnan@margeylabs.com",
     phone: "+91 94321 09876",
     department: "Engineering",
     designation: "QA Automation Lead",
@@ -146,7 +146,7 @@ const rawEmployees = [
   {
     id: "EMP007",
     fullName: "Kabir Sen",
-    email: "kabir.sen@apexglobal.tech",
+    email: "kabir.sen@margeylabs.com",
     phone: "+91 93210 98765",
     department: "Cloud & DevOps",
     designation: "Senior Site Reliability Engineer",
@@ -164,7 +164,7 @@ const rawEmployees = [
   {
     id: "EMP008",
     fullName: "Sneha Kulkarni",
-    email: "sneha.kulkarni@apexglobal.tech",
+    email: "sneha.kulkarni@margeylabs.com",
     phone: "+91 92109 87654",
     department: "Finance & Accounts",
     designation: "Senior Financial Analyst",
@@ -182,7 +182,7 @@ const rawEmployees = [
   {
     id: "EMP009",
     fullName: "Tanvi Saxena",
-    email: "tanvi.saxena@apexglobal.tech",
+    email: "tanvi.saxena@margeylabs.com",
     phone: "+91 91098 76543",
     department: "Marketing",
     designation: "Brand & Growth Lead",
@@ -200,7 +200,7 @@ const rawEmployees = [
   {
     id: "EMP010",
     fullName: "Arjun Reddy",
-    email: "arjun.reddy@apexglobal.tech",
+    email: "arjun.reddy@margeylabs.com",
     phone: "+91 90987 65432",
     department: "Engineering",
     designation: "Associate Full Stack Developer",
