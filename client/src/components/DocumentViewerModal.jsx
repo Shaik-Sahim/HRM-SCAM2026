@@ -203,7 +203,7 @@ export default function DocumentViewerModal({ document, company, onClose }) {
     setTimeout(() => setEmailSent(false), 3000);
   };
 
-  const formattedIssueDate = document.formattedIssueDate || '27TH Oct 2025';
+  const formattedIssueDate = document.formattedIssueDate || (document.issueDate ? formatOrdinalDate(document.issueDate) : '27th Oct, 2025');
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/85 backdrop-blur-sm overflow-y-auto">

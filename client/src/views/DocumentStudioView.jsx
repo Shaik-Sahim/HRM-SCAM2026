@@ -44,6 +44,7 @@ export default function DocumentStudioView({ employees, company, onViewDocument 
     designation: 'HR Executive',
     department: 'Human Resources',
     annualCTC: 600000,
+    issueDate: '2025-10-27',
     joiningDate: '2025-11-12',
     probationMonths: 6,
     noticePeriodDays: 60,
@@ -279,14 +280,14 @@ export default function DocumentStudioView({ employees, company, onViewDocument 
                     className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white"
                   />
                 </div>
-                <div>
+                <div className="sm:col-span-2">
                   <label className="text-slate-300 font-semibold block mb-1">Residential Address</label>
-                  <input
-                    type="text"
+                  <textarea
+                    rows={2}
                     value={offerForm.address}
                     onChange={(e) => setOfferForm({ ...offerForm, address: e.target.value })}
-                    placeholder="City, State"
-                    className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white"
+                    placeholder="Candidate residential address"
+                    className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white text-xs resize-none"
                   />
                 </div>
 
@@ -317,6 +318,16 @@ export default function DocumentStudioView({ employees, company, onViewDocument 
                 </div>
 
                 <div>
+                  <label className="text-slate-300 font-semibold block mb-1">Offer Letter Issue Date *</label>
+                  <input
+                    type="date"
+                    required
+                    value={offerForm.issueDate}
+                    onChange={(e) => setOfferForm({ ...offerForm, issueDate: e.target.value })}
+                    className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white font-mono"
+                  />
+                </div>
+                <div>
                   <label className="text-slate-300 font-semibold block mb-1">Expected Date of Joining *</label>
                   <input
                     type="date"
@@ -326,6 +337,7 @@ export default function DocumentStudioView({ employees, company, onViewDocument 
                     className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white font-mono"
                   />
                 </div>
+
                 <div>
                   <label className="text-slate-300 font-semibold block mb-1">Work Location & Mode</label>
                   <input
@@ -333,6 +345,15 @@ export default function DocumentStudioView({ employees, company, onViewDocument 
                     value={offerForm.workLocation}
                     onChange={(e) => setOfferForm({ ...offerForm, workLocation: e.target.value })}
                     placeholder="e.g. Prestige Tech Cloud Park, Bengaluru (Hybrid)"
+                    className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white"
+                  />
+                </div>
+                <div>
+                  <label className="text-slate-300 font-semibold block mb-1">Reporting Manager / Title</label>
+                  <input
+                    type="text"
+                    value={offerForm.reportingTo}
+                    onChange={(e) => setOfferForm({ ...offerForm, reportingTo: e.target.value })}
                     className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white"
                   />
                 </div>
@@ -347,12 +368,12 @@ export default function DocumentStudioView({ employees, company, onViewDocument 
                   />
                 </div>
                 <div>
-                  <label className="text-slate-300 font-semibold block mb-1">Reporting Manager / Title</label>
+                  <label className="text-slate-300 font-semibold block mb-1">Notice Period (Days)</label>
                   <input
-                    type="text"
-                    value={offerForm.reportingTo}
-                    onChange={(e) => setOfferForm({ ...offerForm, reportingTo: e.target.value })}
-                    className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white"
+                    type="number"
+                    value={offerForm.noticePeriodDays}
+                    onChange={(e) => setOfferForm({ ...offerForm, noticePeriodDays: Number(e.target.value) })}
+                    className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white font-mono"
                   />
                 </div>
               </div>

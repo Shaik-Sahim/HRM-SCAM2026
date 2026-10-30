@@ -81,20 +81,21 @@ function formatOrdinalDate(dateStr) {
  * Generate Offer Letter adhering to the official Margey Labs template
  */
 function generateOfferLetter(data, company, statutorySettings = {}) {
-  const ctc = Number(data.annualCTC) || 600000;
+  const ctc = Number(data.annualCTC || data.ctc) || 600000;
   const salaryStructure = calculateSalaryStructure(ctc, statutorySettings);
   const currencySymbol = company.currency === 'USD' ? '$' : 'INR';
 
   const refSeq = Math.floor(1000 + Math.random() * 9000);
   const refId = data.id || `MARGEY/OFFER/${new Date().getFullYear()}/ML${refSeq}`;
   const issueDate = data.issueDate || '2025-10-27';
+  const formattedIssueDate = data.formattedIssueDate || (data.issueDate ? formatOrdinalDate(data.issueDate) : '27th Oct, 2025');
 
   return {
     id: refId,
     type: 'offer',
     title: 'LETTER OF OFFER',
     issueDate,
-    formattedIssueDate: '27TH Oct 2025',
+    formattedIssueDate,
     candidate: {
       fullName: data.candidateName || 'Ms. Batta Vyshnavi',
       email: data.email || 'vyshnavi.batta@example.com',
