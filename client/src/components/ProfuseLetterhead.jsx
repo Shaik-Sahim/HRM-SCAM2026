@@ -158,17 +158,21 @@ export function ProfuseStamp({ size = 92 }) {
 
 export const MargeyStamp = ProfuseStamp;
 
-export function ProfuseSignatoryBlock({ align = 'left', stampSize = 92 }) {
+export function ProfuseSignatoryBlock({ align = 'left', showStamp = false, stampSize = 92 }) {
   return (
     <div className={`text-slate-800 font-sans shrink-0 ${align === 'right' ? 'text-right' : 'text-left'}`}>
-      <p className="font-medium text-slate-700 text-[11.5px] leading-tight">Best Wishes,</p>
-      <p className="font-medium text-slate-700 text-[11.5px] leading-tight">Yours Sincerely,</p>
-      <p className="font-bold text-slate-900 text-[11.5px] leading-tight mt-0.5">For Margey Labs Pvt Limited</p>
-      <div className={`my-1 ${align === 'right' ? 'flex justify-end' : ''}`}>
-        <ProfuseStamp size={stampSize} />
-      </div>
-      <p className="font-bold text-slate-900 text-[11.5px] leading-tight mt-0.5">Manager - Human Resources</p>
-      <p className="font-bold text-slate-900 text-[11.5px] leading-tight">Murali K</p>
+      <p className="font-medium text-slate-700 text-[11px] leading-tight">Yours Sincerely,</p>
+      <p className="font-bold text-slate-900 text-[11.5px] leading-tight mt-0.5">For MARGEY LABS PRIVATE LIMITED</p>
+      {showStamp ? (
+        <div className={`my-1 ${align === 'right' ? 'flex justify-end' : ''}`}>
+          <ProfuseStamp size={stampSize} />
+        </div>
+      ) : (
+        <div className={`mt-8 pt-1 border-t border-slate-400 w-48 ${align === 'right' ? 'ml-auto' : ''}`}>
+          <p className="font-bold text-slate-900 text-[11px] leading-tight">Authorized Signatory</p>
+          <p className="font-medium text-slate-600 text-[10px] leading-tight">Human Resources Department</p>
+        </div>
+      )}
     </div>
   );
 }

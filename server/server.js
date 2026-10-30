@@ -96,8 +96,9 @@ function seedInitialPayroll() {
 }
 
 function seedInitialDocuments() {
+  const todayIso = new Date().toISOString().split('T')[0];
   const sampleOffer = generateOfferLetter({
-    id: "MARGEY/OFFER/2025/101",
+    id: "MARGEY/OFFER/2026/101",
     candidateName: "Ms. Batta Vyshnavi",
     email: "vyshnavi.batta@example.com",
     phone: "+91 86608 03099",
@@ -105,12 +106,12 @@ function seedInitialDocuments() {
     designation: "HR Executive",
     department: "Human Resources",
     annualCTC: 600000,
-    joiningDate: "2025-11-12",
+    joiningDate: "2026-11-15",
     probationMonths: 6,
     noticePeriodDays: 60,
     workLocation: "Bangalore",
     reportingTo: "[Name / Designation]",
-    issueDate: "2025-10-27"
+    issueDate: todayIso
   }, db.company, db.statutory);
 
   const sampleExp = generateExperienceLetter({

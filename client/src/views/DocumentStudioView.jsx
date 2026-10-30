@@ -34,8 +34,10 @@ export default function DocumentStudioView({ employees, company, onViewDocument 
   const [filterType, setFilterType] = useState('all');
 
   const currencySymbol = company?.currency === 'USD' ? '$' : '₹';
+  const todayIso = new Date().toISOString().split('T')[0];
 
   // ================= Offer Letter Form State (Defaults to Template Standard) ================= //
+  const [selectedOfferEmpId, setSelectedOfferEmpId] = useState('');
   const [offerForm, setOfferForm] = useState({
     candidateName: 'Ms. Batta Vyshnavi',
     email: 'vyshnavi.batta@example.com',
@@ -44,14 +46,34 @@ export default function DocumentStudioView({ employees, company, onViewDocument 
     designation: 'HR Executive',
     department: 'Human Resources',
     annualCTC: 600000,
-    issueDate: '2025-10-27',
-    joiningDate: '2025-11-12',
+    issueDate: todayIso,
+    joiningDate: '2026-11-15',
     probationMonths: 6,
     noticePeriodDays: 60,
-    workLocation: 'Bangalore',
-    reportingTo: '[Name / Designation]'
+    workLocation: 'Bengaluru',
+    reportingTo: '[Reporting Manager / Title]'
   });
   const [offerPreviewCTC, setOfferPreviewCTC] = useState(null);
+
+  const handleOfferEmployeeSelect = (empId) => {
+    setSelectedOfferEmpId(empId);
+    if (!empId) return;
+    const emp = employees.find(x => x.id === empId);
+    if (emp) {
+      setOfferForm(prev => ({
+        ...prev,
+        candidateName: emp.fullName || prev.candidateName,
+        email: emp.email || prev.email,
+        phone: emp.phone || prev.phone,
+        address: emp.address || prev.address,
+        designation: emp.designation || prev.designation,
+        department: emp.department || prev.department,
+        annualCTC: emp.annualCTC || prev.annualCTC,
+        joiningDate: emp.dateOfJoining || prev.joiningDate,
+        workLocation: emp.location || 'Bengaluru'
+      }));
+    }
+  };
 
   // ================= Experience Letter Form State ================= //
   const [expForm, setExpForm] = useState({
@@ -248,6 +270,23 @@ export default function DocumentStudioView({ employees, company, onViewDocument 
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+                <div className="sm:col-span-2 bg-slate-950/70 p-3 rounded-xl border border-slate-800">
+                  <label className="text-cyan-400 font-bold block mb-1 flex items-center justify-between">
+                    <span>Pre-fill From Existing Employee (Optional)</span>
+                    <span className="text-[10px] text-slate-400 font-normal">Select to populate candidate & role fields</span>
+                  </label>
+                  <select
+                    value={selectedOfferEmpId}
+                    onChange={(e) => handleOfferEmployeeSelect(e.target.value)}
+                    className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white text-xs"
+                  >
+                    <option value="">➕ New Candidate / Custom Hire (Enter Information Below)</option>
+                    {employees.map(e => (
+                      <option key={e.id} value={e.id}>{e.fullName} ({e.id}) - {e.designation} [{currencySymbol}{e.annualCTC?.toLocaleString()}]</option>
+                    ))}
+                  </select>
+                </div>
+
                 <div>
                   <label className="text-slate-300 font-semibold block mb-1">Candidate Full Name *</label>
                   <input
@@ -281,12 +320,13 @@ export default function DocumentStudioView({ employees, company, onViewDocument 
                   />
                 </div>
                 <div className="sm:col-span-2">
-                  <label className="text-slate-300 font-semibold block mb-1">Residential Address</label>
+                  <label className="text-slate-300 font-semibold block mb-1">Residential Address *</label>
                   <textarea
                     rows={2}
+                    required
                     value={offerForm.address}
                     onChange={(e) => setOfferForm({ ...offerForm, address: e.target.value })}
-                    placeholder="Candidate residential address"
+                    placeholder="Candidate full residential address"
                     className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white text-xs resize-none"
                   />
                 </div>
@@ -318,14 +358,15 @@ export default function DocumentStudioView({ employees, company, onViewDocument 
                 </div>
 
                 <div>
-                  <label className="text-slate-300 font-semibold block mb-1">Offer Letter Issue Date *</label>
+                  <label className="text-cyan-400 font-bold block mb-1">Offer Letter Printing / Issue Date *</label>
                   <input
                     type="date"
                     required
                     value={offerForm.issueDate}
                     onChange={(e) => setOfferForm({ ...offerForm, issueDate: e.target.value })}
-                    className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white font-mono"
+                    className="w-full bg-slate-800 border border-cyan-500/40 focus:border-cyan-400 rounded-lg px-3 py-2 text-white font-mono"
                   />
+                  <p className="text-[10px] text-slate-400 mt-0.5">Printed at top header and salutation on every page</p>
                 </div>
                 <div>
                   <label className="text-slate-300 font-semibold block mb-1">Expected Date of Joining *</label>
@@ -336,6 +377,7 @@ export default function DocumentStudioView({ employees, company, onViewDocument 
                     onChange={(e) => setOfferForm({ ...offerForm, joiningDate: e.target.value })}
                     className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white font-mono"
                   />
+                  <p className="text-[10px] text-slate-400 mt-0.5">Official employment commencement date</p>
                 </div>
 
                 <div>
@@ -344,7 +386,7 @@ export default function DocumentStudioView({ employees, company, onViewDocument 
                     type="text"
                     value={offerForm.workLocation}
                     onChange={(e) => setOfferForm({ ...offerForm, workLocation: e.target.value })}
-                    placeholder="e.g. Prestige Tech Cloud Park, Bengaluru (Hybrid)"
+                    placeholder="e.g. Bengaluru (Hybrid)"
                     className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white"
                   />
                 </div>
@@ -354,6 +396,7 @@ export default function DocumentStudioView({ employees, company, onViewDocument 
                     type="text"
                     value={offerForm.reportingTo}
                     onChange={(e) => setOfferForm({ ...offerForm, reportingTo: e.target.value })}
+                    placeholder="e.g. Engineering Director"
                     className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white"
                   />
                 </div>

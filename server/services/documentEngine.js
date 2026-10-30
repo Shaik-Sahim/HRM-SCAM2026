@@ -87,8 +87,11 @@ function generateOfferLetter(data, company, statutorySettings = {}) {
 
   const refSeq = Math.floor(1000 + Math.random() * 9000);
   const refId = data.id || `MARGEY/OFFER/${new Date().getFullYear()}/ML${refSeq}`;
-  const issueDate = data.issueDate || '2025-10-27';
-  const formattedIssueDate = data.formattedIssueDate || (data.issueDate ? formatOrdinalDate(data.issueDate) : '27th Oct, 2025');
+  const todayIso = new Date().toISOString().split('T')[0];
+  const issueDate = data.issueDate || todayIso;
+  const formattedIssueDate = data.formattedIssueDate || formatOrdinalDate(issueDate);
+  const joiningDate = data.joiningDate || todayIso;
+  const formattedJoiningDate = data.formattedJoiningDate || formatOrdinalDate(joiningDate);
 
   return {
     id: refId,
@@ -97,7 +100,7 @@ function generateOfferLetter(data, company, statutorySettings = {}) {
     issueDate,
     formattedIssueDate,
     candidate: {
-      fullName: data.candidateName || 'Ms. Batta Vyshnavi',
+      fullName: data.candidateName || data.employeeName || 'Ms. Batta Vyshnavi',
       email: data.email || 'vyshnavi.batta@example.com',
       phone: data.phone || '+91 86608 03099',
       address: data.address || 'Papireddypalem,\nT.P. Gudur Mandal, Nellore District,\nAndhra Pradesh'
@@ -105,13 +108,13 @@ function generateOfferLetter(data, company, statutorySettings = {}) {
     employment: {
       designation: data.designation || 'HR Executive',
       department: data.department || 'Human Resources',
-      joiningDate: data.joiningDate || '2025-11-12',
-      formattedJoiningDate: formatOrdinalDate(data.joiningDate || '2025-11-12') || '12th Nov 2025',
+      joiningDate,
+      formattedJoiningDate,
       probationMonths: Number(data.probationMonths) || 6,
       probationPeriod: data.probationPeriod || `${Number(data.probationMonths) || 6} months`,
       noticePeriodDays: Number(data.noticePeriodDays) || 60,
-      workLocation: data.workLocation || 'Bangalore',
-      reportingTo: data.reportingTo || '[Name / Designation]',
+      workLocation: data.workLocation || 'Bengaluru',
+      reportingTo: data.reportingTo || '[Reporting Manager / Title]',
       acceptanceDays: 3
     },
     compensation: {

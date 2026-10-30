@@ -68,9 +68,19 @@ export default function DocumentViewerModal({ document, company, onClose }) {
   const candidateAddress = document.candidate?.address || 'Papireddypalem,\nT.P. Gudur Mandal, Nellore District,\nAndhra Pradesh';
   const designation = document.employment?.designation || document.employee?.designation || 'HR Executive';
   const department = document.employment?.department || document.employee?.department || 'Human Resources';
-  const joiningDate = document.employment?.formattedJoiningDate || document.employment?.joiningDate || '12th Nov 2025';
-  const workLocation = document.employment?.workLocation || 'Bangalore';
-  const reportingManager = document.employment?.reportingTo || '[Name / Designation]';
+
+  const rawIssueDate = document.issueDate || document.printingDate || new Date().toISOString().slice(0, 10);
+  const formattedIssueDate = (document.formattedIssueDate && document.formattedIssueDate !== '27TH Oct 2025' && document.formattedIssueDate !== '27th Oct, 2025')
+    ? document.formattedIssueDate
+    : formatOrdinalDate(rawIssueDate);
+
+  const rawJoiningDate = document.employment?.joiningDate || document.employment?.expectedJoiningDate || '2026-11-15';
+  const joiningDate = (document.employment?.formattedJoiningDate && document.employment?.formattedJoiningDate !== '12th Nov 2025')
+    ? document.employment.formattedJoiningDate
+    : formatOrdinalDate(rawJoiningDate);
+
+  const workLocation = document.employment?.workLocation || 'Bengaluru';
+  const reportingManager = document.employment?.reportingTo || '[Reporting Manager / Title]';
   const probationPeriod = document.employment?.probationPeriod || (document.employment?.probationMonths ? `${document.employment.probationMonths} months` : '[Insert duration]');
   const noticePeriod = document.employment?.noticePeriodDays ? `${document.employment.noticePeriodDays} days` : '[insert period]';
 
@@ -202,8 +212,6 @@ export default function DocumentViewerModal({ document, company, onClose }) {
     setEmailSent(true);
     setTimeout(() => setEmailSent(false), 3000);
   };
-
-  const formattedIssueDate = document.formattedIssueDate || (document.issueDate ? formatOrdinalDate(document.issueDate) : '27th Oct, 2025');
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/85 backdrop-blur-sm overflow-y-auto">
@@ -427,12 +435,12 @@ export default function DocumentViewerModal({ document, company, onClose }) {
                     </div>
 
                     {/* Closing Signatures */}
-                    <div className="mt-2">
-                      <p className="text-[10px] font-medium text-slate-800">Regards,</p>
-                      <p className="text-[10.5px] font-bold text-slate-900">Human Resources Department</p>
-                      <p className="text-[10.5px] font-bold text-slate-900">MARGEY LABS PRIVATE LIMITED</p>
-                      <div className="mt-0.5">
-                        <MargeySignatoryBlock align="left" stampSize={72} />
+                    <div className="mt-3 text-slate-900 font-sans">
+                      <p className="text-[10.5px] font-medium text-slate-800">Regards,</p>
+                      <p className="text-[11px] font-bold text-slate-900 mt-0.5">Human Resources Department</p>
+                      <p className="text-[11px] font-bold text-slate-900">MARGEY LABS PRIVATE LIMITED</p>
+                      <div className="mt-7 pt-1 border-t border-slate-400 w-48">
+                        <p className="text-[10px] text-slate-700 font-semibold">Authorized Signatory</p>
                       </div>
                     </div>
                   </div>
@@ -530,18 +538,20 @@ export default function DocumentViewerModal({ document, company, onClose }) {
                     </p>
 
                     {/* Dual Signatory Block */}
-                    <div className="pt-3 border-t border-slate-300 grid grid-cols-2 gap-4 text-[10px]">
+                    <div className="pt-4 border-t border-slate-300 grid grid-cols-2 gap-8 text-[10.5px] font-sans">
                       <div>
-                        <p className="font-bold text-slate-900">For MARGEY LABS PVT. LTD.</p>
-                        <div className="mt-1">
-                          <MargeySignatoryBlock align="left" stampSize={72} />
+                        <p className="font-bold text-slate-900">For MARGEY LABS PRIVATE LIMITED</p>
+                        <div className="mt-8 pt-1 border-t border-slate-400 w-48">
+                          <p className="font-bold text-slate-900 text-[10px]">Authorized Signatory</p>
+                          <p className="text-slate-600 text-[9.5px]">Human Resources Department</p>
                         </div>
                       </div>
-                      <div className="flex flex-col justify-end">
-                        <p className="font-bold text-slate-900 mb-6">Candidate Acceptance Signature</p>
-                        <div className="border-b border-slate-800 w-44 mb-1"></div>
-                        <p className="text-[9.5px] text-slate-700">Signature: {candidateName}</p>
-                        <p className="text-[9.5px] text-slate-700">Date: ________________________</p>
+                      <div>
+                        <p className="font-bold text-slate-900">Employee Signature</p>
+                        <div className="mt-8 pt-1 border-t border-slate-400 w-48">
+                          <p className="font-semibold text-slate-800 text-[10px]">{candidateName}</p>
+                          <p className="text-slate-600 text-[9.5px]">Date: ________________________</p>
+                        </div>
                       </div>
                     </div>
                   </div>
