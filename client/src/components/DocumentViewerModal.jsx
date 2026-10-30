@@ -12,9 +12,9 @@ import {
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { 
-  ProfuseHeader, 
-  ProfuseFooter, 
-  ProfuseSignatoryBlock 
+  MargeyHeader, 
+  MargeyFooter, 
+  MargeySignatoryBlock 
 } from './ProfuseLetterhead';
 import { printDocument } from '../utils/printDocument';
 import { calculateTenure, formatOrdinalDate } from '../utils/dateUtils';
@@ -23,17 +23,50 @@ export default function DocumentViewerModal({ document, company, onClose }) {
   const [isExporting, setIsExporting] = useState(false);
   const [emailSent, setEmailSent] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [showFullAnnexure, setShowFullAnnexure] = useState(true); // 7-page full package vs 2-page brief
+  const [showFullAnnexure, setShowFullAnnexure] = useState(true); // Full 6-page package vs 2-page brief
   const printRef = useRef(null);
 
   if (!document) return null;
 
-  const candidateName = document.candidate?.fullName || document.employee?.fullName || 'Doddetipalli Gowtham';
-  const designation = document.employment?.designation || document.employee?.designation || 'Software Developer';
-  const joiningDate = document.employment?.formattedJoiningDate || document.employment?.joiningDate || '05th Mar, 2025';
-  const ctcFormatted = document.compensation?.formattedCTC || '9,40,000';
-  const ctcWords = document.compensation?.inWords || 'Nine Lakh Forty Thousand only';
+  const candidateName = document.candidate?.fullName || document.employee?.fullName || 'Ms. Batta Vyshnavi';
+  const candidateAddress = document.candidate?.address || 'Papireddypalem,\nT.P. Gudur Mandal, Nellore District,\nAndhra Pradesh';
+  const designation = document.employment?.designation || document.employee?.designation || 'HR Executive';
+  const department = document.employment?.department || document.employee?.department || 'Human Resources';
+  const joiningDate = document.employment?.formattedJoiningDate || document.employment?.joiningDate || '12th Nov 2025';
+  const workLocation = document.employment?.workLocation || 'Bangalore';
+  const reportingManager = document.employment?.reportingTo || '[Name / Designation]';
+  const probationPeriod = document.employment?.probationPeriod || (document.employment?.probationMonths ? `${document.employment.probationMonths} months` : '[Insert duration]');
+  const noticePeriod = document.employment?.noticePeriodDays ? `${document.employment.noticePeriodDays} days` : '[insert period]';
+
+  const rawCTC = Number(document.compensation?.annualCTC) || 600000;
+  const ctcFormatted = rawCTC.toLocaleString('en-IN');
+  const monthlyCTCEquivalent = Math.round(rawCTC / 12).toLocaleString('en-IN');
+  const ctcWords = document.compensation?.inWords || 'Rupees Six Lakh only';
+
+  // Compensation Breakdown Components (Annexure I)
   const struct = document.compensation?.structure;
+  const monthlyBasic = struct?.monthly?.basic || Math.round(rawCTC * 0.50 / 12);
+  const annualBasic = struct?.annual?.basic || Math.round(rawCTC * 0.50);
+
+  const monthlyHRA = struct?.monthly?.hra || Math.round(annualBasic * 0.40 / 12);
+  const annualHRA = struct?.annual?.hra || Math.round(annualBasic * 0.40);
+
+  const monthlyTravel = struct?.monthly?.conveyance || 2000;
+  const annualTravel = struct?.annual?.conveyance || 24000;
+
+  const monthlyMedical = struct?.monthly?.medical || 1500;
+  const annualMedical = struct?.annual?.medical || 18000;
+
+  const monthlyInternet = struct?.monthly?.networkAllowance || 1500;
+  const annualInternet = struct?.annual?.networkAllowance || 18000;
+
+  const monthlyFood = struct?.monthly?.otherAllowance || 2000;
+  const annualFood = struct?.annual?.otherAllowance || 24000;
+
+  const monthlyFixedSum = monthlyBasic + monthlyHRA + monthlyTravel + monthlyMedical + monthlyInternet + monthlyFood;
+  const monthlyGrossNum = Math.round(rawCTC / 12);
+  const monthlySpecial = struct?.monthly?.specialAllowance || Math.max(0, monthlyGrossNum - monthlyFixedSum);
+  const annualSpecial = struct?.annual?.specialAllowance || Math.max(0, rawCTC - (annualBasic + annualHRA + annualTravel + annualMedical + annualInternet + annualFood));
 
   // Dynamic Tenure & Formatted Dates for Experience & Relieving Certificates
   const expJoiningDate = document.employee?.formattedJoiningDate || 
@@ -69,7 +102,7 @@ export default function DocumentViewerModal({ document, company, onClose }) {
 
   const handlePrint = () => {
     if (!printRef.current) return;
-    const title = `${document.title || 'Margey Labs Document'} - ${candidateName}`;
+    const title = `${document.title || 'Letter of Offer'} - ${candidateName}`;
     printDocument(printRef.current, title);
   };
 
@@ -128,19 +161,21 @@ export default function DocumentViewerModal({ document, company, onClose }) {
     setTimeout(() => setEmailSent(false), 3000);
   };
 
+  const formattedIssueDate = document.formattedIssueDate || '27TH Oct 2025';
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/85 backdrop-blur-sm overflow-y-auto">
       <div className="relative w-full max-w-4xl bg-slate-900 border border-slate-700 rounded-xl overflow-hidden my-4 flex flex-col max-h-[96vh]">
         {/* Header Controls Bar */}
         <div className="flex flex-wrap items-center justify-between px-5 py-3 bg-slate-950 border-b border-slate-800 no-print shrink-0 gap-2">
           <div className="flex items-center gap-2.5">
-            <div className="p-1.5 rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/20">
+            <div className="p-1.5 rounded-lg bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
               <FileText className="w-4 h-4" />
             </div>
             <div>
               <h2 className="text-sm font-bold text-white flex items-center gap-2">
-                {document.title}
-                <span className="text-[10px] px-2 py-0.5 rounded font-mono bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                {document.title || 'Letter of Offer'}
+                <span className="text-[10px] px-2 py-0.5 rounded font-mono bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
                   {document.id}
                 </span>
               </h2>
@@ -156,18 +191,18 @@ export default function DocumentViewerModal({ document, company, onClose }) {
                 <button
                   onClick={() => setShowFullAnnexure(true)}
                   className={`px-2.5 py-1 rounded font-medium transition-all ${
-                    showFullAnnexure ? 'bg-amber-600 text-white shadow' : 'text-slate-400 hover:text-slate-200'
+                    showFullAnnexure ? 'bg-cyan-600 text-white shadow' : 'text-slate-400 hover:text-slate-200'
                   }`}
-                  title="Full 7-page offer letter including complete employment terms & conditions"
+                  title="Full package including all 5 Annexures (6 Pages)"
                 >
-                  Full Package (7 Pages)
+                  Full Package (6 Pages)
                 </button>
                 <button
                   onClick={() => setShowFullAnnexure(false)}
                   className={`px-2.5 py-1 rounded font-medium transition-all ${
-                    !showFullAnnexure ? 'bg-amber-600 text-white shadow' : 'text-slate-400 hover:text-slate-200'
+                    !showFullAnnexure ? 'bg-cyan-600 text-white shadow' : 'text-slate-400 hover:text-slate-200'
                   }`}
-                  title="Brief 2-page offer letter with compensation breakup table"
+                  title="Brief 2-page offer letter with Annexure I compensation table"
                 >
                   Quick (2 Pages)
                 </button>
@@ -211,7 +246,7 @@ export default function DocumentViewerModal({ document, company, onClose }) {
             <button
               onClick={handleDownloadPDF}
               disabled={isExporting}
-              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-white shadow-md shadow-amber-500/20 transition-all disabled:opacity-50"
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white shadow transition-all disabled:opacity-50"
             >
               <Download className="w-3.5 h-3.5" />
               {isExporting ? 'Generating PDF...' : 'Download PDF'}
@@ -226,478 +261,503 @@ export default function DocumentViewerModal({ document, company, onClose }) {
           </div>
         </div>
 
-        {/* Scrollable Document Area (Pure Clean White Paper - No Shadows, No Rounded Corners) */}
+        {/* Scrollable Document Area */}
         <div className="overflow-y-auto p-4 sm:p-6 flex justify-center bg-slate-950">
           <div ref={printRef} className="printable-area w-full max-w-3xl space-y-8 font-sans">
-            {/* ==================== TEMPLATE TYPE 1: OFFER LETTER PACKAGE ==================== */}
+            
+            {/* ============================================================== */}
+            {/* TEMPLATE TYPE 1: MARGEY LABS OFFICIAL OFFER LETTER PACKAGE      */}
+            {/* ============================================================== */}
             {document.type === 'offer' && (
               <>
-                {/* PAGE 1: Formal Offer Letter & Salutation */}
+                {/* PAGE 1: Main Letter of Offer */}
                 <div
                   className="printable-page bg-white text-slate-900 rounded-none shadow-none border-none p-7 sm:p-8 font-sans flex flex-col justify-between"
                   style={{ width: '210mm', minHeight: '296mm', height: '296mm' }}
                 >
                   <div>
-                    <ProfuseHeader
+                    <MargeyHeader
                       refId={document.id}
-                      dateStr={document.formattedIssueDate || document.issueDate}
+                      dateStr={formattedIssueDate}
                       isConfidential={true}
                     />
 
-                    {/* Centered Heading */}
-                    <div className="text-center my-3">
-                      <h2 className="text-base font-bold text-slate-900 underline decoration-slate-900 decoration-1 underline-offset-4 tracking-wide font-sans">
-                        Offer Letter
-                      </h2>
+                    {/* Date & Addressee */}
+                    <div className="text-[11px] leading-relaxed text-slate-900 font-sans mb-2">
+                      <p className="font-semibold">Date: {formattedIssueDate},</p>
+                      <div className="mt-1 font-sans">
+                        <p className="font-semibold">To,</p>
+                        <p className="font-bold text-slate-900">{candidateName}</p>
+                        {candidateAddress.split('\n').map((line, idx) => (
+                          <p key={idx} className="text-slate-700">{line}</p>
+                        ))}
+                      </div>
                     </div>
 
-                    {/* Candidate Salutation & Content */}
-                    <div className="space-y-2.5 text-[12px] leading-[1.5] text-slate-800 font-sans">
-                      <p className="font-bold text-slate-900 text-[13px]">
+                    {/* Centered Heading */}
+                    <div className="text-center my-2">
+                      <h2 className="text-sm font-bold text-slate-900 tracking-wider uppercase font-sans">
+                        LETTER OF OFFER
+                      </h2>
+                      <p className="text-[11.5px] font-bold text-slate-900 mt-0.5">
+                        Subject: Offer of Employment – {designation}
+                      </p>
+                    </div>
+
+                    {/* Salutation & Body Text */}
+                    <div className="space-y-2 text-[10.5px] leading-[1.4] text-slate-800 font-sans text-justify">
+                      <p className="font-semibold text-slate-900">
                         Dear {candidateName},
                       </p>
 
-                      <p className="font-bold text-slate-900">
-                        Huge Congratulations!
-                      </p>
-
                       <p>
-                        We are delighted to confirm your offer of employment at <strong>Margey Labs Pvt Ltd</strong>:
+                        We are pleased to offer you employment with <strong>MARGEY LABS PRIVATE LIMITED</strong> as an {designation} in the {department} Department. This letter summarises the principal terms of the offer. The attached annexures provide further details regarding compensation, role responsibilities, employment conditions, and workplace policies.
                       </p>
 
-                      <div className="space-y-1 font-sans pl-1 text-[12px]">
+                      {/* Section 1: Position and Employment Details Table */}
+                      <div>
+                        <p className="font-bold text-slate-900 text-[11px] mb-1">1. Position and Employment Details</p>
+                        <table className="w-full text-[10px] border border-slate-400">
+                          <tbody className="divide-y divide-slate-300">
+                            <tr>
+                              <td className="p-1.5 font-semibold text-slate-700 w-1/3 bg-slate-50 border-r border-slate-300">Job Title</td>
+                              <td className="p-1.5 font-bold text-slate-900">{designation}</td>
+                            </tr>
+                            <tr>
+                              <td className="p-1.5 font-semibold text-slate-700 bg-slate-50 border-r border-slate-300">Department</td>
+                              <td className="p-1.5 text-slate-800">{department}</td>
+                            </tr>
+                            <tr>
+                              <td className="p-1.5 font-semibold text-slate-700 bg-slate-50 border-r border-slate-300">Annual CTC</td>
+                              <td className="p-1.5 font-mono font-bold text-slate-900">₹{ctcFormatted} ({ctcWords})</td>
+                            </tr>
+                            <tr>
+                              <td className="p-1.5 font-semibold text-slate-700 bg-slate-50 border-r border-slate-300">Monthly CTC Equivalent</td>
+                              <td className="p-1.5 font-mono font-bold text-slate-900">₹{monthlyCTCEquivalent}</td>
+                            </tr>
+                            <tr>
+                              <td className="p-1.5 font-semibold text-slate-700 bg-slate-50 border-r border-slate-300">Joining Date</td>
+                              <td className="p-1.5 text-slate-800">{joiningDate}</td>
+                            </tr>
+                            <tr>
+                              <td className="p-1.5 font-semibold text-slate-700 bg-slate-50 border-r border-slate-300">Work Location</td>
+                              <td className="p-1.5 text-slate-800">{workLocation}</td>
+                            </tr>
+                            <tr>
+                              <td className="p-1.5 font-semibold text-slate-700 bg-slate-50 border-r border-slate-300">Reporting Manager</td>
+                              <td className="p-1.5 text-slate-800">{reportingManager}</td>
+                            </tr>
+                            <tr>
+                              <td className="p-1.5 font-semibold text-slate-700 bg-slate-50 border-r border-slate-300">Probation Period</td>
+                              <td className="p-1.5 text-slate-800">{probationPeriod}</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+
+                      {/* Section 2 */}
+                      <div>
+                        <p className="font-bold text-slate-900 text-[11px] mb-0.5">2. Compensation and Payroll</p>
                         <p>
-                          <strong>Designation:</strong> {designation}
-                        </p>
-                        <p>
-                          <strong>Joining Date:</strong> {joiningDate}
-                        </p>
-                        <p>
-                          <strong>Annual Total Compensation:</strong> INR {ctcFormatted} ({ctcWords})
+                          Your annual Cost to Company (CTC) will be ₹{ctcFormatted}. The monthly CTC equivalent is ₹{monthlyCTCEquivalent}. Accordingly, the gross salary and take-home amount may be different from the monthly CTC equivalent. Annexure I contains an illustrative compensation schedule; the final breakup will be approved by the company and applied through payroll.
                         </p>
                       </div>
 
-                      <p className="text-slate-800">
-                        However, the structure of your compensation may be altered / changed from time to time based on Company's policy.
-                      </p>
+                      {/* Section 3 */}
+                      <div>
+                        <p className="font-bold text-slate-900 text-[11px] mb-0.5">3. Role and Workplace Expectations</p>
+                        <p>
+                          In this position, you will support recruitment, onboarding, employee documentation, attendance and leave administration, payroll coordination, employee communication, and implementation of HR policies. You are expected to protect confidential information, follow authorized procedures, and perform duties assigned by your reporting manager.
+                        </p>
+                      </div>
 
-                      <p className="text-slate-800 text-justify">
-                        You will be in probation for {document.employment?.probationMonths || 6} months. Your employment is effective from the date of your joining and your initial posting will be at our {document.employment?.workLocation || 'Bangalore office'}. Not with standing your initial place of posting, the Company reserves the right to transfer / depute / second your service to any other division/location/department/segment/branch/unit/associated concern under the ownership of the Company or Group (Margey Labs), if and when required.
-                      </p>
+                      {/* Section 4 */}
+                      <div>
+                        <p className="font-bold text-slate-900 text-[11px] mb-0.5">4. Conditions and Company Policies</p>
+                        <p>
+                          The offer is subject to completion of joining formalities and reasonable verification of the information and documents provided. Your employment will be governed by the conditions in Annexure III, applicable company policies in Annexure IV, and prevailing law. The company should complete all bracketed fields and confirm the final compensation structure before issuing this letter.
+                        </p>
+                      </div>
 
-                      <p className="font-bold text-slate-900">
-                        This offer of employment is subject to the following:
-                      </p>
-
-                      <ul className="list-disc pl-5 space-y-1 text-[11.5px] text-slate-800">
-                        <li>You are sending confirmation of acceptance of this offer within {document.employment?.acceptanceDays || 3} days.</li>
-                        <li>You shall be joining our organization on or before <strong>{document.employment?.joiningDate || '05/03/2025'}</strong>.</li>
-                        <li>Submission of necessary relieving documents from your present & previous employer(s).</li>
-                        <li>Experience & Education certificates and other testimonials at the time of joining.</li>
-                        <li>Your character antecedents, professional reference, background and substance abuse test.</li>
-                      </ul>
-
-                      <p className="text-slate-800 text-justify">
-                        If the terms and conditions stated in the offer are acceptable, please sign the duplicate/digital copy of this letter as a token of your acceptance and return it to us indicating your proposed date of joining within {document.employment?.acceptanceDays || 3} days of receipt of this offer. For Margey Labs Pvt Ltd.,
+                      <p>
+                        We look forward to welcoming you to <strong>MARGEY LABS PRIVATE LIMITED</strong> and wish you success in your role.
                       </p>
                     </div>
 
-                    {/* Manager HR Signatory Block on Left with Fixed-Size Stamp */}
-                    <div className="mt-3">
-                      <ProfuseSignatoryBlock align="left" stampSize={90} />
+                    {/* Closing Signatures */}
+                    <div className="mt-2.5">
+                      <p className="text-[10.5px] font-medium text-slate-800">Regards,</p>
+                      <p className="text-[11px] font-bold text-slate-900">Human Resources Department</p>
+                      <p className="text-[11px] font-bold text-slate-900">MARGEY LABS PRIVATE LIMITED</p>
+                      <div className="mt-1">
+                        <MargeySignatoryBlock align="left" stampSize={80} />
+                      </div>
                     </div>
                   </div>
 
-                  <ProfuseFooter />
+                  <MargeyFooter />
                 </div>
 
-                {/* ================= OPTIONAL FULL ANNEXURE PAGES (PAGES 2-6) ================= */}
-                {showFullAnnexure && (
-                  <>
-                    {/* PAGE 2: Terms and Conditions of Employment (Part 1) */}
-                    <div
-                      className="printable-page bg-white text-slate-900 rounded-none shadow-none border-none p-7 sm:p-8 font-sans flex flex-col justify-between"
-                      style={{ width: '210mm', minHeight: '296mm', height: '296mm' }}
-                    >
-                      <div>
-                        <ProfuseHeader isConfidential={true} />
-
-                        <h2 className="text-[13px] font-bold text-slate-900 mb-2 font-sans">
-                          Terms and Conditions of Employment
-                        </h2>
-
-                        <p className="text-[11.5px] leading-relaxed text-slate-800 mb-3 text-justify">
-                          You shall be governed by the following terms and Conditions of Service during your employment with Margey Labs Private Limited (hereafter referred to as the "Company"), and those that may be amended from time to time.
-                        </p>
-
-                        <div className="space-y-2.5 text-[11.5px] leading-relaxed text-slate-800 font-sans">
-                          <div>
-                            <h3 className="font-bold text-slate-900 text-[12px] mb-0.5">1. Statement of facts</h3>
-                            <p className="text-justify">
-                              The company has made the offer of employment on the basis of the bonafide statements and facts provided by you. A background verification will be conducted which is a mandatory requirement for all employees of Margey Labs to continue with this engagement.
-                            </p>
-                          </div>
-
-                          <div>
-                            <h3 className="font-bold text-slate-900 text-[12px] mb-0.5">2. Duties</h3>
-                            <ul className="list-disc pl-5 space-y-1.5 text-justify">
-                              <li>
-                                During working hours, you shall use your best energies and abilities to serve the Company faithfully and shall comply with the rules, regulations and procedures as notified by the Company in letter and spirit. You are expected at all times assiduously and to the best of your ability, experience and talent, perform all of the duties that may be assigned, from time to time by the Company.
-                              </li>
-                              <li>
-                                During the employment, you shall not directly or indirectly engage in any conduct averse to the best interests of the Company. Also, you shall not divulge any confidential information or violate any agreement with any third party including your prior employers or their clients.
-                              </li>
-                              <li>
-                                You may also at any time, be seconded/ transferred to or re-appointed by any of the Company’s Affiliates, as the case may be. In such an event, you will be required to observe and comply with policies and regulations of the Company, seconded/ transferred/ re-appointed to.
-                              </li>
-                              <li>
-                                You shall adhere to all applicable Company policies which may be subject to change from time to time.
-                              </li>
-                            </ul>
-                          </div>
-
-                          <div>
-                            <h3 className="font-bold text-slate-900 text-[12px] mb-0.5">3. Conduct</h3>
-                            <p className="text-justify">
-                              You shall always, maintain exemplary conduct and decorum and shall uphold honesty and integrity in all your actions. You shall honour and comply with all rules and regulations of the Company and statutory requirements, in letter and spirit.
-                            </p>
-                          </div>
-
-                          <div>
-                            <h3 className="font-bold text-slate-900 text-[12px] mb-0.5">4. Confidentiality</h3>
-                            <ul className="list-disc pl-5 space-y-1 text-justify">
-                              <li>
-                                You must maintain utmost secrecy with regard to confidential and proprietary information relating to the company. This information includes and is not limited to trade secrets, technical processes, finances, dealings with information relating to suppliers, employees, agents, distributors and customers.
-                              </li>
-                              <li>
-                                You shall not take copies of confidential documents or information for your own purposes and forthwith upon termination, you shall return to the Company all documents, records and accounts in any form.
-                              </li>
-                            </ul>
-                          </div>
-                        </div>
-                      </div>
-
-                      <ProfuseFooter />
-                    </div>
-
-                    {/* PAGE 3: Terms and Conditions of Employment (Part 2) */}
-                    <div
-                      className="printable-page bg-white text-slate-900 rounded-none shadow-none border-none p-7 sm:p-8 font-sans flex flex-col justify-between"
-                      style={{ width: '210mm', minHeight: '296mm', height: '296mm' }}
-                    >
-                      <div>
-                        <ProfuseHeader isConfidential={true} />
-
-                        <div className="space-y-3 text-[11.5px] leading-relaxed text-slate-800 font-sans">
-                          <div>
-                            <ul className="list-disc pl-5 space-y-1.5 text-justify">
-                              <li>
-                                not limited to, electronic, mechanical, photographic, & optic recording) relating to matters concerning the business or dealings or affairs of the Company.
-                              </li>
-                              <li>
-                                You shall not during the employment and at all times thereafter do or say anything that may injure directly or indirectly damage the business of the Company.
-                              </li>
-                              <li>
-                                You shall maintain utmost confidentiality with regard to your compensation and benefits. You shall not discuss your compensation and benefits with anyone, but with the Manager you report to or the local HR head.
-                              </li>
-                              <li>
-                                You shall follow all Company confidentiality policies including IT security policies and Code of Ethics.
-                              </li>
-                            </ul>
-                          </div>
-
-                          <div>
-                            <h3 className="font-bold text-slate-900 text-[12px] mb-0.5">5. Place of work</h3>
-                            <ul className="list-disc pl-5 space-y-1 text-justify">
-                              <li>
-                                You will be in employment at Company premises or as directed by the Company or Company officials, but, as and when necessary you may work at other Margey Labs group Company's offices.
-                              </li>
-                              <li>
-                                The Company reserves the right to transfer on a temporary or permanent basis to the other job functions or departments within the Company and assign such other duties as may be deemed fit in the interest of the Company.
-                              </li>
-                            </ul>
-                          </div>
-
-                          <div>
-                            <h3 className="font-bold text-slate-900 text-[12px] mb-0.5">6. Hours of work</h3>
-                            <ul className="list-disc pl-5 space-y-1 text-justify">
-                              <li>
-                                Specific working hours will be determined by your respective local Manager.
-                              </li>
-                              <li>
-                                Depending on the needs of the department, you may be required to work outside the official hours for the proper performance and discharge of your duties.
-                              </li>
-                              <li>
-                                Depending on Business needs, you may be required to work on shift basis (applicable for certain teams). The shift timings will be notified by the Manager and may change from time to time with prior notice.
-                              </li>
-                            </ul>
-                          </div>
-
-                          <div>
-                            <h3 className="font-bold text-slate-900 text-[12px] mb-0.5">7. Probationary Period</h3>
-                            <p className="text-justify">
-                              You will be on 6 month of assessment from the date of joining before the employment is made permanent. Company reserves the right to terminate the employment in case your performance, behavior and / or conduct during the probation period is found unsatisfactory, with immediate effect. Probation will be deemed confirmed/permanent if there is no communication from your Manager/HR regarding extension during the probation period. In case you wish to resign during the probation period, you are required to pay 60 days’ basic salary in lieu of notice period shortfall. The Company reserves the right to either continue your employment during your notice period or relieve you with immediate effect at its discretion without payment.
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-
-                      <ProfuseFooter />
-                    </div>
-
-                    {/* PAGE 4: Terms and Conditions of Employment (Part 3) */}
-                    <div
-                      className="printable-page bg-white text-slate-900 rounded-none shadow-none border-none p-7 sm:p-8 font-sans flex flex-col justify-between"
-                      style={{ width: '210mm', minHeight: '296mm', height: '296mm' }}
-                    >
-                      <div>
-                        <ProfuseHeader isConfidential={true} />
-
-                        <div className="space-y-3 text-[11.5px] leading-relaxed text-slate-800 font-sans">
-                          <div>
-                            <h3 className="font-bold text-slate-900 text-[12px] mb-0.5">8. Alternate Employment</h3>
-                            <p className="text-justify">
-                              As a full-time employee of Company, you are not allowed to undertake any other job, honorary or remunerative, employment, contract, freelance work, business, or assume any public office, without written permission from Company.
-                            </p>
-                          </div>
-
-                          <div>
-                            <h3 className="font-bold text-slate-900 text-[12px] mb-0.5">9. Background Verification</h3>
-                            <p className="text-justify">
-                              This offer and employment is subject to successful verification of your history of employment, educational qualifications, and other details deemed appropriate by the company. Any discrepancy in the verification of the declared information will result in termination of employment without notice or revocation of the offer.
-                            </p>
-                          </div>
-
-                          <div>
-                            <h3 className="font-bold text-slate-900 text-[12px] mb-0.5">10. Termination of Employment & Notice Period</h3>
-                            <p className="text-justify mb-1.5">
-                              The employment may be terminated at any time, either by you or Company without any reason by giving 60 calendar days’ written notice or two months’ basic salary in lieu of the notice to the other party. If the termination is initiated by Company, the company will give 60 days’ notice period or two months’ basic salary in lieu of the notice to the employee. The Company reserves the right to waive off the notice period.
-                            </p>
-                            <p className="text-justify mb-1.5">
-                              If the termination is initiated by the employee, the employee must give 60 days’ written notice period to the Company. It is important to complete all activities related to knowledge transfer and training other employees, as necessary. In certain circumstances where an employee fails to serve the 60 days’ notice period or any shortfall in notice period, then at the discretion of the Company, Company may agree two months’ basic salary or basic salary proportionate to the notice period shortfall as recovery from employee in lieu of the notice period to the Company, failure to pay recovery amount in lieu of the notice period shortfall to the Company will lead to withholding of the Full and Final settlement of the employee.
-                            </p>
-                            <p className="text-justify">
-                              The Company reserves the right to terminate your service / employment at any time without notice period should you be guilty of misdemeanor, misconduct, negligence, or any breach of terms and conditions of your employment. The Company has the right to recover any training, conferences, summits, events, classroom courses, web courses, or any other investment on employee development costs incurred for you during the preceding 12 months from the date of employment termination.
-                            </p>
-                          </div>
-
-                          <div>
-                            <h3 className="font-bold text-slate-900 text-[12px] mb-0.5">11. User and Non-Disclosure Agreement</h3>
-                            <p className="text-justify">
-                              You must not during the employment (other than in the proper performance of your duties) or at any time thereafter use for your own purposes or disclose to any third party any Confidential Material that You will be making use of/ acquiring or adding to and/ or which will be disclosed to You as a result of your relationship with the Company and You must use your best endeavors to prevent such disclosure.
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-
-                      <ProfuseFooter />
-                    </div>
-
-                    {/* PAGE 5: Terms and Conditions of Employment (Part 4) */}
-                    <div
-                      className="printable-page bg-white text-slate-900 rounded-none shadow-none border-none p-7 sm:p-8 font-sans flex flex-col justify-between"
-                      style={{ width: '210mm', minHeight: '296mm', height: '296mm' }}
-                    >
-                      <div>
-                        <ProfuseHeader isConfidential={true} />
-
-                        <div className="space-y-3 text-[11.5px] leading-relaxed text-slate-800 font-sans">
-                          <p className="text-justify">
-                            All Confidential Material and all other Property which may have been made or prepared by You, or at your request or have come into your possession or under your control in the course of your employment or which relate in any way to the business (including prospective business) or the affairs of any member of the Company or any Affiliate of the Company or those of any customer, supplier, agent, distributor or sub-contractor of the Company or any Affiliate of the Company are, as between us deemed to be the Company’s property. You must handover all such Property, to the Company immediately upon the termination of your employment (or at any earlier time on demand).
-                          </p>
-
-                          <p className="text-justify">
-                            You must immediately inform the Company if you become aware of the possession, use or knowledge of any of the Confidential Material by any person not authorized to possess, use or have knowledge of the Confidential Material, whether during your employment or thereafter and you must at the Company’s request provide such reasonable assistance as is, to deal with such event.
-                          </p>
-
-                          <p className="text-justify">
-                            Nothing in this Clause will prevent you from disclosing Confidential Material where it is required to be disclosed by judicial, administrative, governmental or regulatory process in connection with any action, suit, proceeding or claim or otherwise by applicable law, provided you promptly inform the Company of such requirement.
-                          </p>
-
-                          <div>
-                            <h3 className="font-bold text-slate-900 text-[12px] mb-1">12. Ownership of Intellectual Property/ Inventions</h3>
-                            <p className="text-justify mb-1.5">
-                              For the purposes of this Clause, "Intellectual Property" includes copyrights, patents, trademarks and design rights (whether registered or unregistered), and any applications for such rights, discoveries, inventions, confidential information, know-how and all other equivalent or related rights worldwide.
-                            </p>
-                            <p className="text-justify mb-1.5">
-                              If at any time during the course of the employment, an employee may create or discover or participate in the creation or discovery of any Intellectual Property relating to or capable of being used in the Company's business or the business of any Affiliate from time to time, employee must immediately communicate full details of the Intellectual Property to the Company and such Intellectual Property shall be the Company’s or any Affiliate’s absolute property worldwide.
-                            </p>
-                            <p className="text-justify mb-1.5">
-                              At the Company’s request and expense, an employee will give and supply all information and assistance as may be required to enable the Company to exploit the Intellectual Property and in this connection will assign, make, execute and deliver all and any documents requested by the Company and in relation to such Intellectual Property, do all things that may be necessary or desirable for obtaining, maintaining, extending and if necessary, enforcing and defending, protection for and/ or assigning to the Company or any Affiliate.
-                            </p>
-                            <p className="text-justify">
-                              An employee will assign to the Company by way of future assignment all copyrights arising in any works or material produced by you during your employment and will do nothing during or after the employment to affect or imperil the validity of any Intellectual Property rights obtained, applied for or to be applied for by the Company or any Affiliate. Employee hereby waive absolutely the moral rights (if any) in respect of any such Intellectual Property.
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-
-                      <ProfuseFooter />
-                    </div>
-
-                    {/* PAGE 6: Terms and Conditions of Employment (Part 5) */}
-                    <div
-                      className="printable-page bg-white text-slate-900 rounded-none shadow-none border-none p-7 sm:p-8 font-sans flex flex-col justify-between"
-                      style={{ width: '210mm', minHeight: '296mm', height: '296mm' }}
-                    >
-                      <div>
-                        <ProfuseHeader isConfidential={true} />
-
-                        <div className="space-y-3.5 text-[11.5px] leading-relaxed text-slate-800 font-sans">
-                          <div>
-                            <h3 className="font-bold text-slate-900 text-[12px] mb-1">13. Non-Compete and Non-Solicitation Clause</h3>
-                            <p className="text-justify mb-2">
-                              During the term of this employment and for a period of 12 months after the termination of your employment with the Company.
-                            </p>
-                            <ul className="space-y-2 text-justify pl-1">
-                              <li>
-                                <strong>a.</strong> You will not directly or indirectly be associated with, manage, operate, control, invest in, or participate in the ownership, management and operation of, undertake, carry on or be employed, engaged or interested in any capacity, or advise, a company or firm that is in business which is competitive with a certain business of the company, unless with the specific approval of the company, in writing.
-                              </li>
-                              <li>
-                                <strong>b.</strong> You shall not interfere with or endeavor to entice away from employment or engagement with the Company or any other Affiliate of the Company (or procure or assist the solicitation, interference with or enticement of) any employee, independent contractor and/ or consultant or do any act whereby such employee, independent contractor and or consultant as the case may be is encouraged to terminate their employment or engagement, with the Company or any other Affiliate of the Company.
-                              </li>
-                              <li>
-                                <strong>c.</strong> You shall not directly or indirectly, induce or attempt to induce any customer, supplier, dealers, licensee, agents or business relations to cease doing business with the Company, or in any way interfere with the relationship between any customer, supplier, licensee or business entity and the Company or any Affiliate of the Company.
-                              </li>
-                            </ul>
-                          </div>
-
-                          <div>
-                            <h3 className="font-bold text-slate-900 text-[12px] mb-0.5">14. Retirement Age</h3>
-                            <p className="text-justify">
-                              The retirement age in the company will be Sixty (60) years.
-                            </p>
-                          </div>
-
-                          <div>
-                            <h3 className="font-bold text-slate-900 text-[12px] mb-0.5">15. Miscellaneous</h3>
-                            <p className="text-justify">
-                              This letter represents the entire agreement between the parties with respect to your employment by the Company and supersedes any previous written or verbal agreement between the parties in relation to this matter.
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-
-                      <ProfuseFooter />
-                    </div>
-                  </>
-                )}
-
-                {/* ================= PAGE 7 (OR PAGE 2 IN QUICK MODE): COMPENSATION BREAKUP ================= */}
+                {/* PAGE 2: ANNEXURE – I: Compensation & Salary Structure */}
                 <div
                   className="printable-page bg-white text-slate-900 rounded-none shadow-none border-none p-7 sm:p-8 font-sans flex flex-col justify-between"
                   style={{ width: '210mm', minHeight: '296mm', height: '296mm' }}
                 >
                   <div>
-                    <ProfuseHeader isConfidential={true} />
+                    <MargeyHeader
+                      refId={document.id}
+                      dateStr={formattedIssueDate}
+                      isConfidential={true}
+                    />
 
-                    <h2 className="text-sm font-bold text-slate-900 mb-3 font-sans uppercase tracking-wide">
-                      YOUR ANNUAL TOTAL COMPENSATION
-                    </h2>
-
-                    {/* Table 1: Salary Components Summary */}
-                    <div className="border border-slate-800 text-[12px] mb-4">
-                      <div className="bg-white p-2 font-bold text-center border-b border-slate-800 uppercase tracking-wide text-xs">
-                        SALARY COMPONENTS
-                      </div>
-                      <div className="divide-y divide-slate-800 font-sans">
-                        <div className="flex justify-between p-2.5">
-                          <span className="font-bold text-slate-900">Annual Fixed Compensation</span>
-                          <span className="font-mono font-bold text-slate-900">INR {ctcFormatted}</span>
-                        </div>
-                        <div className="flex justify-between p-2.5 bg-slate-50">
-                          <span className="font-bold text-slate-900">Annual Total Compensation</span>
-                          <span className="font-mono font-bold text-slate-900">ATC INR {ctcFormatted}</span>
-                        </div>
-                      </div>
+                    <div className="text-center my-2">
+                      <h2 className="text-sm font-bold text-slate-900 tracking-wider uppercase font-sans">
+                        ANNEXURE – I
+                      </h2>
+                      <p className="text-[11.5px] font-bold text-slate-900 uppercase">
+                        COMPENSATION AND SALARY STRUCTURE
+                      </p>
                     </div>
 
-                    <p className="text-[11.5px] text-slate-700 leading-relaxed mb-4 text-justify">
-                      All other terms and conditions of your employment agreement will remain unchanged. Your salary details are strictly private and confidential and should not be disclosed or discussed with others.
+                    <div className="bg-slate-50 border border-slate-300 p-2 text-[10.5px] font-sans mb-2.5 space-y-0.5">
+                      <p><strong>Employee:</strong> {candidateName} &nbsp;|&nbsp; <strong>Designation:</strong> {designation}</p>
+                      <p><strong>Annual CTC:</strong> ₹{ctcFormatted} &nbsp;|&nbsp; <strong>Monthly CTC equivalent:</strong> ₹{monthlyCTCEquivalent}</p>
+                    </div>
+
+                    <p className="text-[10px] text-slate-700 italic mb-2 text-justify">
+                      The following is an illustrative allocation for discussion. It must be revised if employer contributions, insurance, gratuity, bonus, or other benefits are included in CTC.
                     </p>
 
-                    <div className="space-y-1 text-xs text-slate-900 mb-4 font-sans">
-                      <p><strong>Name:</strong> {candidateName}</p>
-                      <p><strong>Designation:</strong> {designation}</p>
-                    </div>
-
-                    {/* Table 2: Compensation Breakup */}
-                    <div className="border border-slate-800 text-[11.5px] mb-6">
-                      <div className="bg-white p-2 font-bold text-center border-b border-slate-800 uppercase tracking-wide text-xs">
-                        COMPENSATION BREAKUP
-                      </div>
-                      <table className="w-full text-[11.5px]">
-                        <tbody className="divide-y divide-slate-800 font-mono">
+                    {/* Compensation Breakup Table */}
+                    <div className="border border-slate-400 text-[10.5px] mb-3">
+                      <table className="w-full border-collapse">
+                        <thead>
+                          <tr className="bg-slate-100 text-slate-900 uppercase text-[9.5px] font-bold border-b border-slate-400">
+                            <th className="p-1.5 text-left border-r border-slate-300">EARNINGS</th>
+                            <th className="p-1.5 text-right border-r border-slate-300">Per Month (₹)</th>
+                            <th className="p-1.5 text-right">Per Annum (₹)</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-300 font-mono">
                           <tr>
-                            <td className="p-2.5 font-sans text-slate-900">Basic Pay (50%)</td>
-                            <td className="p-2.5 text-right">{struct?.monthly?.basic?.toLocaleString('en-IN', { minimumFractionDigits: 2 }) || '39,166.67'}</td>
-                            <td className="p-2.5 text-right">{struct?.annual?.basic?.toLocaleString('en-IN', { minimumFractionDigits: 2 }) || '4,70,000.00'}</td>
+                            <td className="p-1.5 font-sans font-medium text-slate-800 border-r border-slate-300">Basic Pay</td>
+                            <td className="p-1.5 text-right border-r border-slate-300">{monthlyBasic.toLocaleString('en-IN')}</td>
+                            <td className="p-1.5 text-right">{annualBasic.toLocaleString('en-IN')}</td>
                           </tr>
                           <tr>
-                            <td className="p-2.5 font-sans text-slate-900">HRA (40% Basic)</td>
-                            <td className="p-2.5 text-right">{struct?.monthly?.hra?.toLocaleString('en-IN', { minimumFractionDigits: 2 }) || '15,666.67'}</td>
-                            <td className="p-2.5 text-right">{struct?.annual?.hra?.toLocaleString('en-IN', { minimumFractionDigits: 2 }) || '1,88,000.00'}</td>
+                            <td className="p-1.5 font-sans font-medium text-slate-800 border-r border-slate-300">HRA</td>
+                            <td className="p-1.5 text-right border-r border-slate-300">{monthlyHRA.toLocaleString('en-IN')}</td>
+                            <td className="p-1.5 text-right">{annualHRA.toLocaleString('en-IN')}</td>
                           </tr>
                           <tr>
-                            <td className="p-2.5 font-sans text-slate-900">Conveyance Allowance</td>
-                            <td className="p-2.5 text-right">{struct?.monthly?.conveyance?.toLocaleString('en-IN', { minimumFractionDigits: 2 }) || '800.00'}</td>
-                            <td className="p-2.5 text-right">{struct?.annual?.conveyance?.toLocaleString('en-IN', { minimumFractionDigits: 2 }) || '9,600.00'}</td>
+                            <td className="p-1.5 font-sans font-medium text-slate-800 border-r border-slate-300">Traveling Allowance</td>
+                            <td className="p-1.5 text-right border-r border-slate-300">{monthlyTravel.toLocaleString('en-IN')}</td>
+                            <td className="p-1.5 text-right">{annualTravel.toLocaleString('en-IN')}</td>
                           </tr>
                           <tr>
-                            <td className="p-2.5 font-sans text-slate-900">Medical Allowance</td>
-                            <td className="p-2.5 text-right">{struct?.monthly?.medical?.toLocaleString('en-IN', { minimumFractionDigits: 2 }) || '1,250.00'}</td>
-                            <td className="p-2.5 text-right">{struct?.annual?.medical?.toLocaleString('en-IN', { minimumFractionDigits: 2 }) || '15,000.00'}</td>
+                            <td className="p-1.5 font-sans font-medium text-slate-800 border-r border-slate-300">Medical Allowance</td>
+                            <td className="p-1.5 text-right border-r border-slate-300">{monthlyMedical.toLocaleString('en-IN')}</td>
+                            <td className="p-1.5 text-right">{annualMedical.toLocaleString('en-IN')}</td>
                           </tr>
                           <tr>
-                            <td className="p-2.5 font-sans text-slate-900">Network & Internet Bill</td>
-                            <td className="p-2.5 text-right">{(struct?.monthly?.networkAllowance ?? 1000)?.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
-                            <td className="p-2.5 text-right">{(struct?.annual?.networkAllowance ?? 12000)?.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+                            <td className="p-1.5 font-sans font-medium text-slate-800 border-r border-slate-300">Internet Allowance</td>
+                            <td className="p-1.5 text-right border-r border-slate-300">{monthlyInternet.toLocaleString('en-IN')}</td>
+                            <td className="p-1.5 text-right">{annualInternet.toLocaleString('en-IN')}</td>
                           </tr>
                           <tr>
-                            <td className="p-2.5 font-sans text-slate-900">Other Allowance</td>
-                            <td className="p-2.5 text-right">{(struct?.monthly?.otherAllowance ?? 1000)?.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
-                            <td className="p-2.5 text-right">{(struct?.annual?.otherAllowance ?? 12000)?.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+                            <td className="p-1.5 font-sans font-medium text-slate-800 border-r border-slate-300">Food Allowance</td>
+                            <td className="p-1.5 text-right border-r border-slate-300">{monthlyFood.toLocaleString('en-IN')}</td>
+                            <td className="p-1.5 text-right">{annualFood.toLocaleString('en-IN')}</td>
                           </tr>
                           <tr>
-                            <td className="p-2.5 font-sans text-slate-900">Special Allowance</td>
-                            <td className="p-2.5 text-right">{struct?.monthly?.specialAllowance?.toLocaleString('en-IN', { minimumFractionDigits: 2 }) || '19,450.00'}</td>
-                            <td className="p-2.5 text-right">{struct?.annual?.specialAllowance?.toLocaleString('en-IN', { minimumFractionDigits: 2 }) || '2,33,400.00'}</td>
+                            <td className="p-1.5 font-sans font-medium text-slate-800 border-r border-slate-300">Special Allowance</td>
+                            <td className="p-1.5 text-right border-r border-slate-300">{monthlySpecial.toLocaleString('en-IN')}</td>
+                            <td className="p-1.5 text-right">{annualSpecial.toLocaleString('en-IN')}</td>
                           </tr>
-                          <tr className="bg-slate-100 font-bold border-t-2 border-slate-800">
-                            <td className="p-2.5 font-sans text-slate-900">Gross Pay</td>
-                            <td className="p-2.5 text-right">{struct?.monthly?.gross?.toLocaleString('en-IN', { minimumFractionDigits: 2 }) || '78,333.33'}</td>
-                            <td className="p-2.5 text-right">{struct?.annual?.gross?.toLocaleString('en-IN', { minimumFractionDigits: 2 }) || '9,40,000.00'}</td>
+                          <tr className="bg-slate-100 font-bold border-t-2 border-slate-400">
+                            <td className="p-1.5 font-sans text-slate-900 border-r border-slate-300">Gross Total</td>
+                            <td className="p-1.5 text-right border-r border-slate-300 font-bold">{monthlyGrossNum.toLocaleString('en-IN')}</td>
+                            <td className="p-1.5 text-right font-bold">{rawCTC.toLocaleString('en-IN')}</td>
                           </tr>
                         </tbody>
                       </table>
                     </div>
 
-                    {/* Candidate Acceptance Box */}
-                    <div className="space-y-5 text-xs text-slate-800 mt-6">
-                      <p className="text-justify leading-relaxed text-[11.5px]">
-                        I have read and understood the terms of the Offer Letter and accept the above-mentioned terms and conditions of employment with the Margey Labs Private Limited.
-                      </p>
+                    <p className="text-[10px] text-slate-700 leading-relaxed text-justify mb-4">
+                      This illustration totals ₹{ctcFormatted} as gross-pay components and does not separately account for employer contributions or benefits. The final CTC breakup must be confirmed by payroll. Applicable employee deductions may reduce take-home pay.
+                    </p>
 
-                      <div className="pt-12 flex flex-col items-end">
-                        <div className="w-72 border-b border-slate-900 pb-1"></div>
-                        <span className="text-xs font-semibold text-slate-900 mt-1">Candidate Acceptance Sign and Date</span>
+                    {/* Dual Signatory Block */}
+                    <div className="pt-4 border-t border-slate-300 grid grid-cols-2 gap-4 text-[10.5px]">
+                      <div>
+                        <p className="font-bold text-slate-900">For MARGEY LABS PVT. LTD.</p>
+                        <div className="mt-1">
+                          <MargeySignatoryBlock align="left" stampSize={75} />
+                        </div>
+                      </div>
+                      <div className="flex flex-col justify-end">
+                        <p className="font-bold text-slate-900 mb-6">Candidate Acceptance Signature</p>
+                        <div className="border-b border-slate-800 w-48 mb-1"></div>
+                        <p className="text-[10px] text-slate-700">Signature: {candidateName}</p>
+                        <p className="text-[10px] text-slate-700">Date: ________________________</p>
                       </div>
                     </div>
                   </div>
 
-                  <ProfuseFooter />
+                  <MargeyFooter />
                 </div>
+
+                {/* ================= OPTIONAL FULL ANNEXURES II, III, IV, V (PAGES 3-6) ================= */}
+                {showFullAnnexure && (
+                  <>
+                    {/* PAGE 3: ANNEXURE – II: Role Profile */}
+                    <div
+                      className="printable-page bg-white text-slate-900 rounded-none shadow-none border-none p-7 sm:p-8 font-sans flex flex-col justify-between"
+                      style={{ width: '210mm', minHeight: '296mm', height: '296mm' }}
+                    >
+                      <div>
+                        <MargeyHeader
+                          refId={document.id}
+                          dateStr={formattedIssueDate}
+                          isConfidential={true}
+                        />
+
+                        <div className="text-center my-2">
+                          <h2 className="text-sm font-bold text-slate-900 tracking-wider uppercase font-sans">
+                            ANNEXURE – II
+                          </h2>
+                          <p className="text-[11.5px] font-bold text-slate-900 uppercase">
+                            {designation.toUpperCase()} ROLE PROFILE
+                          </p>
+                        </div>
+
+                        <div className="space-y-3 text-[10.5px] leading-relaxed text-slate-800 font-sans text-justify mt-2">
+                          <div>
+                            <h3 className="font-bold text-slate-900 text-[11.5px] mb-1">Purpose of the role</h3>
+                            <p>
+                              To assist with efficient HR administration and employee support, while maintaining accurate records and helping the organization follow its employment procedures.
+                            </p>
+                          </div>
+
+                          <div>
+                            <h3 className="font-bold text-slate-900 text-[11.5px] mb-1">Principal responsibilities</h3>
+                            <ul className="list-disc pl-5 space-y-1 text-slate-700">
+                              <li>Assist with recruitment activities, including vacancy posting, candidate screening, interview scheduling, and follow-up.</li>
+                              <li>Coordinate joining documentation, induction, onboarding checklists, and employee file creation.</li>
+                              <li>Maintain employee records, HR databases, attendance, leave information, and personnel documentation accurately.</li>
+                              <li>Coordinate attendance and payroll inputs with payroll/accounts and raise discrepancies for resolution.</li>
+                              <li>Answer routine employee questions about HR processes, attendance, leave, and required documentation.</li>
+                              <li>Support employee engagement, training coordination, internal communications, and performance review administration.</li>
+                              <li>Prepare HR reports, letters, trackers, and routine correspondence as assigned.</li>
+                              <li>Assist in communicating company policies, confidentiality requirements, and applicable POSH procedures.</li>
+                              <li>Handle employee information discreetly and access it only for authorized work purposes.</li>
+                              <li>Complete other reasonable HR duties assigned by the reporting manager.</li>
+                            </ul>
+                          </div>
+
+                          <div className="pt-2">
+                            <p className="font-bold text-slate-900">
+                              Reporting line: <span className="font-medium text-slate-800">{reportingManager}</span>
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      <MargeyFooter />
+                    </div>
+
+                    {/* PAGE 4: ANNEXURE – III: Company Policies and Employee Information */}
+                    <div
+                      className="printable-page bg-white text-slate-900 rounded-none shadow-none border-none p-7 sm:p-8 font-sans flex flex-col justify-between"
+                      style={{ width: '210mm', minHeight: '296mm', height: '296mm' }}
+                    >
+                      <div>
+                        <MargeyHeader
+                          refId={document.id}
+                          dateStr={formattedIssueDate}
+                          isConfidential={true}
+                        />
+
+                        <div className="text-center my-2">
+                          <h2 className="text-sm font-bold text-slate-900 tracking-wider uppercase font-sans">
+                            ANNEXURE – III
+                          </h2>
+                          <p className="text-[11.5px] font-bold text-slate-900 uppercase">
+                            COMPANY POLICIES AND EMPLOYEE INFORMATION
+                          </p>
+                        </div>
+
+                        <div className="space-y-3 text-[10px] leading-relaxed text-slate-800 font-sans text-justify mt-2">
+                          <p className="italic text-slate-600">
+                            The company should provide the employee with the applicable policies or access to them and identify which policies have been formally adopted.
+                          </p>
+
+                          <div>
+                            <h3 className="font-bold text-slate-900 text-[11px] mb-1">Adopted Corporate Policies</h3>
+                            <ul className="list-disc pl-5 space-y-0.5 text-slate-700">
+                              <li>Code of Conduct and Professional Behavior</li>
+                              <li>Attendance, Leave, and Working Hours</li>
+                              <li>Confidentiality, Data Privacy, and Information Security</li>
+                              <li>IT, Internet, Email, Password, and Acceptable Use</li>
+                              <li>Prevention of Sexual Harassment (POSH) and reporting procedure</li>
+                              <li>Conflict of Interest and Gifts, where adopted</li>
+                              <li>Grievance Redressal and Disciplinary Procedure</li>
+                              <li>Employee Records and Document Retention, where applicable</li>
+                            </ul>
+                          </div>
+
+                          <div>
+                            <h3 className="font-bold text-slate-900 text-[11px] mb-1">Financial and Statutory benefits</h3>
+                            <ul className="list-disc pl-5 space-y-0.5 text-slate-700">
+                              <li><strong>Annual Performance Bonus:</strong> Additional payment based on individual or company performance.</li>
+                              <li><strong>Festival Bonus:</strong> Additional company-provided festive reward.</li>
+                              <li><strong>EPF (Employee Provident Fund):</strong> Employer contributes towards employee retirement savings as applicable.</li>
+                            </ul>
+                          </div>
+
+                          <div>
+                            <h3 className="font-bold text-slate-900 text-[11px] mb-1">Insurance and Medical benefits</h3>
+                            <ul className="list-disc pl-5 space-y-0.5 text-slate-700">
+                              <li><strong>Family Health Insurance:</strong> Medical coverage for eligible dependents.</li>
+                              <li><strong>Maternity Benefit:</strong> Statutory maternity benefits and any additional company benefits.</li>
+                            </ul>
+                          </div>
+
+                          <div>
+                            <h3 className="font-bold text-slate-900 text-[11px] mb-1">Transportation & Welfare Benefits</h3>
+                            <ul className="list-disc pl-5 space-y-0.5 text-slate-700">
+                              <li><strong>Cab Facility:</strong> Eligible employees may be provided with cab facilities based on shift timings, business requirements and company transportation policy.</li>
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+
+                      <MargeyFooter />
+                    </div>
+
+                    {/* PAGE 5: ANNEXURE – IV: Confidentiality and Data Protection */}
+                    <div
+                      className="printable-page bg-white text-slate-900 rounded-none shadow-none border-none p-7 sm:p-8 font-sans flex flex-col justify-between"
+                      style={{ width: '210mm', minHeight: '296mm', height: '296mm' }}
+                    >
+                      <div>
+                        <MargeyHeader
+                          refId={document.id}
+                          dateStr={formattedIssueDate}
+                          isConfidential={true}
+                        />
+
+                        <div className="text-center my-2">
+                          <h2 className="text-sm font-bold text-slate-900 tracking-wider uppercase font-sans">
+                            ANNEXURE – IV
+                          </h2>
+                          <p className="text-[11.5px] font-bold text-slate-900 uppercase">
+                            CONFIDENTIALITY AND DATA PROTECTION
+                          </p>
+                        </div>
+
+                        <div className="space-y-3 text-[10.5px] leading-relaxed text-slate-800 font-sans text-justify mt-2">
+                          <div>
+                            <h3 className="font-bold text-slate-900 text-[11px] mb-1">Confidential information</h3>
+                            <p>
+                              Confidential information includes non-public employee and candidate records, compensation data, recruitment plans, client information, business plans, passwords, internal reports, financial data and proprietary processes.
+                            </p>
+                          </div>
+
+                          <div>
+                            <h3 className="font-bold text-slate-900 text-[11px] mb-1">Required safeguards</h3>
+                            <ul className="list-disc pl-5 space-y-1 text-slate-700">
+                              <li>Access information only for authorised work purposes.</li>
+                              <li>Do not disclose, copy, photograph, download or transfer confidential information without approval.</li>
+                              <li>Use approved systems and storage; do not send company information to personal email or unauthorised cloud accounts.</li>
+                              <li>Verify recipients before sharing HR records and apply appropriate access controls.</li>
+                              <li>Report suspected loss, unauthorised access, phishing or accidental disclosure promptly.</li>
+                              <li>Retain and dispose of records according to the company’s retention schedule and applicable law.</li>
+                            </ul>
+                          </div>
+
+                          <div className="pt-2">
+                            <p className="text-slate-700 leading-relaxed">
+                              Confidentiality obligations continue after employment ends, subject to lawful disclosures and information legitimately in the public domain. This annexure does not prevent lawful reporting to authorised bodies.
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      <MargeyFooter />
+                    </div>
+
+                    {/* PAGE 6: ANNEXURE – V: Employment Terms and Conditions & Acceptance */}
+                    <div
+                      className="printable-page bg-white text-slate-900 rounded-none shadow-none border-none p-7 sm:p-8 font-sans flex flex-col justify-between"
+                      style={{ width: '210mm', minHeight: '296mm', height: '296mm' }}
+                    >
+                      <div>
+                        <MargeyHeader
+                          refId={document.id}
+                          dateStr={formattedIssueDate}
+                          isConfidential={true}
+                        />
+
+                        <div className="text-center my-2">
+                          <h2 className="text-sm font-bold text-slate-900 tracking-wider uppercase font-sans">
+                            ANNEXURE – V
+                          </h2>
+                          <p className="text-[11.5px] font-bold text-slate-900 uppercase">
+                            EMPLOYMENT TERMS AND CONDITIONS
+                          </p>
+                        </div>
+
+                        <div className="space-y-1.5 text-[9.8px] leading-[1.38] text-slate-800 font-sans text-justify mt-2">
+                          <p><strong>Commencement:</strong> Employment begins on the joining date confirmed in writing after completion of joining formalities.</p>
+                          <p><strong>Probation:</strong> Probation will last {probationPeriod}. Performance and suitability may be reviewed; any extension or confirmation will be communicated in writing.</p>
+                          <p><strong>Working hours:</strong> Working hours, breaks, shifts, and weekly holidays will follow the company schedule and applicable law.</p>
+                          <p><strong>Attendance and leave:</strong> The employee must follow company procedures for attendance, leave applications, approvals, and records. Leave entitlements are subject to company policy and applicable law.</p>
+                          <p><strong>Salary payment:</strong> Salary will be paid monthly according to the final approved compensation structure and payroll calendar, subject to applicable deductions.</p>
+                          <p><strong>Notice period:</strong> The notice period during probation and after confirmation will be {noticePeriod}, subject to the final written terms, company policy, and applicable law.</p>
+                          <p><strong>Confidentiality:</strong> Confidential business information and personal data must be protected and used only for authorized work.</p>
+                          <p><strong>Company assets:</strong> Company property, records, devices, access cards, and credentials must be safeguarded and returned when requested or at separation.</p>
+                          <p><strong>Professional conduct:</strong> The employee must act professionally, avoid conflicts of interest, and comply with lawful instructions and applicable policies.</p>
+                          <p><strong>Verification:</strong> The offer is subject to reasonable verification of information and documents provided. Material discrepancies will be addressed under applicable law and company procedure.</p>
+                          <p><strong>Amendments:</strong> Changes to material employment terms will be communicated in writing by an authorized representative.</p>
+                          <p><strong>Applicable law:</strong> Employment terms are subject to applicable laws in India and the relevant state.</p>
+                        </div>
+
+                        {/* Candidate Acceptance Box */}
+                        <div className="mt-4 p-3 border border-slate-400 bg-slate-50 text-[10px] space-y-2">
+                          <p className="font-semibold text-slate-900">
+                            I have read, understood, and accept the offer of employment and the terms and conditions outlined in this Letter of Offer and Annexures.
+                          </p>
+                          <div className="pt-4 flex justify-between items-end">
+                            <div>
+                              <p className="font-bold text-slate-900">Candidate Name: {candidateName}</p>
+                              <p className="text-slate-700">Date: ________________________</p>
+                            </div>
+                            <div className="text-right">
+                              <div className="border-b border-slate-800 w-44 mb-1"></div>
+                              <span className="font-bold text-slate-900">Candidate Signature</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <MargeyFooter />
+                    </div>
+                  </>
+                )}
               </>
             )}
 
-            {/* ==================== TEMPLATE TYPE 2: EXPERIENCE CERTIFICATE ==================== */}
+            {/* ============================================================== */}
+            {/* TEMPLATE TYPE 2: EXPERIENCE CERTIFICATE                        */}
+            {/* ============================================================== */}
             {document.type === 'experience' && (
               <div
                 className="printable-page bg-white text-slate-900 rounded-none shadow-none border-none p-7 sm:p-8 font-sans flex flex-col justify-between"
                 style={{ width: '210mm', minHeight: '296mm', height: '296mm' }}
               >
                 <div>
-                  <ProfuseHeader
+                  <MargeyHeader
                     refId={document.id}
                     dateStr={document.formattedIssueDate || document.issueDate}
                     isConfidential={false}
@@ -715,7 +775,7 @@ export default function DocumentViewerModal({ document, company, onClose }) {
                     </p>
 
                     <p>
-                      This is to certify that <strong>{document.employee?.fullName || candidateName}</strong> (Employee ID: <strong>{document.employee?.id || 'EMP001'}</strong>) was employed with <strong>Margey Labs Private Limited</strong> from <strong>{expJoiningDate}</strong> to <strong>{expRelievingDate}</strong>.
+                      This is to certify that <strong>{document.employee?.fullName || candidateName}</strong> (Employee ID: <strong>{document.employee?.id || 'EMP001'}</strong>) was employed with <strong>MARGEY LABS PRIVATE LIMITED</strong> from <strong>{expJoiningDate}</strong> to <strong>{expRelievingDate}</strong>.
                     </p>
 
                     <p>
@@ -737,22 +797,24 @@ export default function DocumentViewerModal({ document, company, onClose }) {
                   </div>
 
                   <div className="mt-8">
-                    <ProfuseSignatoryBlock align="left" stampSize={90} />
+                    <MargeySignatoryBlock align="left" stampSize={90} />
                   </div>
                 </div>
 
-                <ProfuseFooter />
+                <MargeyFooter />
               </div>
             )}
 
-            {/* ==================== TEMPLATE TYPE 3: RELIEVING ORDER ==================== */}
+            {/* ============================================================== */}
+            {/* TEMPLATE TYPE 3: RELIEVING ORDER                               */}
+            {/* ============================================================== */}
             {document.type === 'relieving' && (
               <div
                 className="printable-page bg-white text-slate-900 rounded-none shadow-none border-none p-7 sm:p-8 font-sans flex flex-col justify-between"
                 style={{ width: '210mm', minHeight: '296mm', height: '296mm' }}
               >
                 <div>
-                  <ProfuseHeader
+                  <MargeyHeader
                     refId={document.id}
                     dateStr={document.formattedIssueDate || document.issueDate}
                     isConfidential={true}
@@ -774,7 +836,7 @@ export default function DocumentViewerModal({ document, company, onClose }) {
                     </p>
 
                     <p className="text-justify">
-                      With reference to your formal letter of resignation dated <strong>{relResignationDate}</strong>, we wish to confirm that your resignation from the services of <strong>Margey Labs Pvt Ltd</strong> as <strong>{designation}</strong> has been formally accepted.
+                      With reference to your formal letter of resignation dated <strong>{relResignationDate}</strong>, we wish to confirm that your resignation from the services of <strong>MARGEY LABS PRIVATE LIMITED</strong> as <strong>{designation}</strong> has been formally accepted.
                     </p>
 
                     <p className="text-justify">
@@ -796,11 +858,11 @@ export default function DocumentViewerModal({ document, company, onClose }) {
                   </div>
 
                   <div className="mt-8">
-                    <ProfuseSignatoryBlock align="left" stampSize={90} />
+                    <MargeySignatoryBlock align="left" stampSize={90} />
                   </div>
                 </div>
 
-                <ProfuseFooter />
+                <MargeyFooter />
               </div>
             )}
           </div>

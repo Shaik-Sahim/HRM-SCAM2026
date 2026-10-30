@@ -50,13 +50,13 @@ export function ProfuseFooter() {
   return (
     <div className="w-full pt-2 mt-auto text-center border-t border-slate-200 select-none shrink-0 font-sans">
       <h3 className="text-xs font-extrabold uppercase tracking-wide text-cyan-600 font-sans">
-        MARGEY LABS PRIVATE LIMITED
+        MARGEY LABS PVT. LTD.
       </h3>
       <p className="text-[9.5px] text-slate-700 font-medium mt-0.5 font-sans">
-        6<sup>th</sup> Floor, Gamma Block, Sigma Soft Tech Park, Varthur Hobli, Bangalore-560066.
+        4th Floor, GR Arcade, Marathahalli, Bengaluru – 560037
       </p>
       <p className="text-[9.5px] text-slate-600 font-mono mt-0.5">
-        Phone: 080-95883256 &nbsp;|&nbsp; Email: hr@margeylabs.com &nbsp;|&nbsp; Website: www.margeylabs.com
+        CIN: U58200KA2024PTC191015 &nbsp;|&nbsp; Phone: +91 86608 03099, +91 9100588005 &nbsp;|&nbsp; Email: info@margeylabs.com &nbsp;|&nbsp; margeylabs.com
       </p>
     </div>
   );

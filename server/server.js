@@ -97,24 +97,24 @@ function seedInitialPayroll() {
 
 function seedInitialDocuments() {
   const sampleOffer = generateOfferLetter({
-    id: "APEX/OFFER/2026/084",
-    candidateName: "Devansh Singhania",
-    email: "devansh.singhania@outlook.com",
-    phone: "+91 98451 22334",
-    address: "HSR Layout Sector 2, Bengaluru, Karnataka 560102",
-    designation: "Senior AI Platform Architect",
-    department: "Engineering",
-    annualCTC: 2600000,
-    joiningDate: "2026-11-15",
-    probationMonths: 3,
+    id: "MARGEY/OFFER/2025/101",
+    candidateName: "Ms. Batta Vyshnavi",
+    email: "vyshnavi.batta@example.com",
+    phone: "+91 86608 03099",
+    address: "Papireddypalem,\nT.P. Gudur Mandal, Nellore District,\nAndhra Pradesh",
+    designation: "HR Executive",
+    department: "Human Resources",
+    annualCTC: 600000,
+    joiningDate: "2025-11-12",
+    probationMonths: 6,
     noticePeriodDays: 60,
-    workLocation: "Prestige Tech Cloud Park, Bengaluru (Hybrid)",
-    reportingTo: "Chief Technology Officer",
-    issueDate: "2026-10-25"
+    workLocation: "Bangalore",
+    reportingTo: "[Name / Designation]",
+    issueDate: "2025-10-27"
   }, db.company, db.statutory);
 
   const sampleExp = generateExperienceLetter({
-    id: "APEX/EXP/2026/042",
+    id: "MARGEY/EXP/2026/042",
     employeeId: "EMP-089",
     employeeName: "Neha Kapur",
     designation: "Staff Product Designer",
@@ -127,7 +127,7 @@ function seedInitialDocuments() {
   }, db.company);
 
   const sampleRel = generateRelievingLetter({
-    id: "APEX/REL/2026/039",
+    id: "MARGEY/REL/2026/039",
     employeeId: "EMP-076",
     employeeName: "Kunal Mehta",
     designation: "Senior Backend Systems Engineer",

@@ -15,21 +15,21 @@ const statutorySettings = {
 };
 
 const companyProfile = {
-  name: "Margey Labs Pvt Ltd",
-  legalName: "Margey Labs Private Limited",
-  tagline: "Margey Labs Pvt Limited",
-  cin: "U72900KA2022PTC158976",
+  name: "Margey Labs Pvt. Ltd.",
+  legalName: "MARGEY LABS PRIVATE LIMITED",
+  tagline: "MARGEY LABS PVT. LTD.",
+  cin: "U58200KA2024PTC191015",
   pan: "AABCM9823M",
   tan: "BLRM01234D",
   gstin: "29AABCM9823M1Z8",
-  address: "6th Floor, Gamma Block, Sigma Soft Tech Park, Varthur Hobli, Bangalore-560066",
-  website: "www.margeylabs.com",
-  email: "hr@margeylabs.com",
-  phone: "080-95883256",
+  address: "4th Floor, GR Arcade, Marathahalli, Bengaluru – 560037",
+  website: "margeylabs.com",
+  email: "info@margeylabs.com",
+  phone: "+91 86608 03099 | +91 9100588005",
   signatoryName: "Murali K",
   signatoryTitle: "Manager - Human Resources",
   bankName: "HDFC Bank Ltd.",
-  bankBranch: "Whitefield Branch, Bangalore",
+  bankBranch: "Marathahalli Branch, Bangalore",
   salaryAccountNo: "50200088991234",
   ifscCode: "HDFC0000128"
 };

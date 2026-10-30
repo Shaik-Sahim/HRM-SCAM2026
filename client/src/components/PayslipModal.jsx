@@ -279,9 +279,9 @@ export default function PayslipModal({ payslip, company, onClose }) {
                     <div className="flex items-center gap-3">
                       <MargeyLogo height={42} />
                       <div className="text-[10px] text-slate-600 leading-tight">
-                        <p className="font-bold text-slate-900 text-[11px]">MARGEY LABS PRIVATE LIMITED</p>
-                        <p>#45/2, Silicon Terraces, 2nd Floor, Inner Ring Road, Koramangala, Bangalore - 560095</p>
-                        <p>CIN: U72900KA2020PTC139876 | Email: hr@margeylabs.com</p>
+                        <p className="font-bold text-slate-900 text-[11px]">MARGEY LABS PVT. LTD.</p>
+                        <p>4th Floor, GR Arcade, Marathahalli, Bengaluru – 560037</p>
+                        <p>CIN: U58200KA2024PTC191015 | Phone: +91 86608 03099 | Email: info@margeylabs.com</p>
                       </div>
                     </div>
                     <div className="text-right text-[10px] text-slate-500">
@@ -700,8 +700,8 @@ export default function PayslipModal({ payslip, company, onClose }) {
               >
                 <div className="space-y-3">
                   <div className="text-center border-b border-slate-300 pb-2">
-                    <h2 className="text-lg font-bold uppercase tracking-wider text-slate-900">MARGEY LABS PRIVATE LIMITED</h2>
-                    <p className="text-[10.5px] text-slate-600">Bangalore, Karnataka, India • www.margeylabs.com</p>
+                    <h2 className="text-lg font-bold uppercase tracking-wider text-slate-900">MARGEY LABS PVT. LTD.</h2>
+                    <p className="text-[10.5px] text-slate-600">4th Floor, GR Arcade, Marathahalli, Bengaluru – 560037 • CIN: U58200KA2024PTC191015</p>
                     <div className="mt-1.5 inline-block border-y border-slate-800 px-3 py-0.5 font-bold uppercase text-[10.5px] tracking-widest">
                       SALARY CERTIFICATE & PAYSLIP FOR {displayPeriod.toUpperCase()}
                     </div>

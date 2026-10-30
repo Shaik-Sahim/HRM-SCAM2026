@@ -1,4 +1,4 @@
-// Margey HRM Document Engine - Official Margey Labs Pvt Ltd Template
+// OmniaHRM Document Engine - Official Profuse Transtech Solutions Template
 const { calculateSalaryStructure, numberToWords } = require('./payrollEngine');
 
 function calculateTenure(startDateStr, endDateStr) {
@@ -81,34 +81,36 @@ function formatOrdinalDate(dateStr) {
  * Generate Offer Letter adhering to the official Margey Labs template
  */
 function generateOfferLetter(data, company, statutorySettings = {}) {
-  const ctc = Number(data.annualCTC) || 940000;
+  const ctc = Number(data.annualCTC) || 600000;
   const salaryStructure = calculateSalaryStructure(ctc, statutorySettings);
   const currencySymbol = company.currency === 'USD' ? '$' : 'INR';
 
   const refSeq = Math.floor(1000 + Math.random() * 9000);
   const refId = data.id || `MARGEY/OFFER/${new Date().getFullYear()}/ML${refSeq}`;
-  const issueDate = data.issueDate || new Date().toISOString().split('T')[0];
+  const issueDate = data.issueDate || '2025-10-27';
 
   return {
     id: refId,
     type: 'offer',
-    title: 'Offer Letter',
+    title: 'LETTER OF OFFER',
     issueDate,
-    formattedIssueDate: formatDate(issueDate),
+    formattedIssueDate: '27TH Oct 2025',
     candidate: {
-      fullName: data.candidateName || 'Doddetipalli Gowtham',
-      email: data.email || 'gowtham@example.com',
-      phone: data.phone || '080-95883256',
-      address: data.address || 'Bangalore, Karnataka'
+      fullName: data.candidateName || 'Ms. Batta Vyshnavi',
+      email: data.email || 'vyshnavi.batta@example.com',
+      phone: data.phone || '+91 86608 03099',
+      address: data.address || 'Papireddypalem,\nT.P. Gudur Mandal, Nellore District,\nAndhra Pradesh'
     },
     employment: {
-      designation: data.designation || 'Software Developer',
-      department: data.department || 'Engineering',
-      joiningDate: data.joiningDate || '2025-03-05',
-      formattedJoiningDate: formatOrdinalDate(data.joiningDate || '2025-03-05'),
+      designation: data.designation || 'HR Executive',
+      department: data.department || 'Human Resources',
+      joiningDate: data.joiningDate || '2025-11-12',
+      formattedJoiningDate: formatOrdinalDate(data.joiningDate || '2025-11-12') || '12th Nov 2025',
       probationMonths: Number(data.probationMonths) || 6,
-      workLocation: data.workLocation || 'Bangalore office',
-      reportingTo: data.reportingTo || 'Engineering Manager',
+      probationPeriod: data.probationPeriod || `${Number(data.probationMonths) || 6} months`,
+      noticePeriodDays: Number(data.noticePeriodDays) || 60,
+      workLocation: data.workLocation || 'Bangalore',
+      reportingTo: data.reportingTo || '[Name / Designation]',
       acceptanceDays: 3
     },
     compensation: {
@@ -121,12 +123,13 @@ function generateOfferLetter(data, company, statutorySettings = {}) {
       inWords: numberToWords(ctc, 'INR')
     },
     company: {
-      name: company.name || 'Margey Labs Pvt Ltd',
+      name: company.name || 'MARGEY LABS PVT. LTD.',
       legalName: company.legalName || 'MARGEY LABS PRIVATE LIMITED',
-      address: company.address || '6th Floor, Gamma Block, Sigma Soft Tech Park, Varthur Hobli, Bangalore-560066.',
-      phone: company.phone || '080-95883256',
-      email: company.email || 'hr@margeylabs.com',
-      website: company.website || 'www.margeylabs.com',
+      cin: company.cin || 'U58200KA2024PTC191015',
+      address: company.address || '4th Floor, GR Arcade, Marathahalli, Bengaluru – 560037',
+      phone: company.phone || '+91 86608 03099 | +91 9100588005',
+      email: company.email || 'info@margeylabs.com',
+      website: company.website || 'margeylabs.com',
       signatoryName: company.signatoryName || 'Murali K',
       signatoryTitle: company.signatoryTitle || 'Manager - Human Resources'
     }
@@ -170,12 +173,13 @@ function generateExperienceLetter(data, company) {
       formattedRelievingDate: formattedRelieving
     },
     company: {
-      name: company.name || 'Margey Labs Pvt Ltd',
+      name: company.name || 'MARGEY LABS PVT. LTD.',
       legalName: company.legalName || 'MARGEY LABS PRIVATE LIMITED',
-      address: company.address || '6th Floor, Gamma Block, Sigma Soft Tech Park, Varthur Hobli, Bangalore-560066.',
-      phone: company.phone || '080-95883256',
-      email: company.email || 'hr@margeylabs.com',
-      website: company.website || 'www.margeylabs.com',
+      cin: company.cin || 'U58200KA2024PTC191015',
+      address: company.address || '4th Floor, GR Arcade, Marathahalli, Bengaluru – 560037',
+      phone: company.phone || '+91 86608 03099 | +91 9100588005',
+      email: company.email || 'info@margeylabs.com',
+      website: company.website || 'margeylabs.com',
       signatoryName: company.signatoryName || 'Murali K',
       signatoryTitle: company.signatoryTitle || 'Manager - Human Resources'
     },
@@ -228,12 +232,13 @@ function generateRelievingLetter(data, company) {
       formattedRelievingDate: formattedRelieving
     },
     company: {
-      name: company.name || 'Margey Labs Pvt Ltd',
+      name: company.name || 'MARGEY LABS PVT. LTD.',
       legalName: company.legalName || 'MARGEY LABS PRIVATE LIMITED',
-      address: company.address || '6th Floor, Gamma Block, Sigma Soft Tech Park, Varthur Hobli, Bangalore-560066.',
-      phone: company.phone || '080-95883256',
-      email: company.email || 'hr@margeylabs.com',
-      website: company.website || 'www.margeylabs.com',
+      cin: company.cin || 'U58200KA2024PTC191015',
+      address: company.address || '4th Floor, GR Arcade, Marathahalli, Bengaluru – 560037',
+      phone: company.phone || '+91 86608 03099 | +91 9100588005',
+      email: company.email || 'info@margeylabs.com',
+      website: company.website || 'margeylabs.com',
       signatoryName: company.signatoryName || 'Murali K',
       signatoryTitle: company.signatoryTitle || 'Manager - Human Resources'
     },

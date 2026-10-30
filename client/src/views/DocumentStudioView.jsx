@@ -37,18 +37,18 @@ export default function DocumentStudioView({ employees, company, onViewDocument 
 
   // ================= Offer Letter Form State (Defaults to Template Standard) ================= //
   const [offerForm, setOfferForm] = useState({
-    candidateName: 'Doddetipalli Gowtham',
-    email: 'gowtham.d@example.com',
-    phone: '080-95883256',
-    address: 'Bangalore, Karnataka',
-    designation: 'Software Developer',
-    department: 'Engineering',
-    annualCTC: 940000,
-    joiningDate: '2025-03-05',
+    candidateName: 'Ms. Batta Vyshnavi',
+    email: 'vyshnavi.batta@example.com',
+    phone: '+91 86608 03099',
+    address: 'Papireddypalem,\nT.P. Gudur Mandal, Nellore District,\nAndhra Pradesh',
+    designation: 'HR Executive',
+    department: 'Human Resources',
+    annualCTC: 600000,
+    joiningDate: '2025-11-12',
     probationMonths: 6,
     noticePeriodDays: 60,
-    workLocation: 'Bangalore office',
-    reportingTo: 'Manager - Engineering'
+    workLocation: 'Bangalore',
+    reportingTo: '[Name / Designation]'
   });
   const [offerPreviewCTC, setOfferPreviewCTC] = useState(null);
 
@@ -366,7 +366,7 @@ export default function DocumentStudioView({ employees, company, onViewDocument 
                     <DollarSign className="w-4 h-4 text-emerald-400" />
                     <h3 className="text-sm font-bold text-white">Compensation & CTC Annexure</h3>
                   </div>
-                  <span className="text-[10px] uppercase font-bold text-brand-400">Annexure A</span>
+                  <span className="text-[10px] uppercase font-bold text-cyan-400">Annexure I</span>
                 </div>
 
                 <div className="mt-4 space-y-4 text-xs">
@@ -390,7 +390,7 @@ export default function DocumentStudioView({ employees, company, onViewDocument 
                       </div>
                       <div className="divide-y divide-slate-800/50 p-2 space-y-1">
                         <div className="flex justify-between py-1 text-slate-400">
-                          <span>Basic Salary (50%)</span>
+                          <span>Basic Pay (50%)</span>
                           <span className="font-mono text-slate-200">{currencySymbol}{offerPreviewCTC.monthly.basic?.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
                         </div>
                         <div className="flex justify-between py-1 text-slate-400">
@@ -398,23 +398,27 @@ export default function DocumentStudioView({ employees, company, onViewDocument 
                           <span className="font-mono text-slate-200">{currencySymbol}{offerPreviewCTC.monthly.hra?.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
                         </div>
                         <div className="flex justify-between py-1 text-slate-400">
-                          <span>Conveyance & Medical</span>
-                          <span className="font-mono text-slate-200">{currencySymbol}{(offerPreviewCTC.monthly.conveyance + offerPreviewCTC.monthly.medical)?.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
+                          <span>Traveling Allowance</span>
+                          <span className="font-mono text-slate-200">{currencySymbol}{(offerPreviewCTC.monthly.conveyance || 2000)?.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
                         </div>
                         <div className="flex justify-between py-1 text-slate-400">
-                          <span>Network & Internet Bill</span>
-                          <span className="font-mono text-slate-200">{currencySymbol}{(offerPreviewCTC.monthly.networkAllowance || 1000)?.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
+                          <span>Medical Allowance</span>
+                          <span className="font-mono text-slate-200">{currencySymbol}{(offerPreviewCTC.monthly.medical || 1500)?.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
                         </div>
                         <div className="flex justify-between py-1 text-slate-400">
-                          <span>Other Allowance</span>
-                          <span className="font-mono text-slate-200">{currencySymbol}{(offerPreviewCTC.monthly.otherAllowance || 1000)?.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
+                          <span>Internet Allowance</span>
+                          <span className="font-mono text-slate-200">{currencySymbol}{(offerPreviewCTC.monthly.networkAllowance || 1500)?.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
+                        </div>
+                        <div className="flex justify-between py-1 text-slate-400">
+                          <span>Food Allowance</span>
+                          <span className="font-mono text-slate-200">{currencySymbol}{(offerPreviewCTC.monthly.otherAllowance || 2000)?.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
                         </div>
                         <div className="flex justify-between py-1 text-slate-400">
                           <span>Special Allowance</span>
                           <span className="font-mono text-slate-200">{currencySymbol}{offerPreviewCTC.monthly.specialAllowance?.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
                         </div>
                       </div>
-                      <div className="bg-slate-950/80 px-3 py-2 border-t border-slate-800 font-bold text-brand-400 flex justify-between">
+                      <div className="bg-slate-950/80 px-3 py-2 border-t border-slate-800 font-bold text-cyan-400 flex justify-between">
                         <span>Total Monthly Gross</span>
                         <span className="font-mono text-sm">{currencySymbol}{offerPreviewCTC.monthlyCTC?.toLocaleString()}</span>
                       </div>
