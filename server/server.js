@@ -689,6 +689,11 @@ if (fs.existsSync(clientDistPath)) {
   });
 }
 
-app.listen(PORT, () => {
-  console.log(`Apex HRM Server is running on http://localhost:${PORT}`);
-});
+// Only listen when executed directly (not when required as a serverless handler on Vercel)
+if (require.main === module || !process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(`Apex HRM Server is running on http://localhost:${PORT}`);
+  });
+}
+
+module.exports = app;
