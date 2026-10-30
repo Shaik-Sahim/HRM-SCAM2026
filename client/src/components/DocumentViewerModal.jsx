@@ -19,6 +19,42 @@ import {
 import { printDocument } from '../utils/printDocument';
 import { calculateTenure, formatOrdinalDate } from '../utils/dateUtils';
 
+function numberToWords(amount) {
+  if (!amount || isNaN(amount)) return 'Zero Rupees Only';
+  const ones = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
+  const tens = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
+  function convertTwoDigits(num) {
+    if (num < 20) return ones[num];
+    const unit = num % 10;
+    return tens[Math.floor(num / 10)] + (unit ? ' ' + ones[unit] : '');
+  }
+  function convertThreeDigits(num) {
+    let result = '';
+    const hundred = Math.floor(num / 100);
+    const rest = num % 100;
+    if (hundred > 0) result += ones[hundred] + ' Hundred';
+    if (rest > 0) {
+      if (hundred > 0) result += ' and ';
+      result += convertTwoDigits(rest);
+    }
+    return result;
+  }
+  let remaining = Math.floor(Math.abs(amount));
+  let parts = [];
+  const crores = Math.floor(remaining / 10000000);
+  remaining %= 10000000;
+  const lakhs = Math.floor(remaining / 100000);
+  remaining %= 100000;
+  const thousands = Math.floor(remaining / 1000);
+  remaining %= 1000;
+  const hundreds = remaining;
+  if (crores > 0) parts.push(convertThreeDigits(crores) + ' Crore');
+  if (lakhs > 0) parts.push(convertTwoDigits(lakhs) + ' Lakh');
+  if (thousands > 0) parts.push(convertTwoDigits(thousands) + ' Thousand');
+  if (hundreds > 0) parts.push(convertThreeDigits(hundreds));
+  return (parts.join(' ') || 'Zero') + ' Rupees Only';
+}
+
 export default function DocumentViewerModal({ document, company, onClose }) {
   const [isExporting, setIsExporting] = useState(false);
   const [emailSent, setEmailSent] = useState(false);
@@ -38,35 +74,41 @@ export default function DocumentViewerModal({ document, company, onClose }) {
   const probationPeriod = document.employment?.probationPeriod || (document.employment?.probationMonths ? `${document.employment.probationMonths} months` : '[Insert duration]');
   const noticePeriod = document.employment?.noticePeriodDays ? `${document.employment.noticePeriodDays} days` : '[insert period]';
 
-  const rawCTC = Number(document.compensation?.annualCTC) || 600000;
+  // Strict dynamic CTC computation matching whatever the user input
+  const rawCTC = Math.max(0, Number(document.compensation?.annualCTC) || 600000);
   const ctcFormatted = rawCTC.toLocaleString('en-IN');
-  const monthlyCTCEquivalent = Math.round(rawCTC / 12).toLocaleString('en-IN');
-  const ctcWords = document.compensation?.inWords || 'Rupees Six Lakh only';
-
-  // Compensation Breakdown Components (Annexure I)
-  const struct = document.compensation?.structure;
-  const monthlyBasic = struct?.monthly?.basic || Math.round(rawCTC * 0.50 / 12);
-  const annualBasic = struct?.annual?.basic || Math.round(rawCTC * 0.50);
-
-  const monthlyHRA = struct?.monthly?.hra || Math.round(annualBasic * 0.40 / 12);
-  const annualHRA = struct?.annual?.hra || Math.round(annualBasic * 0.40);
-
-  const monthlyTravel = struct?.monthly?.conveyance || 2000;
-  const annualTravel = struct?.annual?.conveyance || 24000;
-
-  const monthlyMedical = struct?.monthly?.medical || 1500;
-  const annualMedical = struct?.annual?.medical || 18000;
-
-  const monthlyInternet = struct?.monthly?.networkAllowance || 1500;
-  const annualInternet = struct?.annual?.networkAllowance || 18000;
-
-  const monthlyFood = struct?.monthly?.otherAllowance || 2000;
-  const annualFood = struct?.annual?.otherAllowance || 24000;
-
-  const monthlyFixedSum = monthlyBasic + monthlyHRA + monthlyTravel + monthlyMedical + monthlyInternet + monthlyFood;
   const monthlyGrossNum = Math.round(rawCTC / 12);
-  const monthlySpecial = struct?.monthly?.specialAllowance || Math.max(0, monthlyGrossNum - monthlyFixedSum);
-  const annualSpecial = struct?.annual?.specialAllowance || Math.max(0, rawCTC - (annualBasic + annualHRA + annualTravel + annualMedical + annualInternet + annualFood));
+  const monthlyCTCEquivalent = monthlyGrossNum.toLocaleString('en-IN');
+  const ctcWords = numberToWords(rawCTC);
+
+  // Exact salary structure decomposition according to Margey Labs standard
+  // 1. Basic Pay: 50% of CTC
+  const annualBasic = Math.round(rawCTC * 0.50);
+  const monthlyBasic = Math.round(annualBasic / 12);
+
+  // 2. HRA: 40% of Basic Pay
+  const annualHRA = Math.round(annualBasic * 0.40);
+  const monthlyHRA = Math.round(annualHRA / 12);
+
+  // 3. Fixed Allowances
+  const monthlyTravel = rawCTC > 100000 ? 2000 : 0;
+  const annualTravel = monthlyTravel * 12;
+
+  const monthlyMedical = rawCTC > 100000 ? 1500 : 0;
+  const annualMedical = monthlyMedical * 12;
+
+  const monthlyInternet = rawCTC > 150000 ? 1500 : 0;
+  const annualInternet = monthlyInternet * 12;
+
+  const monthlyFood = rawCTC > 150000 ? 2000 : 0;
+  const annualFood = monthlyFood * 12;
+
+  // 4. Special Allowance: exact balancing figure
+  const fixedMonthlySum = monthlyBasic + monthlyHRA + monthlyTravel + monthlyMedical + monthlyInternet + monthlyFood;
+  const monthlySpecial = Math.max(0, monthlyGrossNum - fixedMonthlySum);
+
+  const fixedAnnualSum = annualBasic + annualHRA + annualTravel + annualMedical + annualInternet + annualFood;
+  const annualSpecial = Math.max(0, rawCTC - fixedAnnualSum);
 
   // Dynamic Tenure & Formatted Dates for Experience & Relieving Certificates
   const expJoiningDate = document.employee?.formattedJoiningDate || 
@@ -263,7 +305,7 @@ export default function DocumentViewerModal({ document, company, onClose }) {
 
         {/* Scrollable Document Area */}
         <div className="overflow-y-auto p-4 sm:p-6 flex justify-center bg-slate-950">
-          <div ref={printRef} className="printable-area w-full max-w-3xl space-y-8 font-sans">
+          <div ref={printRef} className="printable-area w-full max-w-3xl font-sans space-y-6">
             
             {/* ============================================================== */}
             {/* TEMPLATE TYPE 1: MARGEY LABS OFFICIAL OFFER LETTER PACKAGE      */}
@@ -272,8 +314,8 @@ export default function DocumentViewerModal({ document, company, onClose }) {
               <>
                 {/* PAGE 1: Main Letter of Offer */}
                 <div
-                  className="printable-page bg-white text-slate-900 rounded-none shadow-none border-none p-7 sm:p-8 font-sans flex flex-col justify-between"
-                  style={{ width: '210mm', minHeight: '296mm', height: '296mm' }}
+                  className="printable-page bg-white text-slate-900 rounded-none shadow-none border-none p-6 sm:p-7 font-sans flex flex-col justify-between"
+                  style={{ width: '210mm', minHeight: '295.5mm', height: '295.5mm' }}
                 >
                   <div>
                     <MargeyHeader
@@ -283,9 +325,9 @@ export default function DocumentViewerModal({ document, company, onClose }) {
                     />
 
                     {/* Date & Addressee */}
-                    <div className="text-[11px] leading-relaxed text-slate-900 font-sans mb-2">
+                    <div className="text-[10.5px] leading-snug text-slate-900 font-sans mb-1.5">
                       <p className="font-semibold">Date: {formattedIssueDate},</p>
-                      <div className="mt-1 font-sans">
+                      <div className="mt-0.5 font-sans">
                         <p className="font-semibold">To,</p>
                         <p className="font-bold text-slate-900">{candidateName}</p>
                         {candidateAddress.split('\n').map((line, idx) => (
@@ -295,17 +337,17 @@ export default function DocumentViewerModal({ document, company, onClose }) {
                     </div>
 
                     {/* Centered Heading */}
-                    <div className="text-center my-2">
+                    <div className="text-center my-1.5">
                       <h2 className="text-sm font-bold text-slate-900 tracking-wider uppercase font-sans">
                         LETTER OF OFFER
                       </h2>
-                      <p className="text-[11.5px] font-bold text-slate-900 mt-0.5">
+                      <p className="text-[11px] font-bold text-slate-900 mt-0.5">
                         Subject: Offer of Employment – {designation}
                       </p>
                     </div>
 
                     {/* Salutation & Body Text */}
-                    <div className="space-y-2 text-[10.5px] leading-[1.4] text-slate-800 font-sans text-justify">
+                    <div className="space-y-1.5 text-[10px] leading-[1.38] text-slate-800 font-sans text-justify">
                       <p className="font-semibold text-slate-900">
                         Dear {candidateName},
                       </p>
@@ -316,40 +358,40 @@ export default function DocumentViewerModal({ document, company, onClose }) {
 
                       {/* Section 1: Position and Employment Details Table */}
                       <div>
-                        <p className="font-bold text-slate-900 text-[11px] mb-1">1. Position and Employment Details</p>
-                        <table className="w-full text-[10px] border border-slate-400">
+                        <p className="font-bold text-slate-900 text-[10.5px] mb-0.5">1. Position and Employment Details</p>
+                        <table className="w-full text-[9.5px] border border-slate-400">
                           <tbody className="divide-y divide-slate-300">
                             <tr>
-                              <td className="p-1.5 font-semibold text-slate-700 w-1/3 bg-slate-50 border-r border-slate-300">Job Title</td>
-                              <td className="p-1.5 font-bold text-slate-900">{designation}</td>
+                              <td className="p-1 px-2 font-semibold text-slate-700 w-1/3 bg-slate-50 border-r border-slate-300">Job Title</td>
+                              <td className="p-1 px-2 font-bold text-slate-900">{designation}</td>
                             </tr>
                             <tr>
-                              <td className="p-1.5 font-semibold text-slate-700 bg-slate-50 border-r border-slate-300">Department</td>
-                              <td className="p-1.5 text-slate-800">{department}</td>
+                              <td className="p-1 px-2 font-semibold text-slate-700 bg-slate-50 border-r border-slate-300">Department</td>
+                              <td className="p-1 px-2 text-slate-800">{department}</td>
                             </tr>
                             <tr>
-                              <td className="p-1.5 font-semibold text-slate-700 bg-slate-50 border-r border-slate-300">Annual CTC</td>
-                              <td className="p-1.5 font-mono font-bold text-slate-900">₹{ctcFormatted} ({ctcWords})</td>
+                              <td className="p-1 px-2 font-semibold text-slate-700 bg-slate-50 border-r border-slate-300">Annual CTC</td>
+                              <td className="p-1 px-2 font-mono font-bold text-slate-900">₹{ctcFormatted} ({ctcWords})</td>
                             </tr>
                             <tr>
-                              <td className="p-1.5 font-semibold text-slate-700 bg-slate-50 border-r border-slate-300">Monthly CTC Equivalent</td>
-                              <td className="p-1.5 font-mono font-bold text-slate-900">₹{monthlyCTCEquivalent}</td>
+                              <td className="p-1 px-2 font-semibold text-slate-700 bg-slate-50 border-r border-slate-300">Monthly CTC Equivalent</td>
+                              <td className="p-1 px-2 font-mono font-bold text-slate-900">₹{monthlyCTCEquivalent}</td>
                             </tr>
                             <tr>
-                              <td className="p-1.5 font-semibold text-slate-700 bg-slate-50 border-r border-slate-300">Joining Date</td>
-                              <td className="p-1.5 text-slate-800">{joiningDate}</td>
+                              <td className="p-1 px-2 font-semibold text-slate-700 bg-slate-50 border-r border-slate-300">Joining Date</td>
+                              <td className="p-1 px-2 text-slate-800">{joiningDate}</td>
                             </tr>
                             <tr>
-                              <td className="p-1.5 font-semibold text-slate-700 bg-slate-50 border-r border-slate-300">Work Location</td>
-                              <td className="p-1.5 text-slate-800">{workLocation}</td>
+                              <td className="p-1 px-2 font-semibold text-slate-700 bg-slate-50 border-r border-slate-300">Work Location</td>
+                              <td className="p-1 px-2 text-slate-800">{workLocation}</td>
                             </tr>
                             <tr>
-                              <td className="p-1.5 font-semibold text-slate-700 bg-slate-50 border-r border-slate-300">Reporting Manager</td>
-                              <td className="p-1.5 text-slate-800">{reportingManager}</td>
+                              <td className="p-1 px-2 font-semibold text-slate-700 bg-slate-50 border-r border-slate-300">Reporting Manager</td>
+                              <td className="p-1 px-2 text-slate-800">{reportingManager}</td>
                             </tr>
                             <tr>
-                              <td className="p-1.5 font-semibold text-slate-700 bg-slate-50 border-r border-slate-300">Probation Period</td>
-                              <td className="p-1.5 text-slate-800">{probationPeriod}</td>
+                              <td className="p-1 px-2 font-semibold text-slate-700 bg-slate-50 border-r border-slate-300">Probation Period</td>
+                              <td className="p-1 px-2 text-slate-800">{probationPeriod}</td>
                             </tr>
                           </tbody>
                         </table>
@@ -357,7 +399,7 @@ export default function DocumentViewerModal({ document, company, onClose }) {
 
                       {/* Section 2 */}
                       <div>
-                        <p className="font-bold text-slate-900 text-[11px] mb-0.5">2. Compensation and Payroll</p>
+                        <p className="font-bold text-slate-900 text-[10.5px] mb-0.5">2. Compensation and Payroll</p>
                         <p>
                           Your annual Cost to Company (CTC) will be ₹{ctcFormatted}. The monthly CTC equivalent is ₹{monthlyCTCEquivalent}. Accordingly, the gross salary and take-home amount may be different from the monthly CTC equivalent. Annexure I contains an illustrative compensation schedule; the final breakup will be approved by the company and applied through payroll.
                         </p>
@@ -365,7 +407,7 @@ export default function DocumentViewerModal({ document, company, onClose }) {
 
                       {/* Section 3 */}
                       <div>
-                        <p className="font-bold text-slate-900 text-[11px] mb-0.5">3. Role and Workplace Expectations</p>
+                        <p className="font-bold text-slate-900 text-[10.5px] mb-0.5">3. Role and Workplace Expectations</p>
                         <p>
                           In this position, you will support recruitment, onboarding, employee documentation, attendance and leave administration, payroll coordination, employee communication, and implementation of HR policies. You are expected to protect confidential information, follow authorized procedures, and perform duties assigned by your reporting manager.
                         </p>
@@ -373,7 +415,7 @@ export default function DocumentViewerModal({ document, company, onClose }) {
 
                       {/* Section 4 */}
                       <div>
-                        <p className="font-bold text-slate-900 text-[11px] mb-0.5">4. Conditions and Company Policies</p>
+                        <p className="font-bold text-slate-900 text-[10.5px] mb-0.5">4. Conditions and Company Policies</p>
                         <p>
                           The offer is subject to completion of joining formalities and reasonable verification of the information and documents provided. Your employment will be governed by the conditions in Annexure III, applicable company policies in Annexure IV, and prevailing law. The company should complete all bracketed fields and confirm the final compensation structure before issuing this letter.
                         </p>
@@ -385,12 +427,12 @@ export default function DocumentViewerModal({ document, company, onClose }) {
                     </div>
 
                     {/* Closing Signatures */}
-                    <div className="mt-2.5">
-                      <p className="text-[10.5px] font-medium text-slate-800">Regards,</p>
-                      <p className="text-[11px] font-bold text-slate-900">Human Resources Department</p>
-                      <p className="text-[11px] font-bold text-slate-900">MARGEY LABS PRIVATE LIMITED</p>
-                      <div className="mt-1">
-                        <MargeySignatoryBlock align="left" stampSize={80} />
+                    <div className="mt-2">
+                      <p className="text-[10px] font-medium text-slate-800">Regards,</p>
+                      <p className="text-[10.5px] font-bold text-slate-900">Human Resources Department</p>
+                      <p className="text-[10.5px] font-bold text-slate-900">MARGEY LABS PRIVATE LIMITED</p>
+                      <div className="mt-0.5">
+                        <MargeySignatoryBlock align="left" stampSize={72} />
                       </div>
                     </div>
                   </div>
@@ -400,8 +442,8 @@ export default function DocumentViewerModal({ document, company, onClose }) {
 
                 {/* PAGE 2: ANNEXURE – I: Compensation & Salary Structure */}
                 <div
-                  className="printable-page bg-white text-slate-900 rounded-none shadow-none border-none p-7 sm:p-8 font-sans flex flex-col justify-between"
-                  style={{ width: '210mm', minHeight: '296mm', height: '296mm' }}
+                  className="printable-page bg-white text-slate-900 rounded-none shadow-none border-none p-6 sm:p-7 font-sans flex flex-col justify-between"
+                  style={{ width: '210mm', minHeight: '295.5mm', height: '295.5mm' }}
                 >
                   <div>
                     <MargeyHeader
@@ -429,7 +471,7 @@ export default function DocumentViewerModal({ document, company, onClose }) {
                     </p>
 
                     {/* Compensation Breakup Table */}
-                    <div className="border border-slate-400 text-[10.5px] mb-3">
+                    <div className="border border-slate-400 text-[10px] mb-3">
                       <table className="w-full border-collapse">
                         <thead>
                           <tr className="bg-slate-100 text-slate-900 uppercase text-[9.5px] font-bold border-b border-slate-400">
@@ -488,18 +530,18 @@ export default function DocumentViewerModal({ document, company, onClose }) {
                     </p>
 
                     {/* Dual Signatory Block */}
-                    <div className="pt-4 border-t border-slate-300 grid grid-cols-2 gap-4 text-[10.5px]">
+                    <div className="pt-3 border-t border-slate-300 grid grid-cols-2 gap-4 text-[10px]">
                       <div>
                         <p className="font-bold text-slate-900">For MARGEY LABS PVT. LTD.</p>
                         <div className="mt-1">
-                          <MargeySignatoryBlock align="left" stampSize={75} />
+                          <MargeySignatoryBlock align="left" stampSize={72} />
                         </div>
                       </div>
                       <div className="flex flex-col justify-end">
                         <p className="font-bold text-slate-900 mb-6">Candidate Acceptance Signature</p>
-                        <div className="border-b border-slate-800 w-48 mb-1"></div>
-                        <p className="text-[10px] text-slate-700">Signature: {candidateName}</p>
-                        <p className="text-[10px] text-slate-700">Date: ________________________</p>
+                        <div className="border-b border-slate-800 w-44 mb-1"></div>
+                        <p className="text-[9.5px] text-slate-700">Signature: {candidateName}</p>
+                        <p className="text-[9.5px] text-slate-700">Date: ________________________</p>
                       </div>
                     </div>
                   </div>
@@ -512,8 +554,8 @@ export default function DocumentViewerModal({ document, company, onClose }) {
                   <>
                     {/* PAGE 3: ANNEXURE – II: Role Profile */}
                     <div
-                      className="printable-page bg-white text-slate-900 rounded-none shadow-none border-none p-7 sm:p-8 font-sans flex flex-col justify-between"
-                      style={{ width: '210mm', minHeight: '296mm', height: '296mm' }}
+                      className="printable-page bg-white text-slate-900 rounded-none shadow-none border-none p-6 sm:p-7 font-sans flex flex-col justify-between"
+                      style={{ width: '210mm', minHeight: '295.5mm', height: '295.5mm' }}
                     >
                       <div>
                         <MargeyHeader
@@ -531,16 +573,16 @@ export default function DocumentViewerModal({ document, company, onClose }) {
                           </p>
                         </div>
 
-                        <div className="space-y-3 text-[10.5px] leading-relaxed text-slate-800 font-sans text-justify mt-2">
+                        <div className="space-y-2.5 text-[10px] leading-relaxed text-slate-800 font-sans text-justify mt-2">
                           <div>
-                            <h3 className="font-bold text-slate-900 text-[11.5px] mb-1">Purpose of the role</h3>
+                            <h3 className="font-bold text-slate-900 text-[11px] mb-0.5">Purpose of the role</h3>
                             <p>
                               To assist with efficient HR administration and employee support, while maintaining accurate records and helping the organization follow its employment procedures.
                             </p>
                           </div>
 
                           <div>
-                            <h3 className="font-bold text-slate-900 text-[11.5px] mb-1">Principal responsibilities</h3>
+                            <h3 className="font-bold text-slate-900 text-[11px] mb-0.5">Principal responsibilities</h3>
                             <ul className="list-disc pl-5 space-y-1 text-slate-700">
                               <li>Assist with recruitment activities, including vacancy posting, candidate screening, interview scheduling, and follow-up.</li>
                               <li>Coordinate joining documentation, induction, onboarding checklists, and employee file creation.</li>
@@ -568,8 +610,8 @@ export default function DocumentViewerModal({ document, company, onClose }) {
 
                     {/* PAGE 4: ANNEXURE – III: Company Policies and Employee Information */}
                     <div
-                      className="printable-page bg-white text-slate-900 rounded-none shadow-none border-none p-7 sm:p-8 font-sans flex flex-col justify-between"
-                      style={{ width: '210mm', minHeight: '296mm', height: '296mm' }}
+                      className="printable-page bg-white text-slate-900 rounded-none shadow-none border-none p-6 sm:p-7 font-sans flex flex-col justify-between"
+                      style={{ width: '210mm', minHeight: '295.5mm', height: '295.5mm' }}
                     >
                       <div>
                         <MargeyHeader
@@ -587,13 +629,13 @@ export default function DocumentViewerModal({ document, company, onClose }) {
                           </p>
                         </div>
 
-                        <div className="space-y-3 text-[10px] leading-relaxed text-slate-800 font-sans text-justify mt-2">
+                        <div className="space-y-2.5 text-[9.8px] leading-relaxed text-slate-800 font-sans text-justify mt-2">
                           <p className="italic text-slate-600">
                             The company should provide the employee with the applicable policies or access to them and identify which policies have been formally adopted.
                           </p>
 
                           <div>
-                            <h3 className="font-bold text-slate-900 text-[11px] mb-1">Adopted Corporate Policies</h3>
+                            <h3 className="font-bold text-slate-900 text-[10.5px] mb-0.5">Adopted Corporate Policies</h3>
                             <ul className="list-disc pl-5 space-y-0.5 text-slate-700">
                               <li>Code of Conduct and Professional Behavior</li>
                               <li>Attendance, Leave, and Working Hours</li>
@@ -607,7 +649,7 @@ export default function DocumentViewerModal({ document, company, onClose }) {
                           </div>
 
                           <div>
-                            <h3 className="font-bold text-slate-900 text-[11px] mb-1">Financial and Statutory benefits</h3>
+                            <h3 className="font-bold text-slate-900 text-[10.5px] mb-0.5">Financial and Statutory benefits</h3>
                             <ul className="list-disc pl-5 space-y-0.5 text-slate-700">
                               <li><strong>Annual Performance Bonus:</strong> Additional payment based on individual or company performance.</li>
                               <li><strong>Festival Bonus:</strong> Additional company-provided festive reward.</li>
@@ -616,7 +658,7 @@ export default function DocumentViewerModal({ document, company, onClose }) {
                           </div>
 
                           <div>
-                            <h3 className="font-bold text-slate-900 text-[11px] mb-1">Insurance and Medical benefits</h3>
+                            <h3 className="font-bold text-slate-900 text-[10.5px] mb-0.5">Insurance and Medical benefits</h3>
                             <ul className="list-disc pl-5 space-y-0.5 text-slate-700">
                               <li><strong>Family Health Insurance:</strong> Medical coverage for eligible dependents.</li>
                               <li><strong>Maternity Benefit:</strong> Statutory maternity benefits and any additional company benefits.</li>
@@ -624,7 +666,7 @@ export default function DocumentViewerModal({ document, company, onClose }) {
                           </div>
 
                           <div>
-                            <h3 className="font-bold text-slate-900 text-[11px] mb-1">Transportation & Welfare Benefits</h3>
+                            <h3 className="font-bold text-slate-900 text-[10.5px] mb-0.5">Transportation & Welfare Benefits</h3>
                             <ul className="list-disc pl-5 space-y-0.5 text-slate-700">
                               <li><strong>Cab Facility:</strong> Eligible employees may be provided with cab facilities based on shift timings, business requirements and company transportation policy.</li>
                             </ul>
@@ -637,8 +679,8 @@ export default function DocumentViewerModal({ document, company, onClose }) {
 
                     {/* PAGE 5: ANNEXURE – IV: Confidentiality and Data Protection */}
                     <div
-                      className="printable-page bg-white text-slate-900 rounded-none shadow-none border-none p-7 sm:p-8 font-sans flex flex-col justify-between"
-                      style={{ width: '210mm', minHeight: '296mm', height: '296mm' }}
+                      className="printable-page bg-white text-slate-900 rounded-none shadow-none border-none p-6 sm:p-7 font-sans flex flex-col justify-between"
+                      style={{ width: '210mm', minHeight: '295.5mm', height: '295.5mm' }}
                     >
                       <div>
                         <MargeyHeader
@@ -656,16 +698,16 @@ export default function DocumentViewerModal({ document, company, onClose }) {
                           </p>
                         </div>
 
-                        <div className="space-y-3 text-[10.5px] leading-relaxed text-slate-800 font-sans text-justify mt-2">
+                        <div className="space-y-2.5 text-[10px] leading-relaxed text-slate-800 font-sans text-justify mt-2">
                           <div>
-                            <h3 className="font-bold text-slate-900 text-[11px] mb-1">Confidential information</h3>
+                            <h3 className="font-bold text-slate-900 text-[10.5px] mb-0.5">Confidential information</h3>
                             <p>
                               Confidential information includes non-public employee and candidate records, compensation data, recruitment plans, client information, business plans, passwords, internal reports, financial data and proprietary processes.
                             </p>
                           </div>
 
                           <div>
-                            <h3 className="font-bold text-slate-900 text-[11px] mb-1">Required safeguards</h3>
+                            <h3 className="font-bold text-slate-900 text-[10.5px] mb-0.5">Required safeguards</h3>
                             <ul className="list-disc pl-5 space-y-1 text-slate-700">
                               <li>Access information only for authorised work purposes.</li>
                               <li>Do not disclose, copy, photograph, download or transfer confidential information without approval.</li>
@@ -689,8 +731,8 @@ export default function DocumentViewerModal({ document, company, onClose }) {
 
                     {/* PAGE 6: ANNEXURE – V: Employment Terms and Conditions & Acceptance */}
                     <div
-                      className="printable-page bg-white text-slate-900 rounded-none shadow-none border-none p-7 sm:p-8 font-sans flex flex-col justify-between"
-                      style={{ width: '210mm', minHeight: '296mm', height: '296mm' }}
+                      className="printable-page bg-white text-slate-900 rounded-none shadow-none border-none p-6 sm:p-7 font-sans flex flex-col justify-between"
+                      style={{ width: '210mm', minHeight: '295.5mm', height: '295.5mm' }}
                     >
                       <div>
                         <MargeyHeader
@@ -699,7 +741,7 @@ export default function DocumentViewerModal({ document, company, onClose }) {
                           isConfidential={true}
                         />
 
-                        <div className="text-center my-2">
+                        <div className="text-center my-1.5">
                           <h2 className="text-sm font-bold text-slate-900 tracking-wider uppercase font-sans">
                             ANNEXURE – V
                           </h2>
@@ -708,7 +750,7 @@ export default function DocumentViewerModal({ document, company, onClose }) {
                           </p>
                         </div>
 
-                        <div className="space-y-1.5 text-[9.8px] leading-[1.38] text-slate-800 font-sans text-justify mt-2">
+                        <div className="space-y-1 text-[9.2px] leading-[1.3] text-slate-800 font-sans text-justify mt-1">
                           <p><strong>Commencement:</strong> Employment begins on the joining date confirmed in writing after completion of joining formalities.</p>
                           <p><strong>Probation:</strong> Probation will last {probationPeriod}. Performance and suitability may be reviewed; any extension or confirmation will be communicated in writing.</p>
                           <p><strong>Working hours:</strong> Working hours, breaks, shifts, and weekly holidays will follow the company schedule and applicable law.</p>
@@ -724,11 +766,11 @@ export default function DocumentViewerModal({ document, company, onClose }) {
                         </div>
 
                         {/* Candidate Acceptance Box */}
-                        <div className="mt-4 p-3 border border-slate-400 bg-slate-50 text-[10px] space-y-2">
+                        <div className="mt-2.5 p-2.5 border border-slate-400 bg-slate-50 text-[9.5px] space-y-1.5">
                           <p className="font-semibold text-slate-900">
                             I have read, understood, and accept the offer of employment and the terms and conditions outlined in this Letter of Offer and Annexures.
                           </p>
-                          <div className="pt-4 flex justify-between items-end">
+                          <div className="pt-3 flex justify-between items-end">
                             <div>
                               <p className="font-bold text-slate-900">Candidate Name: {candidateName}</p>
                               <p className="text-slate-700">Date: ________________________</p>
@@ -753,8 +795,8 @@ export default function DocumentViewerModal({ document, company, onClose }) {
             {/* ============================================================== */}
             {document.type === 'experience' && (
               <div
-                className="printable-page bg-white text-slate-900 rounded-none shadow-none border-none p-7 sm:p-8 font-sans flex flex-col justify-between"
-                style={{ width: '210mm', minHeight: '296mm', height: '296mm' }}
+                className="printable-page bg-white text-slate-900 rounded-none shadow-none border-none p-6 sm:p-7 font-sans flex flex-col justify-between"
+                style={{ width: '210mm', minHeight: '295.5mm', height: '295.5mm' }}
               >
                 <div>
                   <MargeyHeader
@@ -797,7 +839,7 @@ export default function DocumentViewerModal({ document, company, onClose }) {
                   </div>
 
                   <div className="mt-8">
-                    <MargeySignatoryBlock align="left" stampSize={90} />
+                    <MargeySignatoryBlock align="left" stampSize={85} />
                   </div>
                 </div>
 
@@ -810,8 +852,8 @@ export default function DocumentViewerModal({ document, company, onClose }) {
             {/* ============================================================== */}
             {document.type === 'relieving' && (
               <div
-                className="printable-page bg-white text-slate-900 rounded-none shadow-none border-none p-7 sm:p-8 font-sans flex flex-col justify-between"
-                style={{ width: '210mm', minHeight: '296mm', height: '296mm' }}
+                className="printable-page bg-white text-slate-900 rounded-none shadow-none border-none p-6 sm:p-7 font-sans flex flex-col justify-between"
+                style={{ width: '210mm', minHeight: '295.5mm', height: '295.5mm' }}
               >
                 <div>
                   <MargeyHeader
@@ -858,7 +900,7 @@ export default function DocumentViewerModal({ document, company, onClose }) {
                   </div>
 
                   <div className="mt-8">
-                    <MargeySignatoryBlock align="left" stampSize={90} />
+                    <MargeySignatoryBlock align="left" stampSize={85} />
                   </div>
                 </div>
 

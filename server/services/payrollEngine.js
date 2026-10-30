@@ -103,13 +103,13 @@ function calculateSalaryStructure(annualCTC, statutorySettings = {}) {
   // 2. House Rent Allowance (40% of Basic Salary)
   const hraAnnual = Math.round(basicAnnual * 0.40);
 
-  // 3. Conveyance & Medical Allowances
-  const conveyanceAnnual = ctc > 100000 ? 9600 : 0;
-  const medicalAnnual = ctc > 100000 ? 15000 : 0;
+  // 3. Conveyance & Medical Allowances (Traveling Allowance: ₹2,000/mo, Medical: ₹1,500/mo)
+  const conveyanceAnnual = ctc > 100000 ? 24000 : 0;
+  const medicalAnnual = ctc > 100000 ? 18000 : 0;
 
-  // 4. Network Bill & Other Allowances
-  const networkAllowanceAnnual = ctc > 150000 ? 12000 : 0;
-  const otherAllowanceAnnual = ctc > 150000 ? 12000 : 0;
+  // 4. Internet Allowance & Food Allowances (Internet: ₹1,500/mo, Food: ₹2,000/mo)
+  const networkAllowanceAnnual = ctc > 150000 ? 18000 : 0;
+  const otherAllowanceAnnual = ctc > 150000 ? 24000 : 0;
   
   // 5. Special Allowance is the balancing figure
   const fixedAnnualSum = basicAnnual + hraAnnual + conveyanceAnnual + medicalAnnual + networkAllowanceAnnual + otherAllowanceAnnual;
