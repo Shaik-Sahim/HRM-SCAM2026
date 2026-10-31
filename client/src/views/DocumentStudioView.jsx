@@ -14,7 +14,9 @@ import {
   Filter,
   CheckCircle2,
   Clock,
-  Building
+  Building,
+  Upload,
+  BadgeCheck
 } from 'lucide-react';
 import { 
   fetchDocuments, 
@@ -49,7 +51,9 @@ export default function DocumentStudioView({ employees, company, onViewDocument 
     issueDate: todayIso,
     joiningDate: '',
     noticePeriodDays: '',
-    workLocation: ''
+    workLocation: '',
+    includeStamp: false,
+    employeeSignature: ''
   });
   const [offerPreviewCTC, setOfferPreviewCTC] = useState(null);
 
@@ -68,9 +72,34 @@ export default function DocumentStudioView({ employees, company, onViewDocument 
         department: emp.department || prev.department,
         annualCTC: emp.annualCTC || prev.annualCTC,
         joiningDate: emp.dateOfJoining || prev.joiningDate,
-        workLocation: emp.location || 'Bengaluru'
+        workLocation: emp.location || 'Bengaluru',
+        employeeSignature: emp.signature || prev.employeeSignature || ''
       }));
     }
+  };
+
+  const handleSignatureUpload = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      alert('Please upload a valid image file (PNG, JPG, WebP).');
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      setOfferForm(prev => ({
+        ...prev,
+        employeeSignature: reader.result
+      }));
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleRemoveSignature = () => {
+    setOfferForm(prev => ({
+      ...prev,
+      employeeSignature: ''
+    }));
   };
 
   // ================= Experience Letter Form State ================= //
@@ -416,6 +445,82 @@ export default function DocumentStudioView({ employees, company, onViewDocument 
                     placeholder="e.g. 60"
                     className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white font-mono"
                   />
+                </div>
+
+                {/* Stamp & Employee Signature Options */}
+                <div className="sm:col-span-2 p-3.5 rounded-xl bg-slate-950/70 border border-slate-800 space-y-3">
+                  <div className="flex items-center justify-between pb-2 border-b border-slate-800">
+                    <span className="text-xs font-bold text-white flex items-center gap-1.5">
+                      <BadgeCheck className="w-4 h-4 text-cyan-400" />
+                      Signatures & Stamp Customization
+                    </span>
+                    <span className="text-[10px] text-slate-400 font-medium">Offer Letter Format</span>
+                  </div>
+
+                  {/* Stamp Option (Unchecked by default) */}
+                  <div className="flex items-start gap-3 p-2.5 rounded-lg bg-slate-900 border border-slate-800/80">
+                    <input
+                      type="checkbox"
+                      id="optIncludeStamp"
+                      checked={offerForm.includeStamp}
+                      onChange={(e) => setOfferForm(prev => ({ ...prev, includeStamp: e.target.checked }))}
+                      className="w-4 h-4 mt-0.5 rounded border-slate-700 bg-slate-800 text-cyan-500 focus:ring-cyan-500 cursor-pointer"
+                    />
+                    <label htmlFor="optIncludeStamp" className="text-xs text-slate-300 cursor-pointer select-none">
+                      <strong className="block text-slate-100 font-semibold">Include Company Rubber Stamp</strong>
+                      <span className="text-[11px] text-slate-400 leading-tight block mt-0.5">
+                        {offerForm.includeStamp 
+                          ? 'Official blue rubber stamp + authorized signature will be printed.' 
+                          : 'Currently: Only signature is printed (no stamp). Click to include rubber stamp.'}
+                      </span>
+                    </label>
+                  </div>
+
+                  {/* Employee Signature PNG Input */}
+                  <div className="p-2.5 rounded-lg bg-slate-900 border border-slate-800/80">
+                    <label className="text-xs font-semibold text-slate-300 block mb-1">
+                      Employee Signature (PNG / Image)
+                    </label>
+                    {offerForm.employeeSignature ? (
+                      <div className="flex items-center gap-3 mt-1 p-2 bg-slate-800/90 rounded-lg border border-slate-700">
+                        <div className="h-10 w-28 bg-white/95 rounded px-2 flex items-center justify-center shrink-0 border border-slate-300">
+                          <img 
+                            src={offerForm.employeeSignature} 
+                            alt="Employee Signature Preview" 
+                            className="max-h-8 max-w-full object-contain"
+                          />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-[11px] font-bold text-emerald-400">Signature Attached</p>
+                          <p className="text-[10px] text-slate-400 truncate">Reflects above Employee Signature line (Annexure I & V)</p>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={handleRemoveSignature}
+                          className="p-1.5 text-rose-400 hover:text-rose-300 hover:bg-rose-950/40 rounded transition-colors"
+                          title="Remove Signature"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    ) : (
+                      <div>
+                        <label className="flex items-center justify-center gap-2 px-3 py-2 border border-dashed border-slate-700 hover:border-cyan-500 rounded-lg cursor-pointer bg-slate-800/40 hover:bg-slate-800/70 transition-all text-xs text-slate-300">
+                          <Upload className="w-3.5 h-3.5 text-cyan-400" />
+                          <span>Upload Candidate / Employee Signature (PNG)</span>
+                          <input
+                            type="file"
+                            accept="image/png, image/jpeg, image/webp"
+                            onChange={handleSignatureUpload}
+                            className="hidden"
+                          />
+                        </label>
+                        <p className="text-[10px] text-slate-400 mt-1">
+                          Optional: Upload transparent PNG signature to auto-print candidate acceptance. Leave empty for physical pen signing.
+                        </p>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>

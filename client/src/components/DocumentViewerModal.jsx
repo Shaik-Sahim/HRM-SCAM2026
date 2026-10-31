@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { 
   X, 
   Printer, 
@@ -7,7 +7,8 @@ import {
   CheckCircle, 
   FileText, 
   Copy,
-  Layers
+  Layers,
+  BadgeCheck
 } from 'lucide-react';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
@@ -61,10 +62,16 @@ export default function DocumentViewerModal({ document, company, onClose }) {
   const [emailSent, setEmailSent] = useState(false);
   const [copied, setCopied] = useState(false);
   const [showFullAnnexure, setShowFullAnnexure] = useState(true); // Full 6-page package vs 2-page brief
+  const [includeStamp, setIncludeStamp] = useState(Boolean(document?.includeStamp));
   const printRef = useRef(null);
+
+  useEffect(() => {
+    setIncludeStamp(Boolean(document?.includeStamp));
+  }, [document]);
 
   if (!document) return null;
 
+  const employeeSignature = document.employeeSignature || document.candidateSignature || document.candidate?.signature || document.employee?.signature || null;
   const candidateName = document.candidate?.fullName || document.employee?.fullName || 'Ms. Batta Vyshnavi';
   const candidateAddress = document.candidate?.address || 'Papireddypalem,\nT.P. Gudur Mandal, Nellore District,\nAndhra Pradesh';
   const designation = document.employment?.designation || document.employee?.designation || 'HR Executive';
@@ -236,26 +243,42 @@ export default function DocumentViewerModal({ document, company, onClose }) {
 
           <div className="flex items-center gap-2">
             {document.type === 'offer' && (
-              <div className="hidden sm:flex bg-slate-900 border border-slate-800 rounded-lg p-0.5 text-xs mr-1">
+              <>
+                <div className="hidden sm:flex bg-slate-900 border border-slate-800 rounded-lg p-0.5 text-xs mr-1">
+                  <button
+                    onClick={() => setShowFullAnnexure(true)}
+                    className={`px-2.5 py-1 rounded font-medium transition-all ${
+                      showFullAnnexure ? 'bg-cyan-600 text-white shadow' : 'text-slate-400 hover:text-slate-200'
+                    }`}
+                    title="Full package including all 5 Annexures (6 Pages)"
+                  >
+                    Full Package (6 Pages)
+                  </button>
+                  <button
+                    onClick={() => setShowFullAnnexure(false)}
+                    className={`px-2.5 py-1 rounded font-medium transition-all ${
+                      !showFullAnnexure ? 'bg-cyan-600 text-white shadow' : 'text-slate-400 hover:text-slate-200'
+                    }`}
+                    title="Brief 2-page offer letter with Annexure I compensation table"
+                  >
+                    Quick (2 Pages)
+                  </button>
+                </div>
+
                 <button
-                  onClick={() => setShowFullAnnexure(true)}
-                  className={`px-2.5 py-1 rounded font-medium transition-all ${
-                    showFullAnnexure ? 'bg-cyan-600 text-white shadow' : 'text-slate-400 hover:text-slate-200'
+                  type="button"
+                  onClick={() => setIncludeStamp(!includeStamp)}
+                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                    includeStamp 
+                      ? 'bg-blue-600/30 text-blue-300 border border-blue-500/50 shadow-sm' 
+                      : 'bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700'
                   }`}
-                  title="Full package including all 5 Annexures (6 Pages)"
+                  title={includeStamp ? 'Stamp is enabled. Click to toggle OFF (signature only).' : 'Stamp is disabled. Click to toggle ON.'}
                 >
-                  Full Package (6 Pages)
+                  <BadgeCheck className={`w-3.5 h-3.5 ${includeStamp ? 'text-blue-400' : 'text-slate-400'}`} />
+                  <span>Company Stamp: <strong className={includeStamp ? 'text-blue-200 font-bold' : 'text-slate-400'}>{includeStamp ? 'ON' : 'OFF'}</strong></span>
                 </button>
-                <button
-                  onClick={() => setShowFullAnnexure(false)}
-                  className={`px-2.5 py-1 rounded font-medium transition-all ${
-                    !showFullAnnexure ? 'bg-cyan-600 text-white shadow' : 'text-slate-400 hover:text-slate-200'
-                  }`}
-                  title="Brief 2-page offer letter with Annexure I compensation table"
-                >
-                  Quick (2 Pages)
-                </button>
-              </div>
+              </>
             )}
 
             <button
@@ -433,12 +456,12 @@ export default function DocumentViewerModal({ document, company, onClose }) {
                       </p>
                     </div>
 
-                    {/* Closing Signatures with Official Stamp & Authorized Signatory */}
+                    {/* Closing Signatures with Authorized Signatory & Optional Stamp */}
                     <div className="mt-3 text-slate-900 font-sans">
                       <p className="text-[11px] font-medium text-slate-800">Yours Sincerely,</p>
                       <p className="text-[11.5px] font-bold text-slate-900 mt-0.5">For MARGEY LABS PRIVATE LIMITED</p>
                       <div className="my-1.5">
-                        <MargeyStamp size={92} />
+                        <MargeyStamp size={92} showStamp={includeStamp} />
                       </div>
                       <div className="pt-1 border-t border-slate-400 w-52">
                         <p className="font-bold text-slate-900 text-[10.5px]">Authorized Signatory</p>
@@ -555,7 +578,7 @@ export default function DocumentViewerModal({ document, company, onClose }) {
                       <div>
                         <p className="font-bold text-slate-900 text-[11.5px]">For MARGEY LABS PRIVATE LIMITED</p>
                         <div className="my-1.5">
-                          <MargeyStamp size={88} />
+                          <MargeyStamp size={88} showStamp={includeStamp} />
                         </div>
                         <div className="pt-1 border-t border-slate-400 w-52">
                           <p className="font-bold text-slate-900 text-[10.5px]">Authorized Signatory</p>
@@ -564,10 +587,20 @@ export default function DocumentViewerModal({ document, company, onClose }) {
                       </div>
                       <div className="flex flex-col items-end">
                         <div className="w-56 text-left">
-                          <p className="font-bold text-slate-900 text-[11px] mb-5">Employee Signature</p>
+                          <p className="font-bold text-slate-900 text-[11px] mb-1">Employee Signature</p>
+                          {employeeSignature ? (
+                            <div className="h-10 flex items-end pb-1">
+                              <img 
+                                src={employeeSignature} 
+                                alt="Employee Signature" 
+                                className="max-h-10 max-w-[150px] object-contain" 
+                              />
+                            </div>
+                          ) : (
+                            <div className="h-8" />
+                          )}
                           <div className="pt-1 border-t border-slate-400 w-full">
                             <p className="font-bold text-slate-900 text-[10.5px]">{candidateName}</p>
-                            <p className="text-slate-600 text-[10px] mt-0.5">Date: ________________________</p>
                           </div>
                         </div>
                       </div>
@@ -871,7 +904,7 @@ export default function DocumentViewerModal({ document, company, onClose }) {
                           <p><strong>15. Entire Agreement & Severability:</strong> This Offer Letter, together with Annexures I through V, constitutes the entire agreement between the parties, superseding all prior oral or written representations.</p>
                         </div>
 
-                        {/* Candidate Acceptance Box with Official Stamp & Signatures */}
+                        {/* Candidate Acceptance Box with Signatures & Optional Stamp */}
                         <div className="mt-3 p-3.5 border border-slate-400 bg-slate-50 text-[10px] space-y-2">
                           <p className="font-semibold text-slate-900 leading-relaxed">
                             I have read, understood, and hereby unconditionally accept the offer of employment and agree to abide by all the terms, conditions, and policies set forth in this Letter of Offer and Annexures I through V.
@@ -880,14 +913,25 @@ export default function DocumentViewerModal({ document, company, onClose }) {
                             <div>
                               <p className="font-bold text-slate-900 text-[10.5px]">For MARGEY LABS PRIVATE LIMITED</p>
                               <div className="my-1">
-                                <MargeyStamp size={80} />
+                                <MargeyStamp size={80} showStamp={includeStamp} />
                               </div>
                               <p className="font-bold text-slate-900 text-[10px]">Authorized Signatory</p>
                               <p className="text-slate-600 text-[9.5px]">Human Resources Department</p>
                             </div>
                             <div className="flex flex-col items-end">
                               <div className="w-56 text-left">
-                                <p className="font-bold text-slate-900 text-[10.5px] mb-5">Candidate Acceptance Signature</p>
+                                <p className="font-bold text-slate-900 text-[10.5px] mb-1">Candidate Acceptance Signature</p>
+                                {employeeSignature ? (
+                                  <div className="h-10 flex items-end pb-1">
+                                    <img 
+                                      src={employeeSignature} 
+                                      alt="Candidate Signature" 
+                                      className="max-h-10 max-w-[150px] object-contain" 
+                                    />
+                                  </div>
+                                ) : (
+                                  <div className="h-8" />
+                                )}
                                 <div className="border-t border-slate-800 pt-1">
                                   <p className="font-bold text-slate-900 text-[10px]">Candidate: {candidateName}</p>
                                   <p className="text-slate-700 text-[9.5px]">Place: Bengaluru</p>
@@ -954,7 +998,7 @@ export default function DocumentViewerModal({ document, company, onClose }) {
                   </div>
 
                   <div className="mt-8">
-                    <MargeySignatoryBlock align="left" stampSize={85} />
+                    <MargeySignatoryBlock align="left" stampSize={85} showStamp={includeStamp} />
                   </div>
                 </div>
 
@@ -1015,7 +1059,7 @@ export default function DocumentViewerModal({ document, company, onClose }) {
                   </div>
 
                   <div className="mt-8">
-                    <MargeySignatoryBlock align="left" stampSize={85} />
+                    <MargeySignatoryBlock align="left" stampSize={85} showStamp={includeStamp} />
                   </div>
                 </div>
 

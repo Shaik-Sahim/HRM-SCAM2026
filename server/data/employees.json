@@ -47,5 +47,54 @@
         "gross": 125000
       }
     }
+  },
+  {
+    "id": "ML7WGL",
+    "fullName": "Mano Rajendiran",
+    "email": "mano.rajendiran@margeylabs.com",
+    "phone": "+91 6366846493",
+    "dateOfBirth": "1993-07-01",
+    "dateOfJoining": "2025-11-10",
+    "groupDOJ": "2025-11-10",
+    "pfNumber": "MH/BAN/43477",
+    "location": "BANGALORE",
+    "department": "Engineering",
+    "designation": "Senior Software Engineer",
+    "status": "Active",
+    "employmentType": "Full-Time",
+    "annualCTC": 1200000,
+    "panNumber": "DOLPM0405R",
+    "uanNumber": "101181485601",
+    "bankName": "HDFC Bank",
+    "bankAccountNumber": "501000000000",
+    "ifscCode": "HDFC0001234",
+    "monthlyTDS": 0,
+    "customSalary": null,
+    "salaryStructure": {
+      "annualCTC": 1200000,
+      "monthlyCTC": 100000,
+      "annual": {
+        "basic": 600000,
+        "hra": 240000,
+        "conveyance": 24000,
+        "medical": 18000,
+        "conveyanceMedical": 42000,
+        "networkAllowance": 18000,
+        "otherAllowance": 24000,
+        "specialAllowance": 276000,
+        "gross": 1200000
+      },
+      "monthly": {
+        "basic": 50000,
+        "hra": 20000,
+        "conveyance": 2000,
+        "medical": 1500,
+        "conveyanceMedical": 3500,
+        "networkAllowance": 1500,
+        "otherAllowance": 2000,
+        "specialAllowance": 23000,
+        "gross": 100000
+      }
+    }
   }
 ]

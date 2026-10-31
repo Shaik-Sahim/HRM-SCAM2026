@@ -99,6 +99,8 @@ function generateOfferLetter(data, company, statutorySettings = {}) {
     title: 'LETTER OF OFFER',
     issueDate,
     formattedIssueDate,
+    includeStamp: data.includeStamp === true || data.includeStamp === 'true',
+    employeeSignature: data.employeeSignature || data.candidateSignature || '',
     candidate: {
       fullName: data.candidateName || data.employeeName || 'Ms. Batta Vyshnavi',
       email: data.email || 'vyshnavi.batta@example.com',
