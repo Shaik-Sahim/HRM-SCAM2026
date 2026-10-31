@@ -1,5 +1,5 @@
 import React from 'react';
-import { MARGEY_LOGO_DATA_URI } from '../assets/logoDataUri';
+import { MARGEY_LOGO_DATA_URI, MARGEY_STAMP_DATA_URI } from '../assets/logoDataUri';
 
 export function ProfuseLogo({ size = 42, height }) {
   const h = height || size;
@@ -67,7 +67,7 @@ export function ProfuseFooter() {
 
 export const MargeyFooter = ProfuseFooter;
 
-export function ProfuseStamp({ size = 92 }) {
+export function ProfuseStamp({ size = 94 }) {
   return (
     <div 
       className="relative select-none pointer-events-none inline-block"
@@ -81,10 +81,10 @@ export function ProfuseStamp({ size = 92 }) {
         position: 'relative'
       }}
     >
-      {/* Official Blue Circular Stamp with Integrated Signature Overlay */}
-      <svg 
-        width={size} 
-        height={size} 
+      {/* Official Circular Margey Labs Rubber Stamp Image with authentic ink blend */}
+      <img 
+        src={MARGEY_STAMP_DATA_URI} 
+        alt="MARGEY LABS PVT. LTD. Stamp" 
         style={{ 
           width: `${size}px`, 
           height: `${size}px`, 
@@ -92,90 +92,61 @@ export function ProfuseStamp({ size = 92 }) {
           minHeight: `${size}px`, 
           maxWidth: `${size}px`, 
           maxHeight: `${size}px`,
-          display: 'block' 
+          display: 'block',
+          mixBlendMode: 'multiply',
+          objectFit: 'contain'
         }} 
-        viewBox="0 0 140 140" 
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
+      />
+
+      {/* Official Authorized HR Signature (Murali K) vector-aligned across the stamp */}
+      <div 
+        className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none"
+        style={{ transform: 'rotate(-12deg)' }}
       >
-        {/* Outer dashed circle */}
-        <circle cx="70" cy="70" r="65" stroke="#0284c7" strokeWidth="2.2" strokeDasharray="3 2" opacity="0.95" />
-        {/* Inner solid borders */}
-        <circle cx="70" cy="70" r="59" stroke="#0369a1" strokeWidth="1.8" opacity="0.95" />
-        <circle cx="70" cy="70" r="41" stroke="#0284c7" strokeWidth="1.2" opacity="0.9" />
-
-        {/* Circular curved text path */}
-        <path id="circlePathTop" d="M 20,70 A 50,50 0 0,1 120,70" fill="none" />
-        <path id="circlePathBottom" d="M 120,70 A 50,50 0 0,1 20,70" fill="none" />
-
-        <text fill="#0369a1" fontSize="8.2" fontWeight="bold" letterSpacing="1.2">
-          <textPath href="#circlePathTop" startOffset="50%" textAnchor="middle">
-            MARGEY LABS PVT. LTD.
-          </textPath>
-        </text>
-
-        <text fill="#0369a1" fontSize="7.8" fontWeight="bold" letterSpacing="1.2">
-          <textPath href="#circlePathBottom" startOffset="50%" textAnchor="middle">
-            ★ BANGALORE ★
-          </textPath>
-        </text>
-
-        {/* Center Text: Bangalore */}
-        <text x="70" y="68" textAnchor="middle" fill="#0284c7" fontSize="9.5" fontWeight="bold" letterSpacing="0.8">
-          Bangalore
-        </text>
-        <line x1="50" y1="72" x2="90" y2="72" stroke="#0284c7" strokeWidth="1" opacity="0.85" />
-
-        {/* Official Authorized Signature (Murali K) - vector-locked onto the stamp */}
-        <g transform="rotate(-13 70 70)">
-          <text
-            x="70"
-            y="65"
-            textAnchor="middle"
-            dominantBaseline="central"
-            fill="#082f49"
-            style={{
-              fontFamily: "'Dancing Script', 'Caveat', 'Brush Script MT', 'Segoe Script', cursive, serif",
-              fontStyle: 'italic',
-              fontWeight: 800,
-              fontSize: '23px',
-              letterSpacing: '0.5px'
-            }}
-          >
-            Murali.k
-          </text>
-          {/* Authentic Wavy Underline Flourish */}
+        <span
+          style={{
+            fontFamily: "'Dancing Script', 'Caveat', 'Brush Script MT', 'Segoe Script', cursive, serif",
+            fontStyle: 'italic',
+            fontWeight: 800,
+            fontSize: `${size * 0.27}px`,
+            letterSpacing: '0.5px',
+            color: '#082f49',
+            display: 'block',
+            lineHeight: 1
+          }}
+        >
+          Murali.k
+        </span>
+        <svg width={size * 0.72} height={size * 0.14} viewBox="0 0 100 20" fill="none" className="mx-auto -mt-0.5">
           <path
-            d="M 28,75 Q 38,71 48,75 T 68,75 T 88,75 T 108,75"
-            fill="none"
+            d="M 5,10 Q 20,4 35,10 T 65,10 T 95,10"
             stroke="#082f49"
-            strokeWidth="1.8"
+            strokeWidth="2.5"
             strokeLinecap="round"
             opacity="0.95"
           />
-        </g>
-      </svg>
+        </svg>
+      </div>
     </div>
   );
 }
 
 export const MargeyStamp = ProfuseStamp;
 
-export function ProfuseSignatoryBlock({ align = 'left', showStamp = false, stampSize = 92 }) {
+export function ProfuseSignatoryBlock({ align = 'left', showStamp = true, stampSize = 92 }) {
   return (
     <div className={`text-slate-800 font-sans shrink-0 ${align === 'right' ? 'text-right' : 'text-left'}`}>
       <p className="font-medium text-slate-700 text-[11px] leading-tight">Yours Sincerely,</p>
       <p className="font-bold text-slate-900 text-[11.5px] leading-tight mt-0.5">For MARGEY LABS PRIVATE LIMITED</p>
       {showStamp ? (
-        <div className={`my-1 ${align === 'right' ? 'flex justify-end' : ''}`}>
+        <div className={`my-1.5 ${align === 'right' ? 'flex justify-end' : ''}`}>
           <ProfuseStamp size={stampSize} />
         </div>
-      ) : (
-        <div className={`mt-8 pt-1 border-t border-slate-400 w-48 ${align === 'right' ? 'ml-auto' : ''}`}>
-          <p className="font-bold text-slate-900 text-[11px] leading-tight">Authorized Signatory</p>
-          <p className="font-medium text-slate-600 text-[10px] leading-tight">Human Resources Department</p>
-        </div>
-      )}
+      ) : null}
+      <div className={`pt-1 border-t border-slate-400 w-52 ${align === 'right' ? 'ml-auto' : ''}`}>
+        <p className="font-bold text-slate-900 text-[10.5px] leading-tight">Authorized Signatory</p>
+        <p className="font-medium text-slate-600 text-[10px] leading-tight">Human Resources Department</p>
+      </div>
     </div>
   );
 }

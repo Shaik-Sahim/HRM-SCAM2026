@@ -14,6 +14,7 @@ import html2canvas from 'html2canvas';
 import { 
   MargeyHeader, 
   MargeyFooter, 
+  MargeyStamp,
   MargeySignatoryBlock 
 } from './ProfuseLetterhead';
 import { printDocument } from '../utils/printDocument';
@@ -419,18 +420,29 @@ export default function DocumentViewerModal({ document, company, onClose }) {
                         </p>
                       </div>
 
+                      {/* Section 5 */}
+                      <div>
+                        <p className="font-bold text-slate-900 text-[11.5px] mb-0.5">5. Offer Acceptance and Validity Window</p>
+                        <p>
+                          This offer remains valid for acceptance for seven (7) business days from the date of issue. Please indicate your formal acceptance by signing and dating the duplicate copy of this letter and the attached annexures, and returning them together with the pre-joining documentation listed in Annexure V.
+                        </p>
+                      </div>
+
                       <p>
                         We look forward to welcoming you to <strong>MARGEY LABS PRIVATE LIMITED</strong> and wish you grand success and professional growth in your role.
                       </p>
                     </div>
 
-                    {/* Closing Signatures */}
-                    <div className="mt-4 text-slate-900 font-sans">
-                      <p className="text-[11px] font-medium text-slate-800">Regards,</p>
-                      <p className="text-[11.5px] font-bold text-slate-900 mt-0.5">Human Resources Department</p>
-                      <p className="text-[11.5px] font-bold text-slate-900">MARGEY LABS PRIVATE LIMITED</p>
-                      <div className="mt-8 pt-1 border-t border-slate-400 w-52">
-                        <p className="text-[10.5px] text-slate-700 font-semibold">Authorized Signatory</p>
+                    {/* Closing Signatures with Official Stamp & Authorized Signatory */}
+                    <div className="mt-3 text-slate-900 font-sans">
+                      <p className="text-[11px] font-medium text-slate-800">Yours Sincerely,</p>
+                      <p className="text-[11.5px] font-bold text-slate-900 mt-0.5">For MARGEY LABS PRIVATE LIMITED</p>
+                      <div className="my-1.5">
+                        <MargeyStamp size={92} />
+                      </div>
+                      <div className="pt-1 border-t border-slate-400 w-52">
+                        <p className="font-bold text-slate-900 text-[10.5px]">Authorized Signatory</p>
+                        <p className="font-medium text-slate-600 text-[10px]">Human Resources Department</p>
                       </div>
                     </div>
                   </div>
@@ -528,27 +540,35 @@ export default function DocumentViewerModal({ document, company, onClose }) {
                       <p>
                         This illustration totals <strong>₹{ctcFormatted}</strong> as gross-pay components and does not separately account for employer contributions or benefits. The final CTC breakup must be confirmed by payroll. Applicable statutory employee deductions may reduce net take-home pay.
                       </p>
-                      <ul className="list-disc pl-5 space-y-1 text-slate-600 text-[10px]">
+                      <ul className="list-disc pl-5 space-y-1.5 text-slate-600 text-[10px]">
                         <li><strong>Statutory Withholdings:</strong> Deductions for Employee Provident Fund (EPF), Professional Tax (PT), and Tax Deducted at Source (TDS) under the Income Tax Act will be computed according to applicable statutory rates.</li>
                         <li><strong>Reimbursement & Allowances:</strong> Fixed allowances such as Traveling, Internet, and Medical components are subject to legitimate voucher claims and prevailing company expense reimbursement policies.</li>
                         <li><strong>Annual Appraisal:</strong> Compensation is reviewed on an annual cycle based on company performance milestones, individual goal achievement, and peer evaluations.</li>
+                        <li><strong>Gratuity & Retirement Benefits:</strong> Gratuity benefits become payable under the Payment of Gratuity Act, 1972 upon completion of five (5) continuous years of qualifying continuous service with the Company.</li>
+                        <li><strong>Salary Crediting & Bank Schedule:</strong> Monthly net salary disbursements are processed via electronic direct transfer on or before the final working day of each calendar month.</li>
+                        <li><strong>Confidentiality of Remuneration:</strong> Your compensation structure is strictly proprietary and confidential. Any unauthorized disclosure of salary details constitutes grounds for disciplinary action.</li>
                       </ul>
                     </div>
 
                     {/* Dual Signatory Block */}
-                    <div className="pt-3 border-t border-slate-300 grid grid-cols-2 gap-8 text-[11px] font-sans">
+                    <div className="pt-3 border-t border-slate-300 grid grid-cols-2 gap-8 text-[11px] font-sans items-end">
                       <div>
-                        <p className="font-bold text-slate-900">For MARGEY LABS PRIVATE LIMITED</p>
-                        <div className="mt-8 pt-1 border-t border-slate-400 w-52">
+                        <p className="font-bold text-slate-900 text-[11.5px]">For MARGEY LABS PRIVATE LIMITED</p>
+                        <div className="my-1.5">
+                          <MargeyStamp size={88} />
+                        </div>
+                        <div className="pt-1 border-t border-slate-400 w-52">
                           <p className="font-bold text-slate-900 text-[10.5px]">Authorized Signatory</p>
-                          <p className="text-slate-600 text-[10px]">Human Resources Department</p>
+                          <p className="font-medium text-slate-600 text-[10px]">Human Resources Department</p>
                         </div>
                       </div>
-                      <div>
-                        <p className="font-bold text-slate-900">Employee Signature</p>
-                        <div className="mt-8 pt-1 border-t border-slate-400 w-52">
-                          <p className="font-semibold text-slate-800 text-[10.5px]">{candidateName}</p>
-                          <p className="text-slate-600 text-[10px]">Date: ________________________</p>
+                      <div className="flex flex-col items-end">
+                        <div className="w-56 text-left">
+                          <p className="font-bold text-slate-900 text-[11px] mb-5">Employee Signature</p>
+                          <div className="pt-1 border-t border-slate-400 w-full">
+                            <p className="font-bold text-slate-900 text-[10.5px]">{candidateName}</p>
+                            <p className="text-slate-600 text-[10px] mt-0.5">Date: ________________________</p>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -616,6 +636,23 @@ export default function DocumentViewerModal({ document, company, onClose }) {
                               <li><strong>Information Security & Integrity:</strong> Zero non-compliance incidents regarding data privacy, confidentiality, and company code of conduct.</li>
                               <li><strong>Collaboration & Stakeholder Ownership:</strong> Positive feedback from cross-functional peers, management, and internal customers.</li>
                             </ul>
+                          </div>
+
+                          <div>
+                            <h3 className="font-bold text-slate-900 text-[11.5px] mb-1">Core Behavioral Competencies & Organizational Values</h3>
+                            <ul className="list-disc pl-5 space-y-1 text-slate-700">
+                              <li><strong>Integrity & Professional Governance:</strong> Unwavering commitment to truthfulness, regulatory compliance, and ethical business conduct.</li>
+                              <li><strong>Analytical Problem Solving:</strong> Demonstrating critical thinking, proactive root-cause analysis, and pragmatic solution design.</li>
+                              <li><strong>Cross-Functional Collaboration:</strong> Open, transparent communication and cooperative teamwork across diverse technical and business functions.</li>
+                              <li><strong>Agile Delivery & Accountability:</strong> High ownership of deliverables with disciplined adherence to organizational milestones and enterprise quality standards.</li>
+                            </ul>
+                          </div>
+
+                          <div>
+                            <h3 className="font-bold text-slate-900 text-[11.5px] mb-1">Professional Growth, Upskilling & Career Development</h3>
+                            <p>
+                              MARGEY LABS PRIVATE LIMITED encourages continuous learning, sponsored professional development certifications, hands-on architectural workshops, and quarterly structured leadership reviews to actively nurture your long-term career growth.
+                            </p>
                           </div>
                         </div>
                       </div>
@@ -690,6 +727,23 @@ export default function DocumentViewerModal({ document, company, onClose }) {
                               <li><strong>Telecommunication & Home Office:</strong> Internet and communication expense subsidies provided to support authorized hybrid working.</li>
                             </ul>
                           </div>
+
+                          <div>
+                            <h3 className="font-bold text-slate-900 text-[11.5px] mb-1">5. Leave Architecture & Public Holidays</h3>
+                            <ul className="list-disc pl-5 space-y-0.5 text-slate-700">
+                              <li><strong>Privilege / Annual Leave (PL):</strong> Accrued at 1.5 days per completed calendar month; eligible for annual rollover as defined in the HR Manual.</li>
+                              <li><strong>Casual & Sick Leaves (CL/SL):</strong> Twelve (12) days provided annually for incidental contingencies and health recuperation.</li>
+                              <li><strong>National & Festival Holidays:</strong> Ten (10) public holidays observed annually per the published Margey Labs holiday calendar.</li>
+                            </ul>
+                          </div>
+
+                          <div>
+                            <h3 className="font-bold text-slate-900 text-[11.5px] mb-1">6. Workplace Safety, Health & Environmental Compliance</h3>
+                            <ul className="list-disc pl-5 space-y-0.5 text-slate-700">
+                              <li><strong>Ergonomics & Physical Wellbeing:</strong> Optimized workstations, ambient climate controls, and ergonomic seating provided at all corporate facilities.</li>
+                              <li><strong>Emergency Readiness:</strong> Periodic fire drills, readily available first-aid facilities, and 24x7 emergency security helplines.</li>
+                            </ul>
+                          </div>
                         </div>
                       </div>
 
@@ -756,6 +810,22 @@ export default function DocumentViewerModal({ document, company, onClose }) {
                               Upon cessation of employment or demand, you must immediately return all company-owned laptops, storage media, software licenses, ID credentials, access cards, and files. Non-disclosure covenants remain permanently binding following separation.
                             </p>
                           </div>
+
+                          <div>
+                            <h3 className="font-bold text-slate-900 text-[11.5px] mb-1">6. Acceptable Use of IT Infrastructure & Cloud Platforms</h3>
+                            <ul className="list-disc pl-5 space-y-0.5 text-slate-700">
+                              <li>Corporate networks, email domains, and cloud environments must be used solely for authorized commercial purposes.</li>
+                              <li>Installation of unapproved third-party software, shadow IT applications, or peer-to-peer file sharing utilities is strictly barred.</li>
+                              <li>All corporate data at rest and in transit must remain encrypted in compliance with enterprise security baselines.</li>
+                            </ul>
+                          </div>
+
+                          <div>
+                            <h3 className="font-bold text-slate-900 text-[11.5px] mb-1">7. Public Communications, Social Media & Non-Disclosure Survival</h3>
+                            <p>
+                              You shall not post, publish, or discuss confidential organizational processes, customer accounts, internal codebases, or proprietary designs on public social media forums or blogs. All non-disclosure and intellectual property assignment covenants set forth in this Annexure survive the cessation of your employment indefinitely.
+                            </p>
+                          </div>
                         </div>
                       </div>
 
@@ -795,22 +865,35 @@ export default function DocumentViewerModal({ document, company, onClose }) {
                           <p><strong>9. Summary Dismissal:</strong> The Company reserves the right to terminate employment immediately without notice in cases of fraud, gross misconduct, insubordination, or material breach of trust.</p>
                           <p><strong>10. Separation Clearance & Asset Surrender:</strong> Full & Final (FnF) clearance is conditional upon surrendering all company assets, hardware, keys, and security credentials.</p>
                           <p><strong>11. Governing Law & Jurisdiction:</strong> All employment terms and disputes shall be governed by the laws of India, subject to the exclusive jurisdiction of the competent courts in Bengaluru, Karnataka.</p>
+                          <p><strong>12. Non-Disparagement & Good Faith:</strong> Neither during nor following separation shall you disparage, defame, or make derogatory statements regarding the Company, its directors, or its clients.</p>
+                          <p><strong>13. Exclusivity & Outside Commercial Interests:</strong> Employment is full-time and exclusive. Engaging in secondary employment, consulting, or moonlighting without documented board approval is strictly prohibited.</p>
+                          <p><strong>14. Dispute Resolution & Arbitration:</strong> In case of unresolved disputes, the matter shall be referred to binding arbitration conducted in Bengaluru in accordance with the Arbitration and Conciliation Act, 1996.</p>
+                          <p><strong>15. Entire Agreement & Severability:</strong> This Offer Letter, together with Annexures I through V, constitutes the entire agreement between the parties, superseding all prior oral or written representations.</p>
                         </div>
 
-                        {/* Candidate Acceptance Box */}
-                        <div className="mt-3 p-3 border border-slate-400 bg-slate-50 text-[10px] space-y-2">
-                          <p className="font-semibold text-slate-900">
+                        {/* Candidate Acceptance Box with Official Stamp & Signatures */}
+                        <div className="mt-3 p-3.5 border border-slate-400 bg-slate-50 text-[10px] space-y-2">
+                          <p className="font-semibold text-slate-900 leading-relaxed">
                             I have read, understood, and hereby unconditionally accept the offer of employment and agree to abide by all the terms, conditions, and policies set forth in this Letter of Offer and Annexures I through V.
                           </p>
-                          <div className="pt-3 flex justify-between items-end">
+                          <div className="pt-2 grid grid-cols-2 gap-8 items-end">
                             <div>
-                              <p className="font-bold text-slate-900 text-[10.5px]">Candidate Name: {candidateName}</p>
-                              <p className="text-slate-700 text-[10px] mt-0.5">Date: ________________________</p>
-                              <p className="text-slate-700 text-[10px]">Place: Bengaluru</p>
+                              <p className="font-bold text-slate-900 text-[10.5px]">For MARGEY LABS PRIVATE LIMITED</p>
+                              <div className="my-1">
+                                <MargeyStamp size={80} />
+                              </div>
+                              <p className="font-bold text-slate-900 text-[10px]">Authorized Signatory</p>
+                              <p className="text-slate-600 text-[9.5px]">Human Resources Department</p>
                             </div>
-                            <div className="text-right">
-                              <div className="border-b border-slate-800 w-52 mb-1"></div>
-                              <span className="font-bold text-slate-900 text-[10.5px]">Candidate Signature</span>
+                            <div className="flex flex-col items-end">
+                              <div className="w-56 text-left">
+                                <p className="font-bold text-slate-900 text-[10.5px] mb-4">Candidate Acceptance Signature</p>
+                                <div className="border-t border-slate-800 pt-1">
+                                  <p className="font-bold text-slate-900 text-[10px]">Candidate: {candidateName}</p>
+                                  <p className="text-slate-700 text-[9.5px]">Date: ________________________</p>
+                                  <p className="text-slate-700 text-[9.5px]">Place: Bengaluru</p>
+                                </div>
+                              </div>
                             </div>
                           </div>
                         </div>
