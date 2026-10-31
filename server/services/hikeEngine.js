@@ -104,7 +104,7 @@ function generateAppraisalLetter(employee, hikeResult, company) {
       phone: company.phone || '080-95883256',
       email: company.email || 'hr@margeylabs.com',
       website: company.website || 'www.margeylabs.com',
-      signatoryName: company.signatoryName || 'Murali K',
+      signatoryName: company.signatoryName || 'Mohammed Vastulla Baig',
       signatoryTitle: company.signatoryTitle || 'Manager - Human Resources'
     },
     hikeDetails: {

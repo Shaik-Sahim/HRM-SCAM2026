@@ -28,7 +28,7 @@ const companyProfile = {
   website: "margeylabs.com",
   email: "info@margeylabs.com",
   phone: "+91 86608 03099 | +91 9100588005",
-  signatoryName: "Murali K",
+  signatoryName: "Mohammed Vastulla Baig",
   signatoryTitle: "Manager - Human Resources",
   bankName: "HDFC Bank Ltd.",
   bankBranch: "Marathahalli Branch, Bangalore",

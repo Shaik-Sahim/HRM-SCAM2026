@@ -39,19 +39,17 @@ export default function DocumentStudioView({ employees, company, onViewDocument 
   // ================= Offer Letter Form State (Defaults to Template Standard) ================= //
   const [selectedOfferEmpId, setSelectedOfferEmpId] = useState('');
   const [offerForm, setOfferForm] = useState({
-    candidateName: 'Ms. Batta Vyshnavi',
-    email: 'vyshnavi.batta@example.com',
-    phone: '+91 86608 03099',
-    address: 'Papireddypalem,\nT.P. Gudur Mandal, Nellore District,\nAndhra Pradesh',
-    designation: 'HR Executive',
-    department: 'Human Resources',
-    annualCTC: 600000,
+    candidateName: '',
+    email: '',
+    phone: '',
+    address: '',
+    designation: '',
+    department: '',
+    annualCTC: '',
     issueDate: todayIso,
-    joiningDate: '2026-11-15',
-    probationMonths: 6,
-    noticePeriodDays: 60,
-    workLocation: 'Bengaluru',
-    reportingTo: '[Reporting Manager / Title]'
+    joiningDate: '',
+    noticePeriodDays: '',
+    workLocation: ''
   });
   const [offerPreviewCTC, setOfferPreviewCTC] = useState(null);
 
@@ -122,8 +120,21 @@ export default function DocumentStudioView({ employees, company, onViewDocument 
 
   const handleCreateOffer = async (e) => {
     e.preventDefault();
-    if (!offerForm.candidateName || !offerForm.annualCTC) {
-      alert('Please fill candidate name and proposed CTC');
+    if (
+      !offerForm.candidateName?.trim() ||
+      !offerForm.email?.trim() ||
+      !offerForm.phone?.trim() ||
+      !offerForm.address?.trim() ||
+      !offerForm.designation?.trim() ||
+      !offerForm.department?.trim() ||
+      !offerForm.issueDate ||
+      !offerForm.joiningDate ||
+      !offerForm.workLocation?.trim() ||
+      !offerForm.noticePeriodDays ||
+      !offerForm.annualCTC ||
+      Number(offerForm.annualCTC) <= 0
+    ) {
+      alert('Please fill all mandatory sections: Candidate Name, Email, Phone, Address, Designation, Department, Issue Date, Joining Date, Work Location, Notice Period, and Proposed Annual CTC.');
       return;
     }
     setLoading(true);
@@ -294,7 +305,7 @@ export default function DocumentStudioView({ employees, company, onViewDocument 
                     required
                     value={offerForm.candidateName}
                     onChange={(e) => setOfferForm({ ...offerForm, candidateName: e.target.value })}
-                    placeholder="e.g. Siddharth Rao"
+                    placeholder="e.g. Ms. Batta Vyshnavi"
                     className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white font-bold"
                   />
                 </div>
@@ -305,17 +316,18 @@ export default function DocumentStudioView({ employees, company, onViewDocument 
                     required
                     value={offerForm.email}
                     onChange={(e) => setOfferForm({ ...offerForm, email: e.target.value })}
-                    placeholder="siddharth.rao@example.com"
+                    placeholder="e.g. vyshnavi.batta@example.com"
                     className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white"
                   />
                 </div>
                 <div>
-                  <label className="text-slate-300 font-semibold block mb-1">Phone Number</label>
+                  <label className="text-slate-300 font-semibold block mb-1">Phone Number *</label>
                   <input
                     type="text"
+                    required
                     value={offerForm.phone}
                     onChange={(e) => setOfferForm({ ...offerForm, phone: e.target.value })}
-                    placeholder="+91 98000 12345"
+                    placeholder="e.g. +91 86608 03099"
                     className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white"
                   />
                 </div>
@@ -326,7 +338,7 @@ export default function DocumentStudioView({ employees, company, onViewDocument 
                     required
                     value={offerForm.address}
                     onChange={(e) => setOfferForm({ ...offerForm, address: e.target.value })}
-                    placeholder="Candidate full residential address"
+                    placeholder="e.g. Papireddypalem, T.P. Gudur Mandal, Nellore District, Andhra Pradesh"
                     className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white text-xs resize-none"
                   />
                 </div>
@@ -338,21 +350,24 @@ export default function DocumentStudioView({ employees, company, onViewDocument 
                     required
                     value={offerForm.designation}
                     onChange={(e) => setOfferForm({ ...offerForm, designation: e.target.value })}
+                    placeholder="e.g. HR Executive"
                     className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white font-semibold"
                   />
                 </div>
                 <div>
-                  <label className="text-slate-300 font-semibold block mb-1">Department</label>
+                  <label className="text-slate-300 font-semibold block mb-1">Department *</label>
                   <select
+                    required
                     value={offerForm.department}
                     onChange={(e) => setOfferForm({ ...offerForm, department: e.target.value })}
                     className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white"
                   >
+                    <option value="">-- Select Department * --</option>
+                    <option value="Human Resources">Human Resources</option>
                     <option value="Engineering">Engineering</option>
                     <option value="Product & Design">Product & Design</option>
                     <option value="Cloud & DevOps">Cloud & DevOps</option>
                     <option value="Sales & Growth">Sales & Growth</option>
-                    <option value="Human Resources">Human Resources</option>
                     <option value="Finance & Accounts">Finance & Accounts</option>
                   </select>
                 </div>
@@ -381,21 +396,24 @@ export default function DocumentStudioView({ employees, company, onViewDocument 
                 </div>
 
                 <div>
-                  <label className="text-slate-300 font-semibold block mb-1">Work Location & Mode</label>
+                  <label className="text-slate-300 font-semibold block mb-1">Work Location & Mode *</label>
                   <input
                     type="text"
+                    required
                     value={offerForm.workLocation}
                     onChange={(e) => setOfferForm({ ...offerForm, workLocation: e.target.value })}
-                    placeholder="e.g. Bengaluru (Hybrid)"
+                    placeholder="e.g. Bengaluru"
                     className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white"
                   />
                 </div>
                 <div>
-                  <label className="text-slate-300 font-semibold block mb-1">Notice Period (Days)</label>
+                  <label className="text-slate-300 font-semibold block mb-1">Notice Period (Days) *</label>
                   <input
                     type="number"
+                    required
                     value={offerForm.noticePeriodDays}
-                    onChange={(e) => setOfferForm({ ...offerForm, noticePeriodDays: Number(e.target.value) })}
+                    onChange={(e) => setOfferForm({ ...offerForm, noticePeriodDays: e.target.value === '' ? '' : Number(e.target.value) })}
+                    placeholder="e.g. 60"
                     className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white font-mono"
                   />
                 </div>
@@ -421,7 +439,8 @@ export default function DocumentStudioView({ employees, company, onViewDocument 
                       step="50000"
                       required
                       value={offerForm.annualCTC}
-                      onChange={(e) => setOfferForm({ ...offerForm, annualCTC: Number(e.target.value) })}
+                      onChange={(e) => setOfferForm({ ...offerForm, annualCTC: e.target.value === '' ? '' : Number(e.target.value) })}
+                      placeholder="e.g. 600000"
                       className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-white font-mono font-black text-base focus:ring-2 focus:ring-brand-500"
                     />
                   </div>

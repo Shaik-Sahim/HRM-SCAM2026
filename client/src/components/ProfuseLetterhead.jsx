@@ -1,5 +1,5 @@
 import React from 'react';
-import { MARGEY_LOGO_DATA_URI, MARGEY_STAMP_DATA_URI } from '../assets/logoDataUri';
+import { MARGEY_LOGO_DATA_URI, MARGEY_STAMP_DATA_URI, MARGEY_SIGNATURE_DATA_URI } from '../assets/logoDataUri';
 
 export function ProfuseLogo({ size = 42, height }) {
   const h = height || size;
@@ -67,7 +67,7 @@ export function ProfuseFooter() {
 
 export const MargeyFooter = ProfuseFooter;
 
-export function ProfuseStamp({ size = 94 }) {
+export function ProfuseStamp({ size = 96 }) {
   return (
     <div 
       className="relative select-none pointer-events-none inline-block"
@@ -81,7 +81,7 @@ export function ProfuseStamp({ size = 94 }) {
         position: 'relative'
       }}
     >
-      {/* Official Circular Margey Labs Rubber Stamp Image with authentic ink blend */}
+      {/* Official Circular Margey Labs Rubber Stamp Image */}
       <img 
         src={MARGEY_STAMP_DATA_URI} 
         alt="MARGEY LABS PVT. LTD. Stamp" 
@@ -93,39 +93,26 @@ export function ProfuseStamp({ size = 94 }) {
           maxWidth: `${size}px`, 
           maxHeight: `${size}px`,
           display: 'block',
-          mixBlendMode: 'multiply',
           objectFit: 'contain'
         }} 
       />
 
-      {/* Official Authorized HR Signature (Murali K) vector-aligned across the stamp */}
+      {/* Official Authorized Signature (MD. Vartulla Baig) positioned across the stamp */}
       <div 
-        className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none"
-        style={{ transform: 'rotate(-12deg)' }}
+        className="absolute inset-0 flex items-center justify-center pointer-events-none"
+        style={{ transform: 'rotate(-5deg)' }}
       >
-        <span
+        <img
+          src={MARGEY_SIGNATURE_DATA_URI}
+          alt="Authorized Signatory"
           style={{
-            fontFamily: "'Dancing Script', 'Caveat', 'Brush Script MT', 'Segoe Script', cursive, serif",
-            fontStyle: 'italic',
-            fontWeight: 800,
-            fontSize: `${size * 0.27}px`,
-            letterSpacing: '0.5px',
-            color: '#082f49',
+            width: `${size * 1.12}px`,
+            maxWidth: `${size * 1.12}px`,
+            height: 'auto',
             display: 'block',
-            lineHeight: 1
+            objectFit: 'contain'
           }}
-        >
-          Murali.k
-        </span>
-        <svg width={size * 0.72} height={size * 0.14} viewBox="0 0 100 20" fill="none" className="mx-auto -mt-0.5">
-          <path
-            d="M 5,10 Q 20,4 35,10 T 65,10 T 95,10"
-            stroke="#082f49"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            opacity="0.95"
-          />
-        </svg>
+        />
       </div>
     </div>
   );

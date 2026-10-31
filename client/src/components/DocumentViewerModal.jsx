@@ -887,10 +887,9 @@ export default function DocumentViewerModal({ document, company, onClose }) {
                             </div>
                             <div className="flex flex-col items-end">
                               <div className="w-56 text-left">
-                                <p className="font-bold text-slate-900 text-[10.5px] mb-4">Candidate Acceptance Signature</p>
+                                <p className="font-bold text-slate-900 text-[10.5px] mb-5">Candidate Acceptance Signature</p>
                                 <div className="border-t border-slate-800 pt-1">
                                   <p className="font-bold text-slate-900 text-[10px]">Candidate: {candidateName}</p>
-                                  <p className="text-slate-700 text-[9.5px]">Date: ________________________</p>
                                   <p className="text-slate-700 text-[9.5px]">Place: Bengaluru</p>
                                 </div>
                               </div>

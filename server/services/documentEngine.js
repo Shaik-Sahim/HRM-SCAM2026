@@ -134,7 +134,7 @@ function generateOfferLetter(data, company, statutorySettings = {}) {
       phone: company.phone || '+91 86608 03099 | +91 9100588005',
       email: company.email || 'info@margeylabs.com',
       website: company.website || 'margeylabs.com',
-      signatoryName: company.signatoryName || 'Murali K',
+      signatoryName: company.signatoryName || 'Mohammed Vastulla Baig',
       signatoryTitle: company.signatoryTitle || 'Manager - Human Resources'
     }
   };
@@ -184,7 +184,7 @@ function generateExperienceLetter(data, company) {
       phone: company.phone || '+91 86608 03099 | +91 9100588005',
       email: company.email || 'info@margeylabs.com',
       website: company.website || 'margeylabs.com',
-      signatoryName: company.signatoryName || 'Murali K',
+      signatoryName: company.signatoryName || 'Mohammed Vastulla Baig',
       signatoryTitle: company.signatoryTitle || 'Manager - Human Resources'
     },
     conductRating: data.conductRating || 'Exemplary & Diligent',
@@ -243,7 +243,7 @@ function generateRelievingLetter(data, company) {
       phone: company.phone || '+91 86608 03099 | +91 9100588005',
       email: company.email || 'info@margeylabs.com',
       website: company.website || 'margeylabs.com',
-      signatoryName: company.signatoryName || 'Murali K',
+      signatoryName: company.signatoryName || 'Mohammed Vastulla Baig',
       signatoryTitle: company.signatoryTitle || 'Manager - Human Resources'
     },
     clearanceStatus: data.clearanceStatus || 'All Company IT Assets, Keys & Data Handover Completed',
