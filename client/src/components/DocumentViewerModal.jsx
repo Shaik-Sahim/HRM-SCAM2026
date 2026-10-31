@@ -464,16 +464,32 @@ export default function DocumentViewerModal({ document, company, onClose }) {
                           </p>
                         </div>
 
-                        {/* Section 3: Conditions and Annexures */}
+                        {/* Section 3: Terms, Code of Conduct & Workplace Guidelines */}
                         <div>
-                          <p className="font-bold text-slate-900 text-[11px] mb-0.5">3. Terms, Code of Conduct & Annexures</p>
+                          <p className="font-bold text-slate-900 text-[11px] mb-0.5">3. Terms, Code of Conduct & Workplace Guidelines</p>
                           <p>
-                            This offer is subject to satisfactory verification of credentials and completion of joining formalities. Your role deliverables, operational responsibilities, company policies, and service terms are detailed in Annexures II, III, and IV. Please review all terms thoroughly before signing the acceptance undertaking in Annexure V.
+                            Your employment will be governed by company operating guidelines, compliance standards, and professional codes detailed in Annexures II, III, and IV. You are expected to demonstrate operational excellence, uphold organizational values, and perform assigned responsibilities faithfully.
+                          </p>
+                        </div>
+
+                        {/* Section 4: Confidentiality, Non-Disclosure & IP Protection */}
+                        <div>
+                          <p className="font-bold text-slate-900 text-[11px] mb-0.5">4. Confidentiality, Non-Disclosure & IP Protection</p>
+                          <p>
+                            You will have access to confidential business information, proprietary technical methodologies, architectures, and client data. You are required to maintain strict confidentiality both during and after your tenure. All work products and intellectual property created during employment belong exclusively to the Company.
+                          </p>
+                        </div>
+
+                        {/* Section 5: Offer Acceptance & Validity Window */}
+                        <div>
+                          <p className="font-bold text-slate-900 text-[11px] mb-0.5">5. Offer Acceptance & Validity Window</p>
+                          <p>
+                            This offer of employment is valid for five (5) business days from the date of issuance. Please confirm your formal acceptance by signing the acceptance undertaking in Annexure V and returning the duplicate copy along with the pre-onboarding documentation listed therein.
                           </p>
                         </div>
 
                         <p className="pt-0.5">
-                          We look forward to welcoming you to <strong>MARGEY LABS PRIVATE LIMITED</strong> and wish you grand success and professional growth in your career with us.
+                          We look forward to welcoming you to <strong>MARGEY LABS PRIVATE LIMITED</strong> and wish you grand success, rewarding learning, and professional growth in your career with us.
                         </p>
                       </div>
                     </div>
