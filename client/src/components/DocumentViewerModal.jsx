@@ -387,129 +387,107 @@ export default function DocumentViewerModal({ document, company, onClose }) {
                   className="printable-page bg-white text-slate-900 rounded-none shadow-none border-none p-6 sm:p-7 font-sans flex flex-col justify-between"
                   style={{ width: '210mm', minHeight: '295.5mm', height: '295.5mm' }}
                 >
-                  <div>
-                    <MargeyHeader
-                      refId={document.id}
-                      dateStr={null}
-                      isConfidential={false}
-                    />
+                  <div className="flex-1 flex flex-col justify-between pb-1">
+                    <div>
+                      <MargeyHeader
+                        refId={document.id}
+                        dateStr={null}
+                        isConfidential={false}
+                      />
 
-                    {/* Date & Addressee */}
-                    <div className="text-[11.5px] leading-snug text-slate-900 font-sans mb-2">
-                      <p className="font-semibold">Date: {formattedIssueDate},</p>
-                      <div className="mt-0.5 font-sans">
-                        <p className="font-semibold">To,</p>
-                        <p className="font-bold text-slate-900 text-[12px]">{candidateName}</p>
-                        {candidateAddress.split('\n').map((line, idx) => (
-                          <p key={idx} className="text-slate-700">{line}</p>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Centered Heading */}
-                    <div className="text-center my-2">
-                      <h2 className="text-base font-bold text-slate-900 tracking-wider uppercase font-sans">
-                        LETTER OF OFFER
-                      </h2>
-                      <p className="text-[12px] font-bold text-slate-900 mt-0.5">
-                        Subject: Offer of Employment – {designation}
-                      </p>
-                    </div>
-
-                    {/* Salutation & Body Text */}
-                    <div className="space-y-2 text-[11px] leading-[1.48] text-slate-800 font-sans text-justify">
-                      <p className="font-bold text-slate-900 text-[12px]">
-                        Dear {candidateName},
-                      </p>
-
-                      <p>
-                        We are pleased to offer you employment with <strong>MARGEY LABS PRIVATE LIMITED</strong> as an {designation} in the {department} Department. This letter summarises the principal terms of the offer. The attached annexures provide comprehensive details regarding compensation, role responsibilities, employment conditions, workplace guidelines, and statutory benefits.
-                      </p>
-
-                      {/* Section 1: Position and Employment Details Table */}
-                      <div>
-                        <p className="font-bold text-slate-900 text-[11.5px] mb-1">1. Position and Employment Details</p>
-                        <table className="w-full text-[10.5px] border border-slate-400">
-                          <tbody className="divide-y divide-slate-300">
-                            <tr>
-                              <td className="p-1.5 px-3 font-semibold text-slate-700 w-1/3 bg-slate-50 border-r border-slate-300">Job Title</td>
-                              <td className="p-1.5 px-3 font-bold text-slate-900">{designation}</td>
-                            </tr>
-                            <tr>
-                              <td className="p-1.5 px-3 font-semibold text-slate-700 bg-slate-50 border-r border-slate-300">Department</td>
-                              <td className="p-1.5 px-3 text-slate-800">{department}</td>
-                            </tr>
-                            <tr>
-                              <td className="p-1.5 px-3 font-semibold text-slate-700 bg-slate-50 border-r border-slate-300">Annual CTC</td>
-                              <td className="p-1.5 px-3 font-sans font-bold text-slate-900">₹{ctcFormatted} ({ctcWords})</td>
-                            </tr>
-                            <tr>
-                              <td className="p-1.5 px-3 font-semibold text-slate-700 bg-slate-50 border-r border-slate-300">Annual Gross Salary</td>
-                              <td className="p-1.5 px-3 font-sans font-bold text-slate-900">₹{annualGross.toLocaleString('en-IN')}</td>
-                            </tr>
-                            <tr>
-                              <td className="p-1.5 px-3 font-semibold text-slate-700 bg-slate-50 border-r border-slate-300">Est. Monthly In-Hand</td>
-                              <td className="p-1.5 px-3 font-sans font-bold text-emerald-800">₹{monthlyInHand.toLocaleString('en-IN')}</td>
-                            </tr>
-                            <tr>
-                              <td className="p-1.5 px-3 font-semibold text-slate-700 bg-slate-50 border-r border-slate-300">Joining Date</td>
-                              <td className="p-1.5 px-3 text-slate-800 font-semibold">{joiningDate}</td>
-                            </tr>
-                            <tr>
-                              <td className="p-1.5 px-3 font-semibold text-slate-700 bg-slate-50 border-r border-slate-300">Work Location</td>
-                              <td className="p-1.5 px-3 text-slate-800">{workLocation}</td>
-                            </tr>
-                          </tbody>
-                        </table>
+                      {/* Date & Addressee */}
+                      <div className="text-[11px] leading-snug text-slate-900 font-sans mb-1.5">
+                        <p className="font-semibold">Date: {formattedIssueDate},</p>
+                        <div className="mt-0.5 font-sans">
+                          <p className="font-semibold">To,</p>
+                          <p className="font-bold text-slate-900 text-[11.5px]">{candidateName}</p>
+                          {candidateAddress.split('\n').map((line, idx) => (
+                            <p key={idx} className="text-slate-700 text-[10px]">{line}</p>
+                          ))}
+                        </div>
                       </div>
 
-                      {/* Section 2 */}
-                      <div>
-                        <p className="font-bold text-slate-900 text-[11.5px] mb-0.5">2. Compensation and Payroll</p>
-                        <p>
-                          Your annual Cost to Company (CTC) will be ₹{ctcFormatted} (Monthly CTC equivalent: ₹{monthlyCTCEquivalent}). Deducting annualised Deferred Benefits (Provident Fund under the PF Act 1952 and Gratuity under the Gratuity Act 1972) yields an Annual Gross Salary of ₹{annualGross.toLocaleString('en-IN')}, and an estimated net Monthly In-Hand of ₹{monthlyInHand.toLocaleString('en-IN')} after statutory employee withholdings. Annexure I contains the full itemized break-up.
+                      {/* Centered Heading */}
+                      <div className="text-center my-1.5">
+                        <h2 className="text-sm font-bold text-slate-900 tracking-wider uppercase font-sans">
+                          LETTER OF OFFER
+                        </h2>
+                        <p className="text-[11px] font-bold text-slate-900 mt-0.5">
+                          Subject: Offer of Employment – {designation}
                         </p>
                       </div>
 
-                      {/* Section 3 */}
-                      <div>
-                        <p className="font-bold text-slate-900 text-[11.5px] mb-0.5">3. Role and Workplace Expectations</p>
+                      {/* Salutation & Body Text */}
+                      <div className="space-y-1.5 text-[10.5px] leading-[1.44] text-slate-800 font-sans text-justify">
+                        <p className="font-bold text-slate-900 text-[11px]">
+                          Dear {candidateName},
+                        </p>
+
                         <p>
-                          In this position, you will support departmental objectives, employee documentation, client engagements, cross-functional initiatives, and execution of organizational policies. You are expected at all times to protect confidential information, adhere to authorized standard operating procedures, and perform all responsibilities assigned to your role faithfully.
+                          We are pleased to offer you employment with <strong>MARGEY LABS PRIVATE LIMITED</strong> as {designation} in the {department} Department. This letter summarizes your principal employment terms. Comprehensive details regarding compensation, responsibilities, guidelines, and benefits are outlined in the attached Annexures I through V.
+                        </p>
+
+                        {/* Section 1: Position and Employment Details Table */}
+                        <div>
+                          <p className="font-bold text-slate-900 text-[11px] mb-1">1. Position and Employment Details</p>
+                          <table className="w-full text-[10px] border border-slate-400">
+                            <tbody className="divide-y divide-slate-300">
+                              <tr>
+                                <td className="p-1 px-3 font-semibold text-slate-700 w-1/3 bg-slate-50 border-r border-slate-300">Job Title</td>
+                                <td className="p-1 px-3 font-bold text-slate-900">{designation}</td>
+                              </tr>
+                              <tr>
+                                <td className="p-1 px-3 font-semibold text-slate-700 bg-slate-50 border-r border-slate-300">Department</td>
+                                <td className="p-1 px-3 text-slate-800">{department}</td>
+                              </tr>
+                              <tr>
+                                <td className="p-1 px-3 font-semibold text-slate-700 bg-slate-50 border-r border-slate-300">Annual CTC</td>
+                                <td className="p-1 px-3 font-sans font-bold text-slate-900">₹{ctcFormatted} ({ctcWords})</td>
+                              </tr>
+                              <tr>
+                                <td className="p-1 px-3 font-semibold text-slate-700 bg-slate-50 border-r border-slate-300">Expected Joining Date</td>
+                                <td className="p-1 px-3 text-slate-800 font-semibold">{joiningDate}</td>
+                              </tr>
+                              <tr>
+                                <td className="p-1 px-3 font-semibold text-slate-700 bg-slate-50 border-r border-slate-300">Work Location</td>
+                                <td className="p-1 px-3 text-slate-800">{workLocation}</td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+
+                        {/* Section 2: Compensation and Payroll */}
+                        <div>
+                          <p className="font-bold text-slate-900 text-[11px] mb-0.5">2. Compensation and Payroll</p>
+                          <p>
+                            Your annual Cost to Company (CTC) will be ₹{ctcFormatted} (Monthly equivalent: ₹{monthlyCTCEquivalent}). Deducting annualised Deferred Benefits (Provident Fund under the PF Act 1952 and Gratuity under the Gratuity Act 1972) yields an Annual Gross Salary of ₹{annualGross.toLocaleString('en-IN')}, and an estimated net Monthly In-Hand of ₹{monthlyInHand.toLocaleString('en-IN')} after statutory withholdings. Complete itemized breakdown is provided in Annexure I.
+                          </p>
+                        </div>
+
+                        {/* Section 3: Conditions and Annexures */}
+                        <div>
+                          <p className="font-bold text-slate-900 text-[11px] mb-0.5">3. Terms, Code of Conduct & Annexures</p>
+                          <p>
+                            This offer is subject to satisfactory verification of credentials and completion of joining formalities. Your role deliverables, operational responsibilities, company policies, and service terms are detailed in Annexures II, III, and IV. Please review all terms thoroughly before signing the acceptance undertaking in Annexure V.
+                          </p>
+                        </div>
+
+                        <p className="pt-0.5">
+                          We look forward to welcoming you to <strong>MARGEY LABS PRIVATE LIMITED</strong> and wish you grand success and professional growth in your career with us.
                         </p>
                       </div>
-
-                      {/* Section 4 */}
-                      <div>
-                        <p className="font-bold text-slate-900 text-[11.5px] mb-0.5">4. Conditions and Company Policies</p>
-                        <p>
-                          This offer is subject to satisfactory completion of joining formalities and reasonable verification of all information and credentials provided. Your employment will be governed by the conditions in Annexure III, applicable company policies in Annexure IV, and prevailing statutory laws. Please review all terms thoroughly before signing the acceptance block.
-                        </p>
-                      </div>
-
-                      {/* Section 5 */}
-                      <div>
-                        <p className="font-bold text-slate-900 text-[11.5px] mb-0.5">5. Offer Acceptance and Validity Window</p>
-                        <p>
-                          This offer remains valid for acceptance for seven (7) business days from the date of issue. Please indicate your formal acceptance by signing and dating the duplicate copy of this letter and the attached annexures, and returning them together with the pre-joining documentation listed in Annexure V.
-                        </p>
-                      </div>
-
-                      <p>
-                        We look forward to welcoming you to <strong>MARGEY LABS PRIVATE LIMITED</strong> and wish you grand success and professional growth in your role.
-                      </p>
                     </div>
 
                     {/* Closing Signatures with Authorized Signatory & Optional Stamp */}
-                    <div className="mt-3 text-slate-900 font-sans">
-                      <p className="text-[11px] font-medium text-slate-800">Yours Sincerely,</p>
-                      <p className="text-[11.5px] font-bold text-slate-900 mt-0.5">For MARGEY LABS PRIVATE LIMITED</p>
-                      <div className={`${includeStamp ? 'h-20' : 'h-12'} flex items-end pb-1`}>
-                        <MargeyStamp size={includeStamp ? 78 : 44} showStamp={includeStamp} />
+                    <div className="mt-2 text-slate-900 font-sans">
+                      <p className="text-[10.5px] font-medium text-slate-800">Yours Sincerely,</p>
+                      <p className="text-[11px] font-bold text-slate-900 mt-0.5">For MARGEY LABS PRIVATE LIMITED</p>
+                      <div className={`${includeStamp ? 'h-18' : 'h-11'} flex items-end pb-1`}>
+                        <MargeyStamp size={includeStamp ? 76 : 42} showStamp={includeStamp} />
                       </div>
                       <div className="border-t border-slate-500 w-56 pt-1">
-                        <p className="font-bold text-slate-900 text-[11px] leading-tight">Authorized Signatory</p>
-                        <p className="font-medium text-slate-600 text-[10px] leading-tight mt-0.5">Human Resources Department</p>
+                        <p className="font-bold text-slate-900 text-[10.5px] leading-tight">Authorized Signatory</p>
+                        <p className="font-medium text-slate-600 text-[9.5px] leading-tight mt-0.5">Human Resources Department</p>
                       </div>
                     </div>
                   </div>
