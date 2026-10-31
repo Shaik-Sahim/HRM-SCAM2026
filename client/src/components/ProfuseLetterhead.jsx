@@ -67,46 +67,34 @@ export function ProfuseFooter() {
 
 export const MargeyFooter = ProfuseFooter;
 
-export function ProfuseStamp({ size = 96, showStamp = false, showSignature = true }) {
+export function ProfuseStamp({ size = 78, showStamp = false, showSignature = true }) {
   if (!showStamp && !showSignature) return null;
 
-  // When stamp is disabled: show just signature that's it - enlarged for clear visibility
+  // When stamp is disabled: show signature with tight, crisp natural proportions sitting right above the line
   if (!showStamp && showSignature) {
     return (
-      <div 
-        className="relative select-none pointer-events-none inline-block my-1"
-        style={{ 
-          height: `${Math.round(size * 0.82)}px`, 
-          minHeight: `${Math.round(size * 0.82)}px`,
-          position: 'relative'
-        }}
-      >
+      <div className="relative select-none pointer-events-none inline-flex items-end">
         <img
           src={MARGEY_SIGNATURE_DATA_URI}
           alt="Authorized Signatory"
-          style={{
-            height: `${Math.round(size * 0.82)}px`,
-            width: 'auto',
-            maxWidth: `${Math.round(size * 2.1)}px`,
-            display: 'block',
-            objectFit: 'contain'
-          }}
+          className="h-11 w-auto max-w-[180px] object-contain object-bottom block"
         />
       </div>
     );
   }
 
-  // When stamp is enabled: official circular rubber stamp with enlarged signature overlaid across it
+  // When stamp is enabled: official circular rubber stamp with signature overlaid across it
+  const stampPx = Math.max(68, Math.min(84, size));
   return (
     <div 
-      className="relative select-none pointer-events-none inline-block my-1"
+      className="relative select-none pointer-events-none inline-block"
       style={{ 
-        width: `${size}px`, 
-        height: `${size}px`, 
-        minWidth: `${size}px`, 
-        minHeight: `${size}px`, 
-        maxWidth: `${size}px`, 
-        maxHeight: `${size}px`,
+        width: `${stampPx}px`, 
+        height: `${stampPx}px`, 
+        minWidth: `${stampPx}px`, 
+        minHeight: `${stampPx}px`, 
+        maxWidth: `${stampPx}px`, 
+        maxHeight: `${stampPx}px`,
         position: 'relative'
       }}
     >
@@ -116,12 +104,8 @@ export function ProfuseStamp({ size = 96, showStamp = false, showSignature = tru
           src={MARGEY_STAMP_DATA_URI} 
           alt="MARGEY LABS PVT. LTD. Stamp" 
           style={{ 
-            width: `${size}px`, 
-            height: `${size}px`, 
-            minWidth: `${size}px`, 
-            minHeight: `${size}px`, 
-            maxWidth: `${size}px`, 
-            maxHeight: `${size}px`,
+            width: `${stampPx}px`, 
+            height: `${stampPx}px`, 
             display: 'block',
             objectFit: 'contain'
           }} 
@@ -138,8 +122,8 @@ export function ProfuseStamp({ size = 96, showStamp = false, showSignature = tru
             src={MARGEY_SIGNATURE_DATA_URI}
             alt="Authorized Signatory"
             style={{
-              width: `${Math.round(size * 1.30)}px`,
-              maxWidth: `${Math.round(size * 1.30)}px`,
+              width: `${Math.round(stampPx * 1.15)}px`,
+              maxWidth: `${Math.round(stampPx * 1.15)}px`,
               height: 'auto',
               display: 'block',
               objectFit: 'contain'
@@ -153,17 +137,17 @@ export function ProfuseStamp({ size = 96, showStamp = false, showSignature = tru
 
 export const MargeyStamp = ProfuseStamp;
 
-export function ProfuseSignatoryBlock({ align = 'left', showStamp = false, showSignature = true, stampSize = 100 }) {
+export function ProfuseSignatoryBlock({ align = 'left', showStamp = false, showSignature = true, stampSize = 78 }) {
   return (
     <div className={`text-slate-800 font-sans shrink-0 ${align === 'right' ? 'text-right' : 'text-left'}`}>
       <p className="font-medium text-slate-700 text-[11px] leading-tight">Yours Sincerely,</p>
       <p className="font-bold text-slate-900 text-[11.5px] leading-tight mt-0.5">For MARGEY LABS PRIVATE LIMITED</p>
-      <div className={`my-1 ${align === 'right' ? 'flex justify-end' : ''}`}>
+      <div className={`${showStamp ? 'h-20' : 'h-12'} flex items-end pb-1 ${align === 'right' ? 'justify-end' : ''}`}>
         <ProfuseStamp size={stampSize} showStamp={showStamp} showSignature={showSignature} />
       </div>
-      <div className={`pt-1 border-t border-slate-400 w-56 ${align === 'right' ? 'ml-auto' : ''}`}>
+      <div className={`pt-1 border-t border-slate-500 w-56 ${align === 'right' ? 'ml-auto' : ''}`}>
         <p className="font-bold text-slate-900 text-[11px] leading-tight">Authorized Signatory</p>
-        <p className="font-medium text-slate-600 text-[10px] leading-tight">Human Resources Department</p>
+        <p className="font-medium text-slate-600 text-[10px] leading-tight mt-0.5">Human Resources Department</p>
       </div>
     </div>
   );

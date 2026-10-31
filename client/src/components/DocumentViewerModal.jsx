@@ -504,12 +504,12 @@ export default function DocumentViewerModal({ document, company, onClose }) {
                     <div className="mt-3 text-slate-900 font-sans">
                       <p className="text-[11px] font-medium text-slate-800">Yours Sincerely,</p>
                       <p className="text-[11.5px] font-bold text-slate-900 mt-0.5">For MARGEY LABS PRIVATE LIMITED</p>
-                      <div className="my-1.5">
-                        <MargeyStamp size={102} showStamp={includeStamp} />
+                      <div className={`${includeStamp ? 'h-20' : 'h-12'} flex items-end pb-1`}>
+                        <MargeyStamp size={includeStamp ? 78 : 44} showStamp={includeStamp} />
                       </div>
-                      <div className="pt-1 border-t border-slate-400 w-56">
-                        <p className="font-bold text-slate-900 text-[11px]">Authorized Signatory</p>
-                        <p className="font-medium text-slate-600 text-[10px]">Human Resources Department</p>
+                      <div className="border-t border-slate-500 w-56 pt-1">
+                        <p className="font-bold text-slate-900 text-[11px] leading-tight">Authorized Signatory</p>
+                        <p className="font-medium text-slate-600 text-[10px] leading-tight mt-0.5">Human Resources Department</p>
                       </div>
                     </div>
                   </div>
@@ -686,34 +686,36 @@ export default function DocumentViewerModal({ document, company, onClose }) {
                     </div>
 
                     {/* Dual Signatory Block */}
-                    <div className="pt-2 border-t border-slate-300 grid grid-cols-2 gap-8 text-[11px] font-sans items-end">
-                      <div>
-                        <p className="font-bold text-slate-900 text-[11px]">For MARGEY LABS PRIVATE LIMITED</p>
-                        <div className="my-1.5">
-                          <MargeyStamp size={98} showStamp={includeStamp} />
+                    <div className="pt-2 border-t border-slate-300 grid grid-cols-2 gap-8 text-[11px] font-sans">
+                      {/* Left: Employer */}
+                      <div className="w-56 text-left">
+                        <p className="font-bold text-slate-900 text-[11px] leading-tight">For MARGEY LABS PRIVATE LIMITED</p>
+                        <div className={`${includeStamp ? 'h-20' : 'h-12'} flex items-end pb-1`}>
+                          <MargeyStamp size={includeStamp ? 78 : 44} showStamp={includeStamp} />
                         </div>
-                        <div className="pt-1 border-t border-slate-400 w-56">
-                          <p className="font-bold text-slate-900 text-[10.5px]">Authorized Signatory</p>
-                          <p className="font-medium text-slate-600 text-[10px]">Human Resources Department</p>
+                        <div className="border-t border-slate-500 w-full pt-1">
+                          <p className="font-bold text-slate-900 text-[10.5px] leading-tight">Authorized Signatory</p>
+                          <p className="font-medium text-slate-600 text-[10px] leading-tight mt-0.5">Human Resources Department</p>
                         </div>
                       </div>
-                      <div className="flex flex-col items-end">
-                        <div className="w-56 text-left">
-                          <p className="font-bold text-slate-900 text-[11px] mb-1">Employee Signature</p>
+
+                      {/* Right: Employee */}
+                      <div className="w-56 ml-auto text-left">
+                        <p className="font-bold text-slate-900 text-[11px] leading-tight">Employee Signature</p>
+                        <div className={`${includeStamp ? 'h-20' : 'h-12'} flex items-end pb-1`}>
                           {employeeSignature ? (
-                            <div className="h-10 flex items-end pb-1">
-                              <img 
-                                src={employeeSignature} 
-                                alt="Employee Signature" 
-                                className="max-h-10 max-w-[150px] object-contain" 
-                              />
-                            </div>
+                            <img 
+                              src={employeeSignature} 
+                              alt="Employee Signature" 
+                              className="h-11 w-auto max-w-[180px] object-contain object-bottom block" 
+                            />
                           ) : (
-                            <div className="h-8" />
+                            <div className="h-11" />
                           )}
-                          <div className="pt-1 border-t border-slate-400 w-full">
-                            <p className="font-bold text-slate-900 text-[10.5px]">{candidateName}</p>
-                          </div>
+                        </div>
+                        <div className="border-t border-slate-500 w-full pt-1">
+                          <p className="font-bold text-slate-900 text-[10.5px] leading-tight">{candidateName}</p>
+                          <p className="font-medium text-slate-600 text-[10px] leading-tight mt-0.5">Candidate</p>
                         </div>
                       </div>
                     </div>
@@ -1021,35 +1023,36 @@ export default function DocumentViewerModal({ document, company, onClose }) {
                           <p className="font-semibold text-slate-900 leading-relaxed">
                             I have read, understood, and hereby unconditionally accept the offer of employment and agree to abide by all the terms, conditions, and policies set forth in this Letter of Offer and Annexures I through V.
                           </p>
-                          <div className="pt-2 grid grid-cols-2 gap-8 items-end">
-                            <div>
-                              <p className="font-bold text-slate-900 text-[10.5px]">For MARGEY LABS PRIVATE LIMITED</p>
-                              <div className="my-1.5">
-                                <MargeyStamp size={92} showStamp={includeStamp} />
+                          <div className="pt-2 grid grid-cols-2 gap-8 font-sans">
+                            {/* Left: Employer */}
+                            <div className="w-56 text-left">
+                              <p className="font-bold text-slate-900 text-[10.5px] leading-tight">For MARGEY LABS PRIVATE LIMITED</p>
+                              <div className={`${includeStamp ? 'h-20' : 'h-12'} flex items-end pb-1`}>
+                                <MargeyStamp size={includeStamp ? 78 : 44} showStamp={includeStamp} />
                               </div>
-                              <div className="pt-1 border-t border-slate-400 w-52">
-                                <p className="font-bold text-slate-900 text-[10.5px]">Authorized Signatory</p>
-                                <p className="font-medium text-slate-600 text-[9.5px]">Human Resources Department</p>
+                              <div className="border-t border-slate-500 w-full pt-1">
+                                <p className="font-bold text-slate-900 text-[10.5px] leading-tight">Authorized Signatory</p>
+                                <p className="font-medium text-slate-600 text-[9.5px] leading-tight mt-0.5">Human Resources Department</p>
                               </div>
                             </div>
-                            <div className="flex flex-col items-end">
-                              <div className="w-56 text-left">
-                                <p className="font-bold text-slate-900 text-[10.5px] mb-1">Candidate Acceptance Signature</p>
+
+                            {/* Right: Candidate */}
+                            <div className="w-56 ml-auto text-left">
+                              <p className="font-bold text-slate-900 text-[10.5px] leading-tight">Candidate Acceptance Signature</p>
+                              <div className={`${includeStamp ? 'h-20' : 'h-12'} flex items-end pb-1`}>
                                 {employeeSignature ? (
-                                  <div className="h-10 flex items-end pb-1">
-                                    <img 
-                                      src={employeeSignature} 
-                                      alt="Candidate Signature" 
-                                      className="max-h-10 max-w-[150px] object-contain" 
-                                    />
-                                  </div>
+                                  <img 
+                                    src={employeeSignature} 
+                                    alt="Candidate Signature" 
+                                    className="h-11 w-auto max-w-[180px] object-contain object-bottom block" 
+                                  />
                                 ) : (
-                                  <div className="h-8" />
+                                  <div className="h-11" />
                                 )}
-                                <div className="border-t border-slate-800 pt-1">
-                                  <p className="font-bold text-slate-900 text-[10px]">Candidate: {candidateName}</p>
-                                  <p className="text-slate-700 text-[9.5px]">Place: Bengaluru</p>
-                                </div>
+                              </div>
+                              <div className="border-t border-slate-500 w-full pt-1">
+                                <p className="font-bold text-slate-900 text-[10px] leading-tight">Candidate: {candidateName}</p>
+                                <p className="text-slate-700 text-[9.5px] leading-tight mt-0.5">Place: Bengaluru</p>
                               </div>
                             </div>
                           </div>
