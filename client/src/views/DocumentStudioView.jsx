@@ -39,6 +39,7 @@ export default function DocumentStudioView({ employees, company, onViewDocument 
   const todayIso = new Date().toISOString().split('T')[0];
 
   // ================= Offer Letter Form State (Defaults to Template Standard) ================= //
+  const defaultJoiningDate = new Date(Date.now() + 15 * 86400000).toISOString().split('T')[0];
   const [selectedOfferEmpId, setSelectedOfferEmpId] = useState('');
   const [offerForm, setOfferForm] = useState({
     candidateName: '',
@@ -49,7 +50,7 @@ export default function DocumentStudioView({ employees, company, onViewDocument 
     department: '',
     annualCTC: '',
     issueDate: todayIso,
-    joiningDate: '',
+    joiningDate: defaultJoiningDate,
     noticePeriodDays: '',
     workLocation: '',
     includeStamp: false,
@@ -62,6 +63,14 @@ export default function DocumentStudioView({ employees, company, onViewDocument 
     if (!empId) return;
     const emp = employees.find(x => x.id === empId);
     if (emp) {
+      // Ensure joining date is active/valid relative to issueDate
+      let validJoiningDate = emp.dateOfJoining;
+      if (!validJoiningDate || validJoiningDate <= (offerForm.issueDate || todayIso)) {
+        const d = new Date(offerForm.issueDate || todayIso);
+        d.setDate(d.getDate() + 15);
+        validJoiningDate = d.toISOString().split('T')[0];
+      }
+
       setOfferForm(prev => ({
         ...prev,
         candidateName: emp.fullName || prev.candidateName,
@@ -71,11 +80,29 @@ export default function DocumentStudioView({ employees, company, onViewDocument 
         designation: emp.designation || prev.designation,
         department: emp.department || prev.department,
         annualCTC: emp.annualCTC || prev.annualCTC,
-        joiningDate: emp.dateOfJoining || prev.joiningDate,
+        joiningDate: validJoiningDate,
         workLocation: emp.location || 'Bengaluru',
         employeeSignature: emp.signature || prev.employeeSignature || ''
       }));
     }
+  };
+
+  const handleIssueDateChange = (newIssueDate) => {
+    setOfferForm(prev => {
+      let updatedJoining = prev.joiningDate;
+      if (!updatedJoining || updatedJoining <= newIssueDate) {
+        const d = new Date(newIssueDate);
+        if (!isNaN(d.getTime())) {
+          d.setDate(d.getDate() + 15);
+          updatedJoining = d.toISOString().split('T')[0];
+        }
+      }
+      return {
+        ...prev,
+        issueDate: newIssueDate,
+        joiningDate: updatedJoining
+      };
+    });
   };
 
   const handleSignatureUpload = (e) => {
@@ -407,7 +434,7 @@ export default function DocumentStudioView({ employees, company, onViewDocument 
                     type="date"
                     required
                     value={offerForm.issueDate}
-                    onChange={(e) => setOfferForm({ ...offerForm, issueDate: e.target.value })}
+                    onChange={(e) => handleIssueDateChange(e.target.value)}
                     className="w-full bg-slate-800 border border-cyan-500/40 focus:border-cyan-400 rounded-lg px-3 py-2 text-white font-mono"
                   />
                   <p className="text-[10px] text-slate-400 mt-0.5">Formal letter issue date printed on offer letter</p>
@@ -587,25 +614,39 @@ export default function DocumentStudioView({ employees, company, onViewDocument 
                         </div>
                       </div>
                       <div className="bg-slate-950/80 px-3 py-1.5 border-t border-slate-800 font-bold text-slate-200 flex justify-between">
-                        <span>Total Monthly Gross (Annual Salary)</span>
-                        <span className="font-mono text-xs">{currencySymbol}{offerPreviewCTC.monthlyCTC?.toLocaleString()}</span>
+                        <span>Total Monthly Gross (Part A Cash)</span>
+                        <span className="font-mono text-xs">{currencySymbol}{(offerPreviewCTC.monthly?.gross || offerPreviewCTC.grossSalary?.monthly || offerPreviewCTC.monthlyCTC)?.toLocaleString()}</span>
                       </div>
                       {offerPreviewCTC.deferred && (
                         <div className="bg-slate-900/90 px-3 py-2 border-t border-slate-800 space-y-1 text-[11px]">
                           <div className="flex justify-between text-slate-400">
-                            <span>Provident Fund (PF 12%)</span>
+                            <span>Provident Fund (Employer PF 12%)</span>
                             <span className="font-mono text-slate-300">{currencySymbol}{offerPreviewCTC.deferred.pfMonthly?.toLocaleString()}</span>
                           </div>
                           <div className="flex justify-between text-slate-400">
                             <span>Gratuity (Gratuity Act 4.81%)</span>
                             <span className="font-mono text-slate-300">{currencySymbol}{offerPreviewCTC.deferred.gratuityMonthly?.toLocaleString()}</span>
                           </div>
+                          <div className="flex justify-between text-slate-300 font-semibold pt-0.5 border-t border-slate-800/80">
+                            <span>Total Deferred Benefits (Part B)</span>
+                            <span className="font-mono">{currencySymbol}{offerPreviewCTC.deferred.totalMonthly?.toLocaleString()}</span>
+                          </div>
                         </div>
                       )}
+                      <div className="bg-slate-950 px-3 py-1.5 border-t border-slate-800 font-bold text-slate-200 flex justify-between text-[11px]">
+                        <span>Total Monthly CTC (A + B)</span>
+                        <span className="font-mono">{currencySymbol}{offerPreviewCTC.monthlyCTC?.toLocaleString()}</span>
+                      </div>
                       {offerPreviewCTC.inHand && (
-                        <div className="bg-emerald-950/40 px-3 py-2 border-t border-emerald-900/60 font-bold text-emerald-400 flex justify-between items-center">
-                          <span>Est. Monthly In-Hand (Net)</span>
-                          <span className="font-mono text-sm">{currencySymbol}{offerPreviewCTC.inHand.monthly?.toLocaleString()}</span>
+                        <div className="bg-emerald-950/40 px-3 py-2 border-t border-emerald-900/60 font-bold text-emerald-400 flex flex-col gap-1">
+                          <div className="flex justify-between text-[11px] text-slate-400 font-normal">
+                            <span>Deductions (Employee PF + PT)</span>
+                            <span className="font-mono text-slate-300">(-) {currencySymbol}{(offerPreviewCTC.deferred.pfMonthly + (offerPreviewCTC.inHand.ptMonthly || 200))?.toLocaleString()}</span>
+                          </div>
+                          <div className="flex justify-between items-center pt-0.5 border-t border-emerald-900/40">
+                            <span>Est. Monthly In-Hand (Net Take-Home)</span>
+                            <span className="font-mono text-sm">{currencySymbol}{offerPreviewCTC.inHand.monthly?.toLocaleString()}</span>
+                          </div>
                         </div>
                       )}
                     </div>

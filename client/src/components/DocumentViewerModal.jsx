@@ -57,6 +57,160 @@ function numberToWords(amount) {
   return (parts.join(' ') || 'Zero') + ' Rupees Only';
 }
 
+export function getRoleProfile(designation = '', department = '') {
+  const dLower = (designation + ' ' + department).toLowerCase();
+
+  // 1. Engineering / Software / Tech / DevOps / QA / Data / Architect
+  if (
+    dLower.includes('software') ||
+    dLower.includes('engineer') ||
+    dLower.includes('developer') ||
+    dLower.includes('architect') ||
+    dLower.includes('frontend') ||
+    dLower.includes('backend') ||
+    dLower.includes('full stack') ||
+    dLower.includes('fullstack') ||
+    dLower.includes('devops') ||
+    dLower.includes('cloud') ||
+    dLower.includes('tech') ||
+    dLower.includes('engineering') ||
+    dLower.includes('qa') ||
+    dLower.includes('tester') ||
+    dLower.includes('data') ||
+    dLower.includes('system')
+  ) {
+    return {
+      purpose: 'To architect, build, and optimize scalable, robust software systems and cloud-native solutions, driving engineering excellence, code quality, and technical innovation aligned with organizational and client strategic goals.',
+      deliverables: [
+        'Architect, design, develop, test, and deploy resilient, high-performance software modules, microservices, and client-facing web applications.',
+        'Author clean, maintainable, modular, and well-documented code adhering to enterprise design patterns, SOLID principles, and language conventions.',
+        'Conduct thorough peer code reviews, mentor junior and mid-level software developers, and ensure rigorous test coverage across unit, integration, and E2E suites.',
+        'Design and integrate secure RESTful/GraphQL APIs, distributed database schemas (SQL/NoSQL), and event-driven asynchronous processing architectures.',
+        'Collaborate closely with Product Management, UI/UX designers, QA engineers, and DevOps to translate complex product specifications into production-grade solutions.',
+        'Champion CI/CD automation, containerization workflows (Docker/Kubernetes), automated build validation, and zero-downtime deployment pipelines.',
+        'Proactively profile system performance, identify latency bottlenecks, debug production issues, and implement high-availability fault tolerance.',
+        'Maintain rigorous data privacy, encryption at rest/transit, and adherence to enterprise security best practices and OWASP standards.',
+        'Actively participate in Agile sprint planning, technical estimation, backlog refinement, architecture spikes, and retrospective reviews.',
+        'Create and maintain comprehensive architecture decision records (ADRs), technical system specifications, runbooks, and developer documentation.',
+        'Drive technological experimentation, evaluate emerging open-source frameworks, and contribute to internal reusable libraries and developer tooling.',
+        'Perform other technical initiatives, architectural spikes, and engineering responsibilities assigned by Engineering Leadership and Management.'
+      ],
+      kpis: [
+        { label: 'Technical Quality & SLA Adherence', desc: 'Zero regression defects, >80% test coverage, and strict delivery within sprint release milestones.' },
+        { label: 'System Reliability & Security', desc: 'Zero high-severity vulnerabilities, 99.9% uptime for deployed services, and full adherence to secure coding standards.' },
+        { label: 'Engineering Velocity & Mentorship', desc: 'Consistent story point velocity, high code review turnaround, and impactful technical mentorship of peer engineers.' }
+      ]
+    };
+  }
+
+  // 2. Human Resources / Talent Acquisition / People Ops
+  if (
+    dLower.includes('hr') ||
+    dLower.includes('human resource') ||
+    dLower.includes('talent') ||
+    dLower.includes('recruiter') ||
+    dLower.includes('people') ||
+    dLower.includes('personnel')
+  ) {
+    return {
+      purpose: 'To orchestrate talent acquisition, foster employee engagement, streamline HR operational workflows, and champion corporate compliance and workplace culture across MARGEY LABS PRIVATE LIMITED.',
+      deliverables: [
+        'Execute end-to-end talent sourcing, candidate screening, interview scheduling, and offer rollout across technical and business divisions.',
+        'Administer Human Resource Information Systems (HRIS), daily biometric attendance, leave approvals, and shift rosters in compliance with guidelines.',
+        'Coordinate comprehensive new-hire onboarding, induction workflows, personnel dossier creation, and statutory documentation.',
+        'Liaise closely with accounts and payroll teams to guarantee flawless monthly attendance inputs and timely resolution of employee compensation queries.',
+        'Serve as the approachable first-line point of contact for employee grievances, workplace procedures, and corporate policy clarifications.',
+        'Drive employee engagement programs, learning & development (L&D) calendars, town halls, and annual performance appraisal cycles.',
+        'Prepare, analyze, and present weekly/monthly HR operational trackers, attrition metrics, and headcount reports for executive review.',
+        'Ensure strict adherence to statutory labor laws, workplace safety norms, and Prevention of Sexual Harassment (POSH) statutory protocols.',
+        'Uphold the highest degree of confidentiality and data security regarding employee personnel, salary schedules, and company internal records.',
+        'Oversee credential checks, educational authentication, and background verification (BGV) validation workflows with empanelled agencies.',
+        'Maintain and continuously update standard operating procedures, employee handbooks, and internal HR documentation templates.',
+        'Facilitate smooth separation formalities, exit interviews, asset surrender coordination, and no-dues clearance signoffs.'
+      ],
+      kpis: [
+        { label: 'Hiring SLA & Onboarding Quality', desc: 'Time-to-hire within 30 days, 100% Day-1 onboarding readiness, and positive new-hire onboarding ratings.' },
+        { label: 'Statutory & HRIS Compliance', desc: 'Zero compliance defaults across labor regulations, EPF/ESI records, POSH filings, and personnel documentation.' },
+        { label: 'Employee Engagement & Retention', desc: 'High retention of key talent, timely grievance resolution, and active participation in organizational culture initiatives.' }
+      ]
+    };
+  }
+
+  // 3. Sales / Business Development / Marketing
+  if (
+    dLower.includes('sales') ||
+    dLower.includes('business development') ||
+    dLower.includes('marketing') ||
+    dLower.includes('account executive') ||
+    dLower.includes('growth')
+  ) {
+    return {
+      purpose: 'To accelerate revenue generation, establish strategic client partnerships, expand enterprise market footprint, and drive sustainable business growth for MARGEY LABS PRIVATE LIMITED.',
+      deliverables: [
+        'Generate, qualify, and cultivate high-potential enterprise leads across domestic and international target market segments.',
+        'Conduct tailored client discovery sessions, deliver high-impact technical solution demonstrations, and articulate Margey Labs\' value propositions.',
+        'Manage the end-to-end sales lifecycle, from prospecting and RFP response formulation to contract negotiation and commercial deal closure.',
+        'Collaborate closely with technical architecture and product teams to formulate custom solution scopes, proposals, and delivery estimations.',
+        'Maintain meticulous CRM pipeline records, deal stages, client interaction logs, and revenue forecasts with daily operational hygiene.',
+        'Build and nurture long-term executive stakeholder relationships to drive account expansion, cross-selling, and annual contract renewals.',
+        'Conduct market intelligence, competitor benchmarking, and pricing analysis to refine go-to-market strategies and outreach collateral.',
+        'Represent the organization at industry conferences, enterprise networking summits, and client executive briefing sessions.',
+        'Coordinate with legal, finance, and delivery units to ensure seamless contract sign-offs, billing milestones, and project handover.',
+        'Achieve and exceed quarterly and annual individual and team gross revenue and margin targets.'
+      ],
+      kpis: [
+        { label: 'Revenue Quota & Pipeline Velocity', desc: '100%+ attainment of quarterly net-new revenue targets and robust pipeline coverage ratio.' },
+        { label: 'Win Rate & Deal Cycle Efficiency', desc: 'Above-benchmark conversion rates from proposal to closed-won, with optimized deal gestation periods.' },
+        { label: 'Client Satisfaction & Expansion', desc: 'High Net Promoter Score (NPS) from enterprise accounts and expansion of annual recurring revenue (ARR).' }
+      ]
+    };
+  }
+
+  // 4. Finance / Accounts / Audit
+  if (
+    dLower.includes('finance') ||
+    dLower.includes('account') ||
+    dLower.includes('audit') ||
+    dLower.includes('tax')
+  ) {
+    return {
+      purpose: 'To oversee financial governance, statutory accounting, payroll compliance, and fiscal management, ensuring impeccable regulatory adherence and financial integrity.',
+      deliverables: [
+        'Manage financial books of accounts, general ledger reconciliations, accounts payable (AP), and accounts receivable (AR).',
+        'Administer monthly payroll processing, statutory deductions (TDS, EPF, PT), and timely disbursement coordination with banking partners.',
+        'Ensure strict compliance with GST filings, TDS returns, advance tax estimations, and statutory annual audit disclosures.',
+        'Prepare monthly P&L statements, balance sheets, cash flow projections, and variance analysis for executive leadership.',
+        'Coordinate with external statutory auditors, tax consultants, and financial banking institutions to complete compliance reviews.',
+        'Formulate and enforce corporate financial controls, travel expense reimbursement guidelines, and procurement authorization limits.',
+        'Monitor working capital requirements, vendor payment schedules, and enterprise cash flow optimization.'
+      ],
+      kpis: [
+        { label: 'Accounting Accuracy & Timeliness', desc: 'Error-free monthly books closure within 5 business days and accurate ledger reconciliations.' },
+        { label: 'Statutory & Tax Compliance', desc: '100% on-time filing of GST, TDS, EPF, and corporate tax returns with zero penalties or notices.' },
+        { label: 'Audit Clearance & Controls', desc: 'Clean statutory audit opinions with zero material internal control deficiencies.' }
+      ]
+    };
+  }
+
+  // 5. General Corporate / Operations
+  return {
+    purpose: `To drive operational efficiency, cross-functional project execution, and organizational excellence, delivering on strategic priorities with high accountability and professional standards.`,
+    deliverables: [
+      `Execute core operational deliverables and strategic assignments associated with the ${designation} position with high precision and ownership.`,
+      `Establish and refine standard operating procedures (SOPs), workflows, and quality governance frameworks across departmental functions.`,
+      `Collaborate cross-functionally across engineering, management, and client operations to guarantee seamless project milestone delivery.`,
+      `Track and report operational KPIs, risk matrices, and resource utilization reports to senior leadership.`,
+      `Uphold enterprise data integrity, confidentiality guidelines, and corporate information security best practices.`,
+      `Participate actively in organizational improvement programs, agile delivery sprints, and client success initiatives.`
+    ],
+    kpis: [
+      { label: 'Operational Quality & SLA Adherence', desc: 'Consistently meeting or exceeding assigned operational benchmarks and client delivery timelines.' },
+      { label: 'Process Innovation & Productivity', desc: 'Identifying operational bottlenecks and delivering measurable efficiency enhancements.' },
+      { label: 'Stakeholder Satisfaction', desc: 'High satisfaction ratings from internal cross-functional stakeholders and external partners.' }
+    ]
+  };
+}
+
 export default function DocumentViewerModal({ document, company, onClose }) {
   const [isExporting, setIsExporting] = useState(false);
   const [emailSent, setEmailSent] = useState(false);
@@ -82,10 +236,45 @@ export default function DocumentViewerModal({ document, company, onClose }) {
     ? document.formattedIssueDate
     : formatOrdinalDate(rawIssueDate);
 
-  const rawJoiningDate = document.employment?.joiningDate || document.employment?.expectedJoiningDate || '2026-11-15';
+  // Strictly synchronize Ref ID year with the issue date's year
+  const issueYear = (() => {
+    if (rawIssueDate && /^\d{4}/.test(rawIssueDate)) return String(rawIssueDate).slice(0, 4);
+    const m = formattedIssueDate?.match(/\b(20\d{2})\b/);
+    if (m) return m[1];
+    return String(new Date().getFullYear());
+  })();
+
+  const effectiveRefId = (() => {
+    const baseId = document.id || `MARGEY/OFFER/${issueYear}/ML4491`;
+    return baseId.replace(/MARGEY\/OFFER\/\d{4}\//, `MARGEY/OFFER/${issueYear}/`);
+  })();
+
+  let rawJoiningDate = document.employment?.joiningDate || document.employment?.expectedJoiningDate;
+  if (!rawJoiningDate) {
+    const d = new Date(rawIssueDate);
+    if (!isNaN(d.getTime())) {
+      d.setDate(d.getDate() + 15);
+      rawJoiningDate = d.toISOString().slice(0, 10);
+    } else {
+      rawJoiningDate = '2026-11-15';
+    }
+  }
+
   const joiningDate = (document.employment?.formattedJoiningDate && document.employment?.formattedJoiningDate !== '12th Nov 2025')
     ? document.employment.formattedJoiningDate
     : formatOrdinalDate(rawJoiningDate);
+
+  // Dynamic 5-day / 7-calendar-day validity window
+  const validityExpiryDate = (() => {
+    try {
+      const d = new Date(rawIssueDate);
+      if (!isNaN(d.getTime())) {
+        d.setDate(d.getDate() + 7);
+        return formatOrdinalDate(d.toISOString().slice(0, 10));
+      }
+    } catch (e) {}
+    return '5 business days from issuance';
+  })();
 
   const workLocation = document.employment?.workLocation || 'Bengaluru';
   const noticePeriod = document.employment?.noticePeriodDays ? `${document.employment.noticePeriodDays} days` : '[insert period]';
@@ -158,7 +347,8 @@ export default function DocumentViewerModal({ document, company, onClose }) {
   const monthlySpecial = Math.max(0, monthlyGross - fixedMonthlySum);
 
   // 7. Statutory Employee Deductions & Net Monthly In-Hand
-  const monthlyPT = monthlyGross > 15000 ? 200 : (monthlyGross > 10000 ? 150 : 0);
+  // Karnataka Professional Tax (PT): ₹200 for gross >= ₹15,000, else ₹0
+  const monthlyPT = monthlyGross >= 15000 ? 200 : 0;
   const annualPT = monthlyPT * 12;
   const monthlyDeductions = monthlyPF + monthlyPT;
   const annualDeductions = annualPF + annualPT;
@@ -390,7 +580,7 @@ export default function DocumentViewerModal({ document, company, onClose }) {
                   <div className="flex-1 flex flex-col justify-between pb-1">
                     <div>
                       <MargeyHeader
-                        refId={document.id}
+                        refId={effectiveRefId}
                         dateStr={null}
                         isConfidential={false}
                       />
@@ -456,19 +646,19 @@ export default function DocumentViewerModal({ document, company, onClose }) {
                           </table>
                         </div>
 
-                        {/* Section 2: Compensation and Payroll */}
+                        {/* Section 2: Compensation, Payroll & PF Establishment */}
                         <div>
-                          <p className="font-bold text-slate-900 text-[11px] mb-0.5">2. Compensation and Payroll</p>
+                          <p className="font-bold text-slate-900 text-[11px] mb-0.5">2. Compensation, Payroll & PF Establishment</p>
                           <p>
-                            Your annual Cost to Company (CTC) will be ₹{ctcFormatted} (Monthly equivalent: ₹{monthlyCTCEquivalent}). Deducting annualised Deferred Benefits (Provident Fund under the PF Act 1952 and Gratuity under the Gratuity Act 1972) yields an Annual Gross Salary of ₹{annualGross.toLocaleString('en-IN')}, and an estimated net Monthly In-Hand of ₹{monthlyInHand.toLocaleString('en-IN')} after statutory withholdings. Complete itemized breakdown is provided in Annexure I.
+                            Your annual Cost to Company (CTC) will be ₹{ctcFormatted} (Monthly equivalent: ₹{monthlyCTCEquivalent}). Deducting annualised Deferred Benefits—Provident Fund under the Employees' Provident Funds & Miscellaneous Provisions Act 1952 (PF Establishment Code: MH/BAN/43477) and Gratuity under the Payment of Gratuity Act 1972—yields an Annual Gross Salary of ₹{annualGross.toLocaleString('en-IN')}, and an estimated net Monthly In-Hand of ₹{monthlyInHand.toLocaleString('en-IN')} after statutory employee withholdings (EPF and Karnataka Professional Tax). Complete itemized breakdown is provided in Annexure I.
                           </p>
                         </div>
 
-                        {/* Section 3: Terms, Code of Conduct & Workplace Guidelines */}
+                        {/* Section 3: Terms, Code of Conduct & Employment Verification (BGV) */}
                         <div>
-                          <p className="font-bold text-slate-900 text-[11px] mb-0.5">3. Terms, Code of Conduct & Workplace Guidelines</p>
+                          <p className="font-bold text-slate-900 text-[11px] mb-0.5">3. Terms, Code of Conduct & Employment Verification (BGV)</p>
                           <p>
-                            Your employment will be governed by company operating guidelines, compliance standards, and professional codes detailed in Annexures II, III, and IV. You are expected to demonstrate operational excellence, uphold organizational values, and perform assigned responsibilities faithfully.
+                            This offer is contingent upon satisfactory establishment of your credentials, past employment history, and background verification (BGV). You are required to submit verifiable relieving letters, past service certificates, previous 3 months' pay slips, bank statements, academic mark sheets, and identity proofs. Your role deliverables, corporate policies, and service terms are detailed in Annexures II, III, and IV. Acceptance undertaking and mandatory pre-onboarding verification checklist are set forth in Annexure V.
                           </p>
                         </div>
 
@@ -484,7 +674,7 @@ export default function DocumentViewerModal({ document, company, onClose }) {
                         <div>
                           <p className="font-bold text-slate-900 text-[11px] mb-0.5">5. Offer Acceptance & Validity Window</p>
                           <p>
-                            This offer of employment is valid for five (5) business days from the date of issuance. Please confirm your formal acceptance by signing the acceptance undertaking in Annexure V and returning the duplicate copy along with the pre-onboarding documentation listed therein.
+                            This offer of employment is valid for five (5) business days from the date of issuance ({formattedIssueDate}). Please confirm your formal acceptance by signing the acceptance undertaking in Annexure V and returning the duplicate copy on or before <strong>{validityExpiryDate}</strong> along with the pre-onboarding verification dossier listed therein. If not accepted within this stipulated window, this offer shall automatically lapse and become void unless extended in writing by the Authorized Signatory.
                           </p>
                         </div>
 
@@ -518,7 +708,7 @@ export default function DocumentViewerModal({ document, company, onClose }) {
                 >
                   <div>
                     <MargeyHeader
-                      refId={document.id}
+                      refId={effectiveRefId}
                       dateStr={null}
                       isConfidential={false}
                     />
@@ -613,7 +803,7 @@ export default function DocumentViewerModal({ document, company, onClose }) {
                           </tr>
                           <tr>
                             <td className="p-1.5 font-sans font-medium text-slate-800 border-r border-slate-300">
-                              Provident Fund (As per the PF Act 1952)
+                              Provident Fund (EPF Act 1952 - MH/BAN/43477)
                             </td>
                             <td className="p-1.5 text-right border-r border-slate-300">{monthlyPF.toLocaleString('en-IN')}</td>
                             <td className="p-1.5 text-right">{annualPF.toLocaleString('en-IN')}</td>
@@ -653,7 +843,7 @@ export default function DocumentViewerModal({ document, company, onClose }) {
                           </tr>
                           <tr>
                             <td className="p-1.5 font-sans font-medium text-slate-800 border-r border-slate-300">
-                              Professional Tax (PT)
+                              Professional Tax (PT - Karnataka)
                             </td>
                             <td className="p-1.5 text-right border-r border-slate-300">(-) {monthlyPT.toLocaleString('en-IN')}</td>
                             <td className="p-1.5 text-right">(-) {annualPT.toLocaleString('en-IN')}</td>
@@ -672,10 +862,10 @@ export default function DocumentViewerModal({ document, company, onClose }) {
                     {/* Explanatory Compensation Notes */}
                     <div className="space-y-1 text-[9.5px] text-slate-700 leading-snug text-justify mb-2">
                       <p>
-                        * <strong>Deferred Benefits:</strong> Provident Fund is computed under the Employees' Provident Funds and Miscellaneous Provisions Act, 1952. Gratuity accrual is calculated pursuant to the Payment of Gratuity Act, 1972, payable after qualifying continuous service. Deducting these deferred benefits yields your Annual Gross Salary.
+                        * <strong>Deferred Benefits:</strong> Provident Fund is computed under the Employees' Provident Funds and Miscellaneous Provisions Act, 1952 (PF Establishment: MH/BAN/43477). Gratuity is computed pursuant to the Payment of Gratuity Act, 1972, payable after qualifying continuous service. Deducting these deferred statutory benefits yields your Annual Gross Salary.
                       </p>
                       <p>
-                        * <strong>Net Monthly In-Hand:</strong> Reflects estimated monthly take-home pay after statutory Employee PF and Professional Tax. Income Tax (TDS) withholdings will be deducted based on applicable tax slabs and declared investment exemptions.
+                        * <strong>Net Monthly In-Hand:</strong> Reflects estimated monthly take-home pay after statutory Employee PF (12% of basic) and Karnataka Professional Tax (PT: ₹200/mo). Income Tax (TDS) withholdings will be deducted based on applicable tax slabs and declared investment exemptions.
                       </p>
                     </div>
 
@@ -722,84 +912,76 @@ export default function DocumentViewerModal({ document, company, onClose }) {
                 {showFullAnnexure && (
                   <>
                     {/* PAGE 3: ANNEXURE – II: Role Profile */}
-                    <div
-                      className="printable-page bg-white text-slate-900 rounded-none shadow-none border-none p-6 sm:p-7 font-sans flex flex-col justify-between"
-                      style={{ width: '210mm', minHeight: '295.5mm', height: '295.5mm' }}
-                    >
-                      <div>
-                        <MargeyHeader
-                          refId={document.id}
-                          dateStr={null}
-                          isConfidential={false}
-                        />
+                    {(() => {
+                      const roleProfile = getRoleProfile(designation, department);
+                      return (
+                        <div
+                          className="printable-page bg-white text-slate-900 rounded-none shadow-none border-none p-6 sm:p-7 font-sans flex flex-col justify-between"
+                          style={{ width: '210mm', minHeight: '295.5mm', height: '295.5mm' }}
+                        >
+                          <div>
+                            <MargeyHeader
+                              refId={effectiveRefId}
+                              dateStr={null}
+                              isConfidential={false}
+                            />
 
-                        <div className="text-center my-2">
-                          <h2 className="text-base font-bold text-slate-900 tracking-wider uppercase font-sans">
-                            ANNEXURE – II
-                          </h2>
-                          <p className="text-[12px] font-bold text-slate-900 uppercase">
-                            {designation.toUpperCase()} ROLE PROFILE
-                          </p>
+                            <div className="text-center my-2">
+                              <h2 className="text-base font-bold text-slate-900 tracking-wider uppercase font-sans">
+                                ANNEXURE – II
+                              </h2>
+                              <p className="text-[12px] font-bold text-slate-900 uppercase">
+                                {designation.toUpperCase()} ROLE PROFILE
+                              </p>
+                            </div>
+
+                            <div className="space-y-3 text-[10.5px] leading-[1.48] text-slate-800 font-sans text-justify mt-2">
+                              <div>
+                                <h3 className="font-bold text-slate-900 text-[11.5px] mb-1">Purpose of the Role</h3>
+                                <p>{roleProfile.purpose}</p>
+                              </div>
+
+                              <div>
+                                <h3 className="font-bold text-slate-900 text-[11.5px] mb-1">Principal Responsibilities & Deliverables</h3>
+                                <ul className="list-disc pl-5 space-y-1 text-slate-700">
+                                  {roleProfile.deliverables.map((item, idx) => (
+                                    <li key={idx}>{item}</li>
+                                  ))}
+                                </ul>
+                              </div>
+
+                              <div>
+                                <h3 className="font-bold text-slate-900 text-[11.5px] mb-1">Key Performance Indicators & Evaluation Standards</h3>
+                                <ul className="list-disc pl-5 space-y-1 text-slate-700">
+                                  {roleProfile.kpis.map((kpi, idx) => (
+                                    <li key={idx}><strong>{kpi.label}:</strong> {kpi.desc}</li>
+                                  ))}
+                                </ul>
+                              </div>
+
+                              <div>
+                                <h3 className="font-bold text-slate-900 text-[11.5px] mb-1">Core Behavioral Competencies & Organizational Values</h3>
+                                <ul className="list-disc pl-5 space-y-1 text-slate-700">
+                                  <li><strong>Integrity & Professional Governance:</strong> Unwavering commitment to truthfulness, regulatory compliance, and ethical business conduct.</li>
+                                  <li><strong>Analytical Problem Solving:</strong> Demonstrating critical thinking, proactive root-cause analysis, and pragmatic solution design.</li>
+                                  <li><strong>Cross-Functional Collaboration:</strong> Open, transparent communication and cooperative teamwork across diverse technical and business functions.</li>
+                                  <li><strong>Agile Delivery & Accountability:</strong> High ownership of deliverables with disciplined adherence to organizational milestones and enterprise quality standards.</li>
+                                </ul>
+                              </div>
+
+                              <div>
+                                <h3 className="font-bold text-slate-900 text-[11.5px] mb-1">Professional Growth, Upskilling & Career Development</h3>
+                                <p>
+                                  MARGEY LABS PRIVATE LIMITED encourages continuous learning, sponsored professional development certifications, hands-on architectural workshops, and quarterly structured leadership reviews to actively nurture your long-term career growth.
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+
+                          <MargeyFooter />
                         </div>
-
-                        <div className="space-y-3 text-[10.5px] leading-[1.48] text-slate-800 font-sans text-justify mt-2">
-                          <div>
-                            <h3 className="font-bold text-slate-900 text-[11.5px] mb-1">Purpose of the Role</h3>
-                            <p>
-                              To drive excellence, operational efficiency, and cross-functional support within the organization, maintaining accurate documentation, upholding professional standards, and ensuring full alignment with company strategic objectives and standard operating procedures (SOPs).
-                            </p>
-                          </div>
-
-                          <div>
-                            <h3 className="font-bold text-slate-900 text-[11.5px] mb-1">Principal Responsibilities & Deliverables</h3>
-                            <ul className="list-disc pl-5 space-y-1 text-slate-700">
-                              <li>Execute core operational duties and strategic assignments associated with the {designation} role with high accuracy and timeliness.</li>
-                              <li>Coordinate recruitment, onboarding workflows, candidate pipeline tracking, and employee personnel file maintenance.</li>
-                              <li>Administer Human Resource Information Systems (HRIS), daily attendance, leave approvals, and shift rosters in compliance with company guidelines.</li>
-                              <li>Liaise closely with accounts and payroll divisions to guarantee flawless attendance inputs and timely resolution of employee queries.</li>
-                              <li>Serve as an approachable point of contact for employee grievances, workplace procedures, and policy clarifications.</li>
-                              <li>Drive employee engagement programs, professional learning & development (L&D) initiatives, and performance appraisal administration.</li>
-                              <li>Prepare, analyze, and present weekly/monthly operational trackers, audit reports, and departmental metrics for leadership review.</li>
-                              <li>Ensure strict adherence to statutory labor guidelines, workplace safety norms, and Prevention of Sexual Harassment (POSH) protocols.</li>
-                              <li>Uphold the highest degree of confidentiality and data security regarding employee, candidate, financial, and client proprietary records.</li>
-                              <li>Participate proactively in cross-functional task forces, quality audits, and operational scaling initiatives across business units.</li>
-                              <li>Oversee third-party vendor management, credential checks, and background verification (BGV) validation workflows.</li>
-                              <li>Maintain and continuously update standard operating procedures, checklists, and internal documentation templates.</li>
-                              <li>Facilitate smooth separation formalities, asset surrender tracking, knowledge transfer sessions, and no-dues signoffs.</li>
-                              <li>Perform any other reasonable responsibilities and strategic initiatives assigned by senior leadership and departmental heads.</li>
-                            </ul>
-                          </div>
-
-                          <div>
-                            <h3 className="font-bold text-slate-900 text-[11.5px] mb-1">Key Performance Indicators & Evaluation Standards</h3>
-                            <ul className="list-disc pl-5 space-y-1 text-slate-700">
-                              <li><strong>Execution Quality & SLA Adherence:</strong> Timely completion of operational tasks and adherence to quality benchmarks.</li>
-                              <li><strong>Information Security & Integrity:</strong> Zero non-compliance incidents regarding data privacy, confidentiality, and company code of conduct.</li>
-                              <li><strong>Collaboration & Stakeholder Ownership:</strong> Positive feedback from cross-functional peers, management, and internal customers.</li>
-                            </ul>
-                          </div>
-
-                          <div>
-                            <h3 className="font-bold text-slate-900 text-[11.5px] mb-1">Core Behavioral Competencies & Organizational Values</h3>
-                            <ul className="list-disc pl-5 space-y-1 text-slate-700">
-                              <li><strong>Integrity & Professional Governance:</strong> Unwavering commitment to truthfulness, regulatory compliance, and ethical business conduct.</li>
-                              <li><strong>Analytical Problem Solving:</strong> Demonstrating critical thinking, proactive root-cause analysis, and pragmatic solution design.</li>
-                              <li><strong>Cross-Functional Collaboration:</strong> Open, transparent communication and cooperative teamwork across diverse technical and business functions.</li>
-                              <li><strong>Agile Delivery & Accountability:</strong> High ownership of deliverables with disciplined adherence to organizational milestones and enterprise quality standards.</li>
-                            </ul>
-                          </div>
-
-                          <div>
-                            <h3 className="font-bold text-slate-900 text-[11.5px] mb-1">Professional Growth, Upskilling & Career Development</h3>
-                            <p>
-                              MARGEY LABS PRIVATE LIMITED encourages continuous learning, sponsored professional development certifications, hands-on architectural workshops, and quarterly structured leadership reviews to actively nurture your long-term career growth.
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-
-                      <MargeyFooter />
-                    </div>
+                      );
+                    })()}
 
                     {/* PAGE 4: ANNEXURE – III: Company Policies and Working Conditions */}
                     <div
@@ -808,7 +990,7 @@ export default function DocumentViewerModal({ document, company, onClose }) {
                     >
                       <div>
                         <MargeyHeader
-                          refId={document.id}
+                          refId={effectiveRefId}
                           dateStr={null}
                           isConfidential={false}
                         />
@@ -843,7 +1025,7 @@ export default function DocumentViewerModal({ document, company, onClose }) {
                           <div>
                             <h3 className="font-bold text-slate-900 text-[11.5px] mb-1">2. Financial & Statutory Benefits</h3>
                             <ul className="list-disc pl-5 space-y-0.5 text-slate-700">
-                              <li><strong>Employee Provident Fund (EPF):</strong> Statutory employer and employee contributions deposited under the EPF & MP Act, 1952.</li>
+                              <li><strong>Employee Provident Fund (EPF):</strong> Statutory employer (12%) and employee (12%) contributions deposited under the EPF & MP Act, 1952 via EPFO Regional Office, Bengaluru (Establishment Code: MH/BAN/43477). Employee must submit EPFO Form 11, active Universal Account Number (UAN), and Aadhaar linkage upon joining.</li>
                               <li><strong>Gratuity:</strong> Gratuity benefits payable upon completion of qualifying continuous service as per Payment of Gratuity Act, 1972.</li>
                               <li><strong>Annual Performance Incentive:</strong> Merit-based performance awards evaluated during the annual organizational review cycle.</li>
                               <li><strong>Festival Rewards & Allowances:</strong> Discretionary festive bonuses and welfare disbursements as declared by executive leadership.</li>
@@ -898,7 +1080,7 @@ export default function DocumentViewerModal({ document, company, onClose }) {
                     >
                       <div>
                         <MargeyHeader
-                          refId={document.id}
+                          refId={effectiveRefId}
                           dateStr={null}
                           isConfidential={false}
                         />
@@ -980,7 +1162,7 @@ export default function DocumentViewerModal({ document, company, onClose }) {
                     >
                       <div>
                         <MargeyHeader
-                          refId={document.id}
+                          refId={effectiveRefId}
                           dateStr={null}
                           isConfidential={false}
                         />
@@ -1002,7 +1184,7 @@ export default function DocumentViewerModal({ document, company, onClose }) {
                           <p><strong>5. Attendance & Approved Leaves:</strong> Absence without approved leave is considered unauthorized. Leave entitlements are governed by the company leave policy.</p>
                           <p><strong>6. Notice Period & Voluntary Resignation:</strong> The required notice period for separation is {noticePeriod}, or equivalent gross salary in lieu thereof with mutual management consent.</p>
                           <p><strong>7. Professional Conduct & Ethics:</strong> You must comply with all company rules, maintain professional decorum, and avoid any activities adverse to the company's reputational or commercial interests.</p>
-                          <p><strong>8. Pre-Employment Verification (BGV):</strong> This offer is contingent upon satisfactory verification of academic degrees, previous employment records, and background checks.</p>
+                          <p><strong>8. Pre-Employment Verification (BGV) & Compliance Mandate:</strong> This offer is strictly contingent upon satisfactory background screening, including authentication of academic credentials, verification of previous employment tenure, service records, relieving orders, salary certificates, Form 16 / EPFO service history, and reference checks. You hereby authorize MARGEY LABS PRIVATE LIMITED and its appointed third-party verification partners to conduct comprehensive inquiries. Any discrepancy, concealment of facts, falsification of employment history, or adverse BGV report shall result in immediate withdrawal of this offer or summary termination of employment without notice, severance, or pay in lieu thereof.</p>
                           <p><strong>9. Summary Dismissal:</strong> The Company reserves the right to terminate employment immediately without notice in cases of fraud, gross misconduct, insubordination, or material breach of trust.</p>
                           <p><strong>10. Separation Clearance & Asset Surrender:</strong> Full & Final (FnF) clearance is conditional upon surrendering all company assets, hardware, keys, and security credentials.</p>
                           <p><strong>11. Governing Law & Jurisdiction:</strong> All employment terms and disputes shall be governed by the laws of India, subject to the exclusive jurisdiction of the competent courts in Bengaluru, Karnataka.</p>
@@ -1013,8 +1195,23 @@ export default function DocumentViewerModal({ document, company, onClose }) {
                         </div>
 
                         {/* Candidate Acceptance Box with Signatures & Optional Stamp */}
-                        <div className="mt-3 p-3.5 border border-slate-400 bg-slate-50 text-[10px] space-y-2">
-                          <p className="font-semibold text-slate-900 leading-relaxed">
+                        <div className="mt-2.5 p-3 border border-slate-400 bg-slate-50 text-[9.5px] space-y-2">
+                          {/* Mandatory Pre-Onboarding Verification Dossier Checklist */}
+                          <div className="p-2 border border-slate-300 bg-white rounded">
+                            <p className="font-bold text-slate-900 mb-0.5 text-[10px]">
+                              MANDATORY PRE-ONBOARDING VERIFICATION DOSSIER (SUBMISSION BEFORE COMMENCEMENT):
+                            </p>
+                            <div className="grid grid-cols-2 gap-x-3 gap-y-0.5 text-[9px] text-slate-700">
+                              <p>✓ Relieving Letter & Service Certificate from prior employer</p>
+                              <p>✓ Highest Educational Degree Certificates & Mark Sheets</p>
+                              <p>✓ Last 3 months' Pay Slips & Bank Salary Credit Statements</p>
+                              <p>✓ Government Photo ID & Address Proof (Aadhaar & PAN Card)</p>
+                              <p>✓ EPFO Form 11 Declaration & UAN Seeding Details</p>
+                              <p>✓ 4 Recent Color Passport-size Photographs</p>
+                            </div>
+                          </div>
+
+                          <p className="font-semibold text-slate-900 leading-snug">
                             I have read, understood, and hereby unconditionally accept the offer of employment and agree to abide by all the terms, conditions, and policies set forth in this Letter of Offer and Annexures I through V.
                           </p>
                           <div className="pt-2 grid grid-cols-2 gap-8 font-sans">
@@ -1070,7 +1267,7 @@ export default function DocumentViewerModal({ document, company, onClose }) {
               >
                 <div>
                   <MargeyHeader
-                    refId={document.id}
+                    refId={effectiveRefId}
                     dateStr={document.formattedIssueDate || document.issueDate}
                     isConfidential={false}
                   />
@@ -1127,7 +1324,7 @@ export default function DocumentViewerModal({ document, company, onClose }) {
               >
                 <div>
                   <MargeyHeader
-                    refId={document.id}
+                    refId={effectiveRefId}
                     dateStr={document.formattedIssueDate || document.issueDate}
                     isConfidential={true}
                   />

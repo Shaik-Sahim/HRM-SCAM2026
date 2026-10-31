@@ -94,82 +94,93 @@ function numberToWords(amount, currency = 'INR') {
  */
 function calculateSalaryStructure(annualCTC, statutorySettings = {}, customMonthly = null) {
   const ctc = Math.max(0, Number(annualCTC) || 0);
-  const monthlyCTC = Number((ctc / 12).toFixed(2));
+  const monthlyCTC = Math.round(ctc / 12);
 
-  let basicMonthly, hraMonthly, conveyanceMonthly, medicalMonthly, networkAllowanceMonthly, otherAllowanceMonthly, specialAllowanceMonthly;
+  // 1. Basic Salary (50% of CTC)
+  let basicAnnual = Math.round(ctc * 0.50);
+  let basicMonthly = Math.round(basicAnnual / 12);
 
-  if (customMonthly && (customMonthly.basic !== undefined || customMonthly.isCustom)) {
-    // Custom salary package explicitly defined by HR
-    basicMonthly = Number(Number(customMonthly.basic || 0).toFixed(2));
-    hraMonthly = Number(Number(customMonthly.hra || 0).toFixed(2));
-    conveyanceMonthly = Number(Number(customMonthly.conveyance || 0).toFixed(2));
-    medicalMonthly = Number(Number(customMonthly.medical || 0).toFixed(2));
-    networkAllowanceMonthly = Number(Number(customMonthly.networkAllowance || 0).toFixed(2));
-    otherAllowanceMonthly = Number(Number(customMonthly.otherAllowance || 0).toFixed(2));
-
-    if (customMonthly.specialAllowance !== undefined && customMonthly.specialAllowance !== null) {
-      specialAllowanceMonthly = Number(Number(customMonthly.specialAllowance).toFixed(2));
-    } else {
-      const fixedMonthlySum = Number((basicMonthly + hraMonthly + conveyanceMonthly + medicalMonthly + networkAllowanceMonthly + otherAllowanceMonthly).toFixed(2));
-      specialAllowanceMonthly = Math.max(0, Number((monthlyCTC - fixedMonthlySum).toFixed(2)));
-    }
-  } else {
-    // Component breakdown (Standard Margey Labs formula):
-    // 1. Basic Salary (50% of CTC)
-    const basicAnnual = Math.round(ctc * 0.50);
-
-    // 2. House Rent Allowance (40% of Basic Salary)
-    const hraAnnual = Math.round(basicAnnual * 0.40);
-
-    // 3. Conveyance & Medical Allowances (Traveling: ₹2,000/mo, Medical: ₹1,500/mo)
-    const conveyanceAnnual = ctc > 100000 ? 24000 : 0;
-    const medicalAnnual = ctc > 100000 ? 18000 : 0;
-
-    // 4. Internet Allowance & Other Allowance (Internet: ₹1,500/mo, Other: ₹2,000/mo)
-    const networkAllowanceAnnual = ctc > 150000 ? 18000 : 0;
-    const otherAllowanceAnnual = ctc > 150000 ? 24000 : 0;
-    
-    // 5. Special Allowance is the balancing figure
-    const fixedAnnualSum = basicAnnual + hraAnnual + conveyanceAnnual + medicalAnnual + networkAllowanceAnnual + otherAllowanceAnnual;
-    const specialAllowanceAnnual = Math.max(0, ctc - fixedAnnualSum);
-
-    basicMonthly = Number((basicAnnual / 12).toFixed(2));
-    hraMonthly = Number((hraAnnual / 12).toFixed(2));
-    conveyanceMonthly = Number((conveyanceAnnual / 12).toFixed(2));
-    medicalMonthly = Number((medicalAnnual / 12).toFixed(2));
-    networkAllowanceMonthly = Number((networkAllowanceAnnual / 12).toFixed(2));
-    otherAllowanceMonthly = Number((otherAllowanceAnnual / 12).toFixed(2));
-
-    // Ensure monthly components balance precisely to monthlyCTC
-    const fixedMonthlySum = Number((basicMonthly + hraMonthly + conveyanceMonthly + medicalMonthly + networkAllowanceMonthly + otherAllowanceMonthly).toFixed(2));
-    specialAllowanceMonthly = Math.max(0, Number((monthlyCTC - fixedMonthlySum).toFixed(2)));
-  }
-
-  const basicAnnual = Math.round(basicMonthly * 12);
-  const hraAnnual = Math.round(hraMonthly * 12);
-  const conveyanceAnnual = Math.round(conveyanceMonthly * 12);
-  const medicalAnnual = Math.round(medicalMonthly * 12);
-  const networkAllowanceAnnual = Math.round(networkAllowanceMonthly * 12);
-  const otherAllowanceAnnual = Math.round(otherAllowanceMonthly * 12);
-  const specialAllowanceAnnual = Math.round(specialAllowanceMonthly * 12);
-  const computedGrossMonthly = Number((basicMonthly + hraMonthly + conveyanceMonthly + medicalMonthly + networkAllowanceMonthly + otherAllowanceMonthly + specialAllowanceMonthly).toFixed(2));
-  const computedGrossAnnual = Math.round(computedGrossMonthly * 12);
-
+  // 2. Deferred Benefits (Annualised)
+  // Provident Fund (12% of Basic Pay - Employees' Provident Funds Act 1952)
   const pfAnnual = Math.round(basicAnnual * 0.12);
   const pfMonthly = Math.round(pfAnnual / 12);
+
+  // Gratuity (4.81% of Basic Pay - Payment of Gratuity Act 1972)
   const gratuityAnnual = Math.round(basicAnnual * 0.0481);
   const gratuityMonthly = Math.round(gratuityAnnual / 12);
+
   const totalDeferredAnnual = pfAnnual + gratuityAnnual;
   const totalDeferredMonthly = pfMonthly + gratuityMonthly;
 
-  const ptMonthly = computedGrossMonthly > 15000 ? 200 : (computedGrossMonthly > 10000 ? 150 : 0);
+  // 3. Gross Annual Salary (Cash Components Part A = CTC - Deferred Benefits)
+  let grossAnnual = Math.max(0, ctc - totalDeferredAnnual);
+  let grossMonthly = Math.round(grossAnnual / 12);
+
+  let hraAnnual, hraMonthly, conveyanceAnnual, conveyanceMonthly, medicalAnnual, medicalMonthly, networkAllowanceAnnual, networkAllowanceMonthly, otherAllowanceAnnual, otherAllowanceMonthly, specialAllowanceAnnual, specialAllowanceMonthly;
+
+  if (customMonthly && (customMonthly.basic !== undefined || customMonthly.isCustom)) {
+    basicMonthly = Number(Number(customMonthly.basic || 0).toFixed(2));
+    basicAnnual = Math.round(basicMonthly * 12);
+    hraMonthly = Number(Number(customMonthly.hra || 0).toFixed(2));
+    hraAnnual = Math.round(hraMonthly * 12);
+    conveyanceMonthly = Number(Number(customMonthly.conveyance || 0).toFixed(2));
+    conveyanceAnnual = Math.round(conveyanceMonthly * 12);
+    medicalMonthly = Number(Number(customMonthly.medical || 0).toFixed(2));
+    medicalAnnual = Math.round(medicalMonthly * 12);
+    networkAllowanceMonthly = Number(Number(customMonthly.networkAllowance || 0).toFixed(2));
+    networkAllowanceAnnual = Math.round(networkAllowanceMonthly * 12);
+    otherAllowanceMonthly = Number(Number(customMonthly.otherAllowance || 0).toFixed(2));
+    otherAllowanceAnnual = Math.round(otherAllowanceMonthly * 12);
+
+    if (customMonthly.specialAllowance !== undefined && customMonthly.specialAllowance !== null) {
+      specialAllowanceMonthly = Number(Number(customMonthly.specialAllowance).toFixed(2));
+      specialAllowanceAnnual = Math.round(specialAllowanceMonthly * 12);
+    } else {
+      const fixedMonthlySum = basicMonthly + hraMonthly + conveyanceMonthly + medicalMonthly + networkAllowanceMonthly + otherAllowanceMonthly;
+      specialAllowanceMonthly = Math.max(0, grossMonthly - fixedMonthlySum);
+      specialAllowanceAnnual = Math.max(0, grossAnnual - (basicAnnual + hraAnnual + conveyanceAnnual + medicalAnnual + networkAllowanceAnnual + otherAllowanceAnnual));
+    }
+    grossMonthly = basicMonthly + hraMonthly + conveyanceMonthly + medicalMonthly + networkAllowanceMonthly + otherAllowanceMonthly + specialAllowanceMonthly;
+    grossAnnual = Math.round(grossMonthly * 12);
+  } else {
+    // Standard Margey Labs Cash Allowances
+    hraAnnual = Math.round(basicAnnual * 0.40);
+    hraMonthly = Math.round(hraAnnual / 12);
+
+    conveyanceAnnual = ctc >= 150000 ? 24000 : 0;
+    conveyanceMonthly = Math.round(conveyanceAnnual / 12);
+
+    medicalAnnual = ctc >= 150000 ? 18000 : 0;
+    medicalMonthly = Math.round(medicalAnnual / 12);
+
+    networkAllowanceAnnual = ctc >= 200000 ? 18000 : 0;
+    networkAllowanceMonthly = Math.round(networkAllowanceAnnual / 12);
+
+    otherAllowanceAnnual = ctc >= 200000 ? 24000 : 0;
+    otherAllowanceMonthly = Math.round(otherAllowanceAnnual / 12);
+
+    const fixedAnnualSum = basicAnnual + hraAnnual + conveyanceAnnual + medicalAnnual + networkAllowanceAnnual + otherAllowanceAnnual;
+    specialAllowanceAnnual = Math.max(0, grossAnnual - fixedAnnualSum);
+
+    const fixedMonthlySum = basicMonthly + hraMonthly + conveyanceMonthly + medicalMonthly + networkAllowanceMonthly + otherAllowanceMonthly;
+    specialAllowanceMonthly = Math.max(0, grossMonthly - fixedMonthlySum);
+  }
+
+  // Karnataka Professional Tax (PT): ₹200 for gross >= ₹15,000, else ₹0
+  const ptMonthly = grossMonthly >= 15000 ? 200 : 0;
   const ptAnnual = ptMonthly * 12;
-  const inHandMonthly = Math.max(0, Math.round(computedGrossMonthly - pfMonthly - ptMonthly));
-  const inHandAnnual = Math.max(0, Math.round(computedGrossAnnual - pfAnnual - ptAnnual));
+
+  // Net Monthly In-Hand (Part A Gross - Employee PF - Karnataka PT)
+  const inHandMonthly = Math.max(0, grossMonthly - pfMonthly - ptMonthly);
+  const inHandAnnual = Math.max(0, grossAnnual - pfAnnual - ptAnnual);
 
   return {
-    annualCTC: computedGrossAnnual || ctc,
-    monthlyCTC: computedGrossMonthly || monthlyCTC,
+    annualCTC: ctc,
+    monthlyCTC: monthlyCTC,
+    grossSalary: {
+      monthly: grossMonthly,
+      annual: grossAnnual
+    },
     deferred: {
       pfMonthly,
       pfAnnual,
@@ -193,7 +204,7 @@ function calculateSalaryStructure(annualCTC, statutorySettings = {}, customMonth
       networkAllowance: networkAllowanceAnnual,
       otherAllowance: otherAllowanceAnnual,
       specialAllowance: specialAllowanceAnnual,
-      gross: computedGrossAnnual
+      gross: grossAnnual
     },
     monthly: {
       basic: basicMonthly,
@@ -204,7 +215,7 @@ function calculateSalaryStructure(annualCTC, statutorySettings = {}, customMonth
       networkAllowance: networkAllowanceMonthly,
       otherAllowance: otherAllowanceMonthly,
       specialAllowance: specialAllowanceMonthly,
-      gross: computedGrossMonthly
+      gross: grossMonthly
     }
   };
 }
@@ -276,13 +287,13 @@ function processMonthlyPayroll(employee, attendance, adjustments = {}, statutory
     }
   }
 
-  // 3. Professional Tax (PTax)
+  // 3. Professional Tax (PTax - Karnataka standard slab)
   let ptaxDeduction = 0;
   if (statutorySettings.enablePTax !== false) {
-    if (totalGrossEarnings > 15000) {
-      ptaxDeduction = 200; // Standard typical slab
-    } else if (totalGrossEarnings > 10000) {
-      ptaxDeduction = 150;
+    if (totalGrossEarnings >= 15000) {
+      ptaxDeduction = 200; // Karnataka slab: ₹200 for gross >= ₹15,000/month
+    } else {
+      ptaxDeduction = 0;
     }
   }
 

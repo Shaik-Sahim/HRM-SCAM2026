@@ -85,13 +85,29 @@ function generateOfferLetter(data, company, statutorySettings = {}) {
   const salaryStructure = calculateSalaryStructure(ctc, statutorySettings);
   const currencySymbol = company.currency === 'USD' ? '$' : 'INR';
 
-  const refSeq = Math.floor(1000 + Math.random() * 9000);
-  const refId = data.id || `MARGEY/OFFER/${new Date().getFullYear()}/ML${refSeq}`;
   const todayIso = new Date().toISOString().split('T')[0];
   const issueDate = data.issueDate || todayIso;
+  const issueYear = (issueDate ? String(issueDate).slice(0, 4) : '') || String(new Date().getFullYear());
   const formattedIssueDate = data.formattedIssueDate || formatOrdinalDate(issueDate);
-  const joiningDate = data.joiningDate || todayIso;
+
+  // Default joiningDate to 15 days ahead of issueDate if not provided
+  let joiningDate = data.joiningDate;
+  if (!joiningDate) {
+    const d = new Date(issueDate);
+    if (!isNaN(d.getTime())) {
+      d.setDate(d.getDate() + 15);
+      joiningDate = d.toISOString().split('T')[0];
+    } else {
+      joiningDate = todayIso;
+    }
+  }
   const formattedJoiningDate = data.formattedJoiningDate || formatOrdinalDate(joiningDate);
+
+  const refSeq = Math.floor(1000 + Math.random() * 9000);
+  // Ensure refId year strictly synchronizes with the offer issue date's year
+  const refId = data.id 
+    ? data.id.replace(/MARGEY\/OFFER\/\d{4}\//, `MARGEY/OFFER/${issueYear}/`)
+    : `MARGEY/OFFER/${issueYear}/ML${refSeq}`;
 
   return {
     id: refId,
