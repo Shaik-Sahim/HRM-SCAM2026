@@ -366,7 +366,7 @@ export default function DocumentStudioView({ employees, company, onViewDocument 
                     onChange={(e) => setOfferForm({ ...offerForm, issueDate: e.target.value })}
                     className="w-full bg-slate-800 border border-cyan-500/40 focus:border-cyan-400 rounded-lg px-3 py-2 text-white font-mono"
                   />
-                  <p className="text-[10px] text-slate-400 mt-0.5">Printed at top header and salutation on every page</p>
+                  <p className="text-[10px] text-slate-400 mt-0.5">Formal letter issue date printed on offer letter</p>
                 </div>
                 <div>
                   <label className="text-slate-300 font-semibold block mb-1">Expected Date of Joining *</label>
@@ -388,26 +388,6 @@ export default function DocumentStudioView({ employees, company, onViewDocument 
                     onChange={(e) => setOfferForm({ ...offerForm, workLocation: e.target.value })}
                     placeholder="e.g. Bengaluru (Hybrid)"
                     className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white"
-                  />
-                </div>
-                <div>
-                  <label className="text-slate-300 font-semibold block mb-1">Reporting Manager / Title</label>
-                  <input
-                    type="text"
-                    value={offerForm.reportingTo}
-                    onChange={(e) => setOfferForm({ ...offerForm, reportingTo: e.target.value })}
-                    placeholder="e.g. Engineering Director"
-                    className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white"
-                  />
-                </div>
-
-                <div>
-                  <label className="text-slate-300 font-semibold block mb-1">Probation Period (Months)</label>
-                  <input
-                    type="number"
-                    value={offerForm.probationMonths}
-                    onChange={(e) => setOfferForm({ ...offerForm, probationMonths: Number(e.target.value) })}
-                    className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white font-mono"
                   />
                 </div>
                 <div>

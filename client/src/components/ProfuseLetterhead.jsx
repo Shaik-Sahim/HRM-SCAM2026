@@ -37,7 +37,7 @@ export function ProfuseHeader({ refId, dateStr, isConfidential = true }) {
       </div>
       {refId && (
         <div className="mt-2 text-[11.5px] font-bold text-slate-900 font-sans">
-          Emp Ref : <span className="font-mono">{refId}</span>
+          Emp Ref : <span className="font-sans font-bold">{refId}</span>
         </div>
       )}
     </div>

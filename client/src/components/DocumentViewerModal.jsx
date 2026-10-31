@@ -80,8 +80,6 @@ export default function DocumentViewerModal({ document, company, onClose }) {
     : formatOrdinalDate(rawJoiningDate);
 
   const workLocation = document.employment?.workLocation || 'Bengaluru';
-  const reportingManager = document.employment?.reportingTo || '[Reporting Manager / Title]';
-  const probationPeriod = document.employment?.probationPeriod || (document.employment?.probationMonths ? `${document.employment.probationMonths} months` : '[Insert duration]');
   const noticePeriod = document.employment?.noticePeriodDays ? `${document.employment.noticePeriodDays} days` : '[insert period]';
 
   // Strict dynamic CTC computation matching whatever the user input
@@ -328,8 +326,8 @@ export default function DocumentViewerModal({ document, company, onClose }) {
                   <div>
                     <MargeyHeader
                       refId={document.id}
-                      dateStr={formattedIssueDate}
-                      isConfidential={true}
+                      dateStr={null}
+                      isConfidential={false}
                     />
 
                     {/* Date & Addressee */}
@@ -379,11 +377,11 @@ export default function DocumentViewerModal({ document, company, onClose }) {
                             </tr>
                             <tr>
                               <td className="p-1.5 px-3 font-semibold text-slate-700 bg-slate-50 border-r border-slate-300">Annual CTC</td>
-                              <td className="p-1.5 px-3 font-mono font-bold text-slate-900">₹{ctcFormatted} ({ctcWords})</td>
+                              <td className="p-1.5 px-3 font-sans font-bold text-slate-900">₹{ctcFormatted} ({ctcWords})</td>
                             </tr>
                             <tr>
                               <td className="p-1.5 px-3 font-semibold text-slate-700 bg-slate-50 border-r border-slate-300">Monthly CTC Equivalent</td>
-                              <td className="p-1.5 px-3 font-mono font-bold text-slate-900">₹{monthlyCTCEquivalent}</td>
+                              <td className="p-1.5 px-3 font-sans font-bold text-slate-900">₹{monthlyCTCEquivalent}</td>
                             </tr>
                             <tr>
                               <td className="p-1.5 px-3 font-semibold text-slate-700 bg-slate-50 border-r border-slate-300">Joining Date</td>
@@ -392,14 +390,6 @@ export default function DocumentViewerModal({ document, company, onClose }) {
                             <tr>
                               <td className="p-1.5 px-3 font-semibold text-slate-700 bg-slate-50 border-r border-slate-300">Work Location</td>
                               <td className="p-1.5 px-3 text-slate-800">{workLocation}</td>
-                            </tr>
-                            <tr>
-                              <td className="p-1.5 px-3 font-semibold text-slate-700 bg-slate-50 border-r border-slate-300">Reporting Manager</td>
-                              <td className="p-1.5 px-3 text-slate-800">{reportingManager}</td>
-                            </tr>
-                            <tr>
-                              <td className="p-1.5 px-3 font-semibold text-slate-700 bg-slate-50 border-r border-slate-300">Probation Period</td>
-                              <td className="p-1.5 px-3 text-slate-800">{probationPeriod}</td>
                             </tr>
                           </tbody>
                         </table>
@@ -417,7 +407,7 @@ export default function DocumentViewerModal({ document, company, onClose }) {
                       <div>
                         <p className="font-bold text-slate-900 text-[11.5px] mb-0.5">3. Role and Workplace Expectations</p>
                         <p>
-                          In this position, you will support departmental objectives, employee documentation, client engagements, cross-functional initiatives, and execution of organizational policies. You are expected at all times to protect confidential information, adhere to authorized standard operating procedures, and perform all responsibilities assigned by your reporting manager faithfully.
+                          In this position, you will support departmental objectives, employee documentation, client engagements, cross-functional initiatives, and execution of organizational policies. You are expected at all times to protect confidential information, adhere to authorized standard operating procedures, and perform all responsibilities assigned to your role faithfully.
                         </p>
                       </div>
 
@@ -456,8 +446,8 @@ export default function DocumentViewerModal({ document, company, onClose }) {
                   <div>
                     <MargeyHeader
                       refId={document.id}
-                      dateStr={formattedIssueDate}
-                      isConfidential={true}
+                      dateStr={null}
+                      isConfidential={false}
                     />
 
                     <div className="text-center my-2">
@@ -488,7 +478,7 @@ export default function DocumentViewerModal({ document, company, onClose }) {
                             <th className="p-2 text-right">Per Annum (₹)</th>
                           </tr>
                         </thead>
-                        <tbody className="divide-y divide-slate-300 font-mono">
+                        <tbody className="divide-y divide-slate-300 font-sans">
                           <tr>
                             <td className="p-2 font-sans font-medium text-slate-800 border-r border-slate-300">Basic Pay (50%)</td>
                             <td className="p-2 text-right border-r border-slate-300">{monthlyBasic.toLocaleString('en-IN')}</td>
@@ -578,8 +568,8 @@ export default function DocumentViewerModal({ document, company, onClose }) {
                       <div>
                         <MargeyHeader
                           refId={document.id}
-                          dateStr={formattedIssueDate}
-                          isConfidential={true}
+                          dateStr={null}
+                          isConfidential={false}
                         />
 
                         <div className="text-center my-2">
@@ -615,7 +605,7 @@ export default function DocumentViewerModal({ document, company, onClose }) {
                               <li>Oversee third-party vendor management, credential checks, and background verification (BGV) validation workflows.</li>
                               <li>Maintain and continuously update standard operating procedures, checklists, and internal documentation templates.</li>
                               <li>Facilitate smooth separation formalities, asset surrender tracking, knowledge transfer sessions, and no-dues signoffs.</li>
-                              <li>Perform any other reasonable responsibilities and strategic initiatives assigned by senior leadership and your reporting manager.</li>
+                              <li>Perform any other reasonable responsibilities and strategic initiatives assigned by senior leadership and departmental heads.</li>
                             </ul>
                           </div>
 
@@ -626,12 +616,6 @@ export default function DocumentViewerModal({ document, company, onClose }) {
                               <li><strong>Information Security & Integrity:</strong> Zero non-compliance incidents regarding data privacy, confidentiality, and company code of conduct.</li>
                               <li><strong>Collaboration & Stakeholder Ownership:</strong> Positive feedback from cross-functional peers, management, and internal customers.</li>
                             </ul>
-                          </div>
-
-                          <div className="pt-2">
-                            <p className="font-bold text-slate-900 text-[11px]">
-                              Reporting Line: <span className="font-medium text-slate-800">{reportingManager}</span>
-                            </p>
                           </div>
                         </div>
                       </div>
@@ -647,8 +631,8 @@ export default function DocumentViewerModal({ document, company, onClose }) {
                       <div>
                         <MargeyHeader
                           refId={document.id}
-                          dateStr={formattedIssueDate}
-                          isConfidential={true}
+                          dateStr={null}
+                          isConfidential={false}
                         />
 
                         <div className="text-center my-2">
@@ -720,8 +704,8 @@ export default function DocumentViewerModal({ document, company, onClose }) {
                       <div>
                         <MargeyHeader
                           refId={document.id}
-                          dateStr={formattedIssueDate}
-                          isConfidential={true}
+                          dateStr={null}
+                          isConfidential={false}
                         />
 
                         <div className="text-center my-2">
@@ -786,8 +770,8 @@ export default function DocumentViewerModal({ document, company, onClose }) {
                       <div>
                         <MargeyHeader
                           refId={document.id}
-                          dateStr={formattedIssueDate}
-                          isConfidential={true}
+                          dateStr={null}
+                          isConfidential={false}
                         />
 
                         <div className="text-center my-2">
@@ -801,11 +785,11 @@ export default function DocumentViewerModal({ document, company, onClose }) {
 
                         <div className="space-y-1.5 text-[10px] leading-[1.42] text-slate-800 font-sans text-justify mt-1">
                           <p><strong>1. Commencement:</strong> Employment formally commences on the joining date confirmed in writing after full completion of onboarding verification.</p>
-                          <p><strong>2. Probationary Period:</strong> You will be on probation for {probationPeriod}. Confirmation is subject to satisfactory performance and written communication from HR.</p>
+                          <p><strong>2. Terms of Appointment:</strong> Employment is subject to continuous satisfactory performance and compliance with all company standards, operating procedures, and policies.</p>
                           <p><strong>3. Working Hours & Rostering:</strong> Normal working hours follow the company operational schedule and roster, including applicable meal and rest breaks.</p>
                           <p><strong>4. Salary & Statutory Withholdings:</strong> Monthly remuneration is disbursed through direct bank transfer per the payroll calendar, subject to statutory deductions (EPF, PT, TDS).</p>
                           <p><strong>5. Attendance & Approved Leaves:</strong> Absence without approved leave is considered unauthorized. Leave entitlements are governed by the company leave policy.</p>
-                          <p><strong>6. Notice Period & Voluntary Resignation:</strong> The required notice period during probation and following confirmation is {noticePeriod}, or equivalent gross salary in lieu thereof with mutual management consent.</p>
+                          <p><strong>6. Notice Period & Voluntary Resignation:</strong> The required notice period for separation is {noticePeriod}, or equivalent gross salary in lieu thereof with mutual management consent.</p>
                           <p><strong>7. Professional Conduct & Ethics:</strong> You must comply with all company rules, maintain professional decorum, and avoid any activities adverse to the company's reputational or commercial interests.</p>
                           <p><strong>8. Pre-Employment Verification (BGV):</strong> This offer is contingent upon satisfactory verification of academic degrees, previous employment records, and background checks.</p>
                           <p><strong>9. Summary Dismissal:</strong> The Company reserves the right to terminate employment immediately without notice in cases of fraud, gross misconduct, insubordination, or material breach of trust.</p>
