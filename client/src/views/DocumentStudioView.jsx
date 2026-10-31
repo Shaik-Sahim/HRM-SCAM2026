@@ -586,10 +586,28 @@ export default function DocumentStudioView({ employees, company, onViewDocument 
                           <span className="font-mono text-slate-200">{currencySymbol}{offerPreviewCTC.monthly.specialAllowance?.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
                         </div>
                       </div>
-                      <div className="bg-slate-950/80 px-3 py-2 border-t border-slate-800 font-bold text-cyan-400 flex justify-between">
-                        <span>Total Monthly Gross</span>
-                        <span className="font-mono text-sm">{currencySymbol}{offerPreviewCTC.monthlyCTC?.toLocaleString()}</span>
+                      <div className="bg-slate-950/80 px-3 py-1.5 border-t border-slate-800 font-bold text-slate-200 flex justify-between">
+                        <span>Total Monthly Gross (Annual Salary)</span>
+                        <span className="font-mono text-xs">{currencySymbol}{offerPreviewCTC.monthlyCTC?.toLocaleString()}</span>
                       </div>
+                      {offerPreviewCTC.deferred && (
+                        <div className="bg-slate-900/90 px-3 py-2 border-t border-slate-800 space-y-1 text-[11px]">
+                          <div className="flex justify-between text-slate-400">
+                            <span>Provident Fund (PF 12%)</span>
+                            <span className="font-mono text-slate-300">{currencySymbol}{offerPreviewCTC.deferred.pfMonthly?.toLocaleString()}</span>
+                          </div>
+                          <div className="flex justify-between text-slate-400">
+                            <span>Gratuity (Gratuity Act 4.81%)</span>
+                            <span className="font-mono text-slate-300">{currencySymbol}{offerPreviewCTC.deferred.gratuityMonthly?.toLocaleString()}</span>
+                          </div>
+                        </div>
+                      )}
+                      {offerPreviewCTC.inHand && (
+                        <div className="bg-emerald-950/40 px-3 py-2 border-t border-emerald-900/60 font-bold text-emerald-400 flex justify-between items-center">
+                          <span>Est. Monthly In-Hand (Net)</span>
+                          <span className="font-mono text-sm">{currencySymbol}{offerPreviewCTC.inHand.monthly?.toLocaleString()}</span>
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>

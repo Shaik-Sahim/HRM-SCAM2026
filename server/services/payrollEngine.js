@@ -155,9 +155,35 @@ function calculateSalaryStructure(annualCTC, statutorySettings = {}, customMonth
   const computedGrossMonthly = Number((basicMonthly + hraMonthly + conveyanceMonthly + medicalMonthly + networkAllowanceMonthly + otherAllowanceMonthly + specialAllowanceMonthly).toFixed(2));
   const computedGrossAnnual = Math.round(computedGrossMonthly * 12);
 
+  const pfAnnual = Math.round(basicAnnual * 0.12);
+  const pfMonthly = Math.round(pfAnnual / 12);
+  const gratuityAnnual = Math.round(basicAnnual * 0.0481);
+  const gratuityMonthly = Math.round(gratuityAnnual / 12);
+  const totalDeferredAnnual = pfAnnual + gratuityAnnual;
+  const totalDeferredMonthly = pfMonthly + gratuityMonthly;
+
+  const ptMonthly = computedGrossMonthly > 15000 ? 200 : (computedGrossMonthly > 10000 ? 150 : 0);
+  const ptAnnual = ptMonthly * 12;
+  const inHandMonthly = Math.max(0, Math.round(computedGrossMonthly - pfMonthly - ptMonthly));
+  const inHandAnnual = Math.max(0, Math.round(computedGrossAnnual - pfAnnual - ptAnnual));
+
   return {
     annualCTC: computedGrossAnnual || ctc,
     monthlyCTC: computedGrossMonthly || monthlyCTC,
+    deferred: {
+      pfMonthly,
+      pfAnnual,
+      gratuityMonthly,
+      gratuityAnnual,
+      totalMonthly: totalDeferredMonthly,
+      totalAnnual: totalDeferredAnnual
+    },
+    inHand: {
+      ptMonthly,
+      ptAnnual,
+      monthly: inHandMonthly,
+      annual: inHandAnnual
+    },
     annual: {
       basic: basicAnnual,
       hra: hraAnnual,

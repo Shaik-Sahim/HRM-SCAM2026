@@ -70,14 +70,14 @@ export const MargeyFooter = ProfuseFooter;
 export function ProfuseStamp({ size = 96, showStamp = false, showSignature = true }) {
   if (!showStamp && !showSignature) return null;
 
-  // When stamp is disabled: show just signature that's it!
+  // When stamp is disabled: show just signature that's it - enlarged for clear visibility
   if (!showStamp && showSignature) {
     return (
       <div 
         className="relative select-none pointer-events-none inline-block my-1"
         style={{ 
-          height: `${Math.round(size * 0.52)}px`, 
-          minHeight: `${Math.round(size * 0.52)}px`,
+          height: `${Math.round(size * 0.82)}px`, 
+          minHeight: `${Math.round(size * 0.82)}px`,
           position: 'relative'
         }}
       >
@@ -85,9 +85,9 @@ export function ProfuseStamp({ size = 96, showStamp = false, showSignature = tru
           src={MARGEY_SIGNATURE_DATA_URI}
           alt="Authorized Signatory"
           style={{
-            height: `${Math.round(size * 0.52)}px`,
+            height: `${Math.round(size * 0.82)}px`,
             width: 'auto',
-            maxWidth: `${Math.round(size * 1.35)}px`,
+            maxWidth: `${Math.round(size * 2.1)}px`,
             display: 'block',
             objectFit: 'contain'
           }}
@@ -96,7 +96,7 @@ export function ProfuseStamp({ size = 96, showStamp = false, showSignature = tru
     );
   }
 
-  // When stamp is enabled: official circular rubber stamp with signature overlaid across it
+  // When stamp is enabled: official circular rubber stamp with enlarged signature overlaid across it
   return (
     <div 
       className="relative select-none pointer-events-none inline-block my-1"
@@ -138,8 +138,8 @@ export function ProfuseStamp({ size = 96, showStamp = false, showSignature = tru
             src={MARGEY_SIGNATURE_DATA_URI}
             alt="Authorized Signatory"
             style={{
-              width: `${Math.round(size * 1.12)}px`,
-              maxWidth: `${Math.round(size * 1.12)}px`,
+              width: `${Math.round(size * 1.30)}px`,
+              maxWidth: `${Math.round(size * 1.30)}px`,
               height: 'auto',
               display: 'block',
               objectFit: 'contain'
@@ -153,7 +153,7 @@ export function ProfuseStamp({ size = 96, showStamp = false, showSignature = tru
 
 export const MargeyStamp = ProfuseStamp;
 
-export function ProfuseSignatoryBlock({ align = 'left', showStamp = false, showSignature = true, stampSize = 92 }) {
+export function ProfuseSignatoryBlock({ align = 'left', showStamp = false, showSignature = true, stampSize = 100 }) {
   return (
     <div className={`text-slate-800 font-sans shrink-0 ${align === 'right' ? 'text-right' : 'text-left'}`}>
       <p className="font-medium text-slate-700 text-[11px] leading-tight">Yours Sincerely,</p>
@@ -161,8 +161,8 @@ export function ProfuseSignatoryBlock({ align = 'left', showStamp = false, showS
       <div className={`my-1 ${align === 'right' ? 'flex justify-end' : ''}`}>
         <ProfuseStamp size={stampSize} showStamp={showStamp} showSignature={showSignature} />
       </div>
-      <div className={`pt-1 border-t border-slate-400 w-52 ${align === 'right' ? 'ml-auto' : ''}`}>
-        <p className="font-bold text-slate-900 text-[10.5px] leading-tight">Authorized Signatory</p>
+      <div className={`pt-1 border-t border-slate-400 w-56 ${align === 'right' ? 'ml-auto' : ''}`}>
+        <p className="font-bold text-slate-900 text-[11px] leading-tight">Authorized Signatory</p>
         <p className="font-medium text-slate-600 text-[10px] leading-tight">Human Resources Department</p>
       </div>
     </div>

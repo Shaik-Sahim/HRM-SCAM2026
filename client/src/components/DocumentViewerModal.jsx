@@ -97,34 +97,74 @@ export default function DocumentViewerModal({ document, company, onClose }) {
   const monthlyCTCEquivalent = monthlyGrossNum.toLocaleString('en-IN');
   const ctcWords = numberToWords(rawCTC);
 
-  // Exact salary structure decomposition according to Margey Labs standard
+  // Exact salary structure decomposition with Deferred Benefits & Net Monthly In-Hand
   // 1. Basic Pay: 50% of CTC
-  const annualBasic = Math.round(rawCTC * 0.50);
-  const monthlyBasic = Math.round(annualBasic / 12);
+  let annualBasic = Math.round(rawCTC * 0.50);
+  let monthlyBasic = Math.round(annualBasic / 12);
 
-  // 2. HRA: 40% of Basic Pay
-  const annualHRA = Math.round(annualBasic * 0.40);
-  const monthlyHRA = Math.round(annualHRA / 12);
+  // 2. Deferred Benefits (Annualised)
+  // Provident Fund (As per the PF Act 1952) - 12% of Basic Pay
+  const annualPF = Math.round(annualBasic * 0.12);
+  const monthlyPF = Math.round(annualPF / 12);
 
-  // 3. Fixed Allowances
-  const monthlyTravel = rawCTC > 100000 ? 2000 : 0;
-  const annualTravel = monthlyTravel * 12;
+  // Gratuity (As per the Gratuity Act 1972) - 4.81% of Basic Pay (15/26 days per year of service)
+  const annualGratuity = Math.round(annualBasic * 0.0481);
+  const monthlyGratuity = Math.round(annualGratuity / 12);
 
-  const monthlyMedical = rawCTC > 100000 ? 1500 : 0;
-  const annualMedical = monthlyMedical * 12;
+  const annualDeferred = annualPF + annualGratuity;
+  const monthlyDeferred = monthlyPF + monthlyGratuity;
 
-  const monthlyInternet = rawCTC > 150000 ? 1500 : 0;
-  const annualInternet = monthlyInternet * 12;
+  // 3. Gross Annual Salary (by deducting Deferred Benefits from Total Annual CTC)
+  const annualGross = Math.max(0, rawCTC - annualDeferred);
+  const monthlyGross = Math.round(annualGross / 12);
 
-  const monthlyFood = rawCTC > 150000 ? 2000 : 0;
-  const annualFood = monthlyFood * 12;
+  // 4. House Rent Allowance (HRA - 40% of Basic Pay)
+  let annualHRA = Math.round(annualBasic * 0.40);
+  let monthlyHRA = Math.round(annualHRA / 12);
 
-  // 4. Special Allowance: exact balancing figure
+  // 5. Fixed Allowances
+  let annualTravel = rawCTC >= 150000 ? 24000 : 0;
+  let monthlyTravel = Math.round(annualTravel / 12);
+
+  let annualMedical = rawCTC >= 150000 ? 18000 : 0;
+  let monthlyMedical = Math.round(annualMedical / 12);
+
+  let annualInternet = rawCTC >= 200000 ? 18000 : 0;
+  let monthlyInternet = Math.round(annualInternet / 12);
+
+  let annualFood = rawCTC >= 200000 ? 24000 : 0;
+  let monthlyFood = Math.round(annualFood / 12);
+
+  let fixedAnnualSum = annualBasic + annualHRA + annualTravel + annualMedical + annualInternet + annualFood;
+  if (fixedAnnualSum > annualGross) {
+    annualBasic = Math.round(annualGross * 0.50);
+    monthlyBasic = Math.round(annualBasic / 12);
+    annualHRA = Math.round(annualBasic * 0.40);
+    monthlyHRA = Math.round(annualHRA / 12);
+    annualTravel = Math.min(24000, Math.round(annualGross * 0.06));
+    monthlyTravel = Math.round(annualTravel / 12);
+    annualMedical = Math.min(18000, Math.round(annualGross * 0.04));
+    monthlyMedical = Math.round(annualMedical / 12);
+    annualInternet = Math.min(18000, Math.round(annualGross * 0.04));
+    monthlyInternet = Math.round(annualInternet / 12);
+    annualFood = Math.min(24000, Math.round(annualGross * 0.06));
+    monthlyFood = Math.round(annualFood / 12);
+    fixedAnnualSum = annualBasic + annualHRA + annualTravel + annualMedical + annualInternet + annualFood;
+  }
+
+  // 6. Special Allowance: exact balancing figure to equal Gross Salary
+  const annualSpecial = Math.max(0, annualGross - fixedAnnualSum);
   const fixedMonthlySum = monthlyBasic + monthlyHRA + monthlyTravel + monthlyMedical + monthlyInternet + monthlyFood;
-  const monthlySpecial = Math.max(0, monthlyGrossNum - fixedMonthlySum);
+  const monthlySpecial = Math.max(0, monthlyGross - fixedMonthlySum);
 
-  const fixedAnnualSum = annualBasic + annualHRA + annualTravel + annualMedical + annualInternet + annualFood;
-  const annualSpecial = Math.max(0, rawCTC - fixedAnnualSum);
+  // 7. Statutory Employee Deductions & Net Monthly In-Hand
+  const monthlyPT = monthlyGross > 15000 ? 200 : (monthlyGross > 10000 ? 150 : 0);
+  const annualPT = monthlyPT * 12;
+  const monthlyDeductions = monthlyPF + monthlyPT;
+  const annualDeductions = annualPF + annualPT;
+
+  const monthlyInHand = Math.max(0, monthlyGross - monthlyDeductions);
+  const annualInHand = Math.max(0, annualGross - annualDeductions);
 
   // Dynamic Tenure & Formatted Dates for Experience & Relieving Certificates
   const expJoiningDate = document.employee?.formattedJoiningDate || 
@@ -404,8 +444,12 @@ export default function DocumentViewerModal({ document, company, onClose }) {
                               <td className="p-1.5 px-3 font-sans font-bold text-slate-900">₹{ctcFormatted} ({ctcWords})</td>
                             </tr>
                             <tr>
-                              <td className="p-1.5 px-3 font-semibold text-slate-700 bg-slate-50 border-r border-slate-300">Monthly CTC Equivalent</td>
-                              <td className="p-1.5 px-3 font-sans font-bold text-slate-900">₹{monthlyCTCEquivalent}</td>
+                              <td className="p-1.5 px-3 font-semibold text-slate-700 bg-slate-50 border-r border-slate-300">Annual Gross Salary</td>
+                              <td className="p-1.5 px-3 font-sans font-bold text-slate-900">₹{annualGross.toLocaleString('en-IN')}</td>
+                            </tr>
+                            <tr>
+                              <td className="p-1.5 px-3 font-semibold text-slate-700 bg-slate-50 border-r border-slate-300">Est. Monthly In-Hand</td>
+                              <td className="p-1.5 px-3 font-sans font-bold text-emerald-800">₹{monthlyInHand.toLocaleString('en-IN')}</td>
                             </tr>
                             <tr>
                               <td className="p-1.5 px-3 font-semibold text-slate-700 bg-slate-50 border-r border-slate-300">Joining Date</td>
@@ -423,7 +467,7 @@ export default function DocumentViewerModal({ document, company, onClose }) {
                       <div>
                         <p className="font-bold text-slate-900 text-[11.5px] mb-0.5">2. Compensation and Payroll</p>
                         <p>
-                          Your annual Cost to Company (CTC) will be ₹{ctcFormatted}. The monthly CTC equivalent is ₹{monthlyCTCEquivalent}. Accordingly, the gross salary and take-home amount may be different from the monthly CTC equivalent depending on tax obligations and statutory deductions. Annexure I contains an illustrative compensation schedule; the final breakup will be approved by the company and applied through payroll.
+                          Your annual Cost to Company (CTC) will be ₹{ctcFormatted} (Monthly CTC equivalent: ₹{monthlyCTCEquivalent}). Deducting annualised Deferred Benefits (Provident Fund under the PF Act 1952 and Gratuity under the Gratuity Act 1972) yields an Annual Gross Salary of ₹{annualGross.toLocaleString('en-IN')}, and an estimated net Monthly In-Hand of ₹{monthlyInHand.toLocaleString('en-IN')} after statutory employee withholdings. Annexure I contains the full itemized break-up.
                         </p>
                       </div>
 
@@ -461,10 +505,10 @@ export default function DocumentViewerModal({ document, company, onClose }) {
                       <p className="text-[11px] font-medium text-slate-800">Yours Sincerely,</p>
                       <p className="text-[11.5px] font-bold text-slate-900 mt-0.5">For MARGEY LABS PRIVATE LIMITED</p>
                       <div className="my-1.5">
-                        <MargeyStamp size={92} showStamp={includeStamp} />
+                        <MargeyStamp size={102} showStamp={includeStamp} />
                       </div>
-                      <div className="pt-1 border-t border-slate-400 w-52">
-                        <p className="font-bold text-slate-900 text-[10.5px]">Authorized Signatory</p>
+                      <div className="pt-1 border-t border-slate-400 w-56">
+                        <p className="font-bold text-slate-900 text-[11px]">Authorized Signatory</p>
                         <p className="font-medium text-slate-600 text-[10px]">Human Resources Department</p>
                       </div>
                     </div>
@@ -494,93 +538,161 @@ export default function DocumentViewerModal({ document, company, onClose }) {
                       </p>
                     </div>
 
-                    <div className="bg-slate-50 border border-slate-300 p-2.5 text-[11px] font-sans mb-3 space-y-1">
-                      <p><strong>Employee:</strong> {candidateName} &nbsp;|&nbsp; <strong>Designation:</strong> {designation}</p>
-                      <p><strong>Annual CTC:</strong> ₹{ctcFormatted} &nbsp;|&nbsp; <strong>Monthly CTC equivalent:</strong> ₹{monthlyCTCEquivalent}</p>
+                    <div className="bg-slate-50 border border-slate-300 p-2 text-[10.5px] font-sans mb-2">
+                      <div className="grid grid-cols-2 gap-x-4 gap-y-1">
+                        <p><strong>Employee:</strong> {candidateName}</p>
+                        <p><strong>Designation:</strong> {designation}</p>
+                        <p><strong>Total Annual CTC:</strong> ₹{ctcFormatted}</p>
+                        <p><strong>Gross Annual Salary:</strong> ₹{annualGross.toLocaleString('en-IN')}</p>
+                        <p><strong>Monthly CTC Equivalent:</strong> ₹{monthlyCTCEquivalent}</p>
+                        <p className="text-emerald-800 font-bold"><strong>Estimated Monthly In-Hand:</strong> ₹{monthlyInHand.toLocaleString('en-IN')}</p>
+                      </div>
                     </div>
 
-                    <p className="text-[10.5px] text-slate-700 italic mb-2.5 text-justify">
-                      The following schedule details the illustrative allocation for discussion. It must be revised if statutory employer contributions, gratuity, performance incentives, or specialized health benefits are modified within CTC.
+                    <p className="text-[10px] text-slate-700 italic mb-2 text-justify">
+                      The schedule below outlines the structured compensation breakdown including Cash Components, annualised Deferred Benefits (Provident Fund & Gratuity), and estimated Net Monthly In-Hand salary.
                     </p>
 
                     {/* Compensation Breakup Table */}
-                    <div className="border border-slate-400 text-[10.5px] mb-3">
+                    <div className="border border-slate-400 text-[9.5px] mb-2">
                       <table className="w-full border-collapse">
                         <thead>
-                          <tr className="bg-slate-100 text-slate-900 uppercase text-[10px] font-bold border-b border-slate-400">
-                            <th className="p-2 text-left border-r border-slate-300">EARNINGS COMPONENT</th>
-                            <th className="p-2 text-right border-r border-slate-300">Per Month (₹)</th>
-                            <th className="p-2 text-right">Per Annum (₹)</th>
+                          <tr className="bg-slate-200 text-slate-900 uppercase text-[9px] font-bold border-b border-slate-400">
+                            <th className="p-1.5 text-left border-r border-slate-300 w-1/2">SALARY COMPONENTS</th>
+                            <th className="p-1.5 text-right border-r border-slate-300 w-1/4">Per Month (₹)</th>
+                            <th className="p-1.5 text-right w-1/4">Per Annum (₹)</th>
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-300 font-sans">
-                          <tr>
-                            <td className="p-2 font-sans font-medium text-slate-800 border-r border-slate-300">Basic Pay (50%)</td>
-                            <td className="p-2 text-right border-r border-slate-300">{monthlyBasic.toLocaleString('en-IN')}</td>
-                            <td className="p-2 text-right">{annualBasic.toLocaleString('en-IN')}</td>
+                          {/* PART A: EARNINGS / CASH COMPONENTS */}
+                          <tr className="bg-slate-100 font-bold text-slate-900">
+                            <td colSpan="3" className="p-1.5 font-bold uppercase tracking-wide text-[9px] bg-slate-100 text-slate-800 border-b border-slate-300">
+                              PART A: EARNINGS / CASH COMPONENTS (ANNUAL SALARY)
+                            </td>
                           </tr>
                           <tr>
-                            <td className="p-2 font-sans font-medium text-slate-800 border-r border-slate-300">House Rent Allowance (HRA - 40% Basic)</td>
-                            <td className="p-2 text-right border-r border-slate-300">{monthlyHRA.toLocaleString('en-IN')}</td>
-                            <td className="p-2 text-right">{annualHRA.toLocaleString('en-IN')}</td>
+                            <td className="p-1.5 font-sans font-medium text-slate-800 border-r border-slate-300">Basic Pay (50%)</td>
+                            <td className="p-1.5 text-right border-r border-slate-300">{monthlyBasic.toLocaleString('en-IN')}</td>
+                            <td className="p-1.5 text-right">{annualBasic.toLocaleString('en-IN')}</td>
                           </tr>
                           <tr>
-                            <td className="p-2 font-sans font-medium text-slate-800 border-r border-slate-300">Traveling Allowance</td>
-                            <td className="p-2 text-right border-r border-slate-300">{monthlyTravel.toLocaleString('en-IN')}</td>
-                            <td className="p-2 text-right">{annualTravel.toLocaleString('en-IN')}</td>
+                            <td className="p-1.5 font-sans font-medium text-slate-800 border-r border-slate-300">House Rent Allowance (HRA - 40% Basic)</td>
+                            <td className="p-1.5 text-right border-r border-slate-300">{monthlyHRA.toLocaleString('en-IN')}</td>
+                            <td className="p-1.5 text-right">{annualHRA.toLocaleString('en-IN')}</td>
                           </tr>
                           <tr>
-                            <td className="p-2 font-sans font-medium text-slate-800 border-r border-slate-300">Medical Allowance</td>
-                            <td className="p-2 text-right border-r border-slate-300">{monthlyMedical.toLocaleString('en-IN')}</td>
-                            <td className="p-2 text-right">{annualMedical.toLocaleString('en-IN')}</td>
+                            <td className="p-1.5 font-sans font-medium text-slate-800 border-r border-slate-300">Traveling Allowance</td>
+                            <td className="p-1.5 text-right border-r border-slate-300">{monthlyTravel.toLocaleString('en-IN')}</td>
+                            <td className="p-1.5 text-right">{annualTravel.toLocaleString('en-IN')}</td>
                           </tr>
                           <tr>
-                            <td className="p-2 font-sans font-medium text-slate-800 border-r border-slate-300">Internet Allowance</td>
-                            <td className="p-2 text-right border-r border-slate-300">{monthlyInternet.toLocaleString('en-IN')}</td>
-                            <td className="p-2 text-right">{annualInternet.toLocaleString('en-IN')}</td>
+                            <td className="p-1.5 font-sans font-medium text-slate-800 border-r border-slate-300">Medical Allowance</td>
+                            <td className="p-1.5 text-right border-r border-slate-300">{monthlyMedical.toLocaleString('en-IN')}</td>
+                            <td className="p-1.5 text-right">{annualMedical.toLocaleString('en-IN')}</td>
                           </tr>
                           <tr>
-                            <td className="p-2 font-sans font-medium text-slate-800 border-r border-slate-300">Food Allowance</td>
-                            <td className="p-2 text-right border-r border-slate-300">{monthlyFood.toLocaleString('en-IN')}</td>
-                            <td className="p-2 text-right">{annualFood.toLocaleString('en-IN')}</td>
+                            <td className="p-1.5 font-sans font-medium text-slate-800 border-r border-slate-300">Internet Allowance</td>
+                            <td className="p-1.5 text-right border-r border-slate-300">{monthlyInternet.toLocaleString('en-IN')}</td>
+                            <td className="p-1.5 text-right">{annualInternet.toLocaleString('en-IN')}</td>
                           </tr>
                           <tr>
-                            <td className="p-2 font-sans font-medium text-slate-800 border-r border-slate-300">Special Allowance</td>
-                            <td className="p-2 text-right border-r border-slate-300">{monthlySpecial.toLocaleString('en-IN')}</td>
-                            <td className="p-2 text-right">{annualSpecial.toLocaleString('en-IN')}</td>
+                            <td className="p-1.5 font-sans font-medium text-slate-800 border-r border-slate-300">Food Allowance</td>
+                            <td className="p-1.5 text-right border-r border-slate-300">{monthlyFood.toLocaleString('en-IN')}</td>
+                            <td className="p-1.5 text-right">{annualFood.toLocaleString('en-IN')}</td>
                           </tr>
-                          <tr className="bg-slate-100 font-bold border-t-2 border-slate-400">
-                            <td className="p-2 font-sans text-slate-900 border-r border-slate-300">Gross Total</td>
-                            <td className="p-2 text-right border-r border-slate-300 font-bold">{monthlyGrossNum.toLocaleString('en-IN')}</td>
-                            <td className="p-2 text-right font-bold">{rawCTC.toLocaleString('en-IN')}</td>
+                          <tr>
+                            <td className="p-1.5 font-sans font-medium text-slate-800 border-r border-slate-300">Special Allowance</td>
+                            <td className="p-1.5 text-right border-r border-slate-300">{monthlySpecial.toLocaleString('en-IN')}</td>
+                            <td className="p-1.5 text-right">{annualSpecial.toLocaleString('en-IN')}</td>
+                          </tr>
+                          <tr className="bg-slate-100 font-bold border-t border-b border-slate-400">
+                            <td className="p-1.5 font-bold text-slate-900 border-r border-slate-300">Total Gross Salary / Annual Salary (A)</td>
+                            <td className="p-1.5 text-right border-r border-slate-300 font-bold">{monthlyGross.toLocaleString('en-IN')}</td>
+                            <td className="p-1.5 text-right font-bold">{annualGross.toLocaleString('en-IN')}</td>
+                          </tr>
+
+                          {/* PART B: DEFERRED BENEFITS */}
+                          <tr className="bg-slate-100 font-bold text-slate-900">
+                            <td colSpan="3" className="p-1.5 font-bold uppercase tracking-wide text-[9px] bg-slate-100 text-slate-800 border-b border-slate-300">
+                              PART B: DEFERRED BENEFITS (ANNUALISED) / RETIRALS
+                            </td>
+                          </tr>
+                          <tr>
+                            <td className="p-1.5 font-sans font-medium text-slate-800 border-r border-slate-300">
+                              Provident Fund (As per the PF Act 1952)
+                            </td>
+                            <td className="p-1.5 text-right border-r border-slate-300">{monthlyPF.toLocaleString('en-IN')}</td>
+                            <td className="p-1.5 text-right">{annualPF.toLocaleString('en-IN')}</td>
+                          </tr>
+                          <tr>
+                            <td className="p-1.5 font-sans font-medium text-slate-800 border-r border-slate-300">
+                              Gratuity (As per the Gratuity Act 1972)
+                            </td>
+                            <td className="p-1.5 text-right border-r border-slate-300">{monthlyGratuity.toLocaleString('en-IN')}</td>
+                            <td className="p-1.5 text-right">{annualGratuity.toLocaleString('en-IN')}</td>
+                          </tr>
+                          <tr className="bg-slate-100 font-bold border-t border-b border-slate-400">
+                            <td className="p-1.5 font-bold text-slate-900 border-r border-slate-300">Total Deferred Benefits (B)</td>
+                            <td className="p-1.5 text-right border-r border-slate-300 font-bold">{monthlyDeferred.toLocaleString('en-IN')}</td>
+                            <td className="p-1.5 text-right font-bold">{annualDeferred.toLocaleString('en-IN')}</td>
+                          </tr>
+
+                          {/* TOTAL COST TO COMPANY */}
+                          <tr className="bg-blue-50/80 font-bold border-t-2 border-b-2 border-slate-500">
+                            <td className="p-1.5 font-bold text-slate-900 border-r border-slate-300">TOTAL COST TO COMPANY (CTC) (A + B)</td>
+                            <td className="p-1.5 text-right border-r border-slate-300 font-bold text-slate-900">{monthlyGrossNum.toLocaleString('en-IN')}</td>
+                            <td className="p-1.5 text-right font-bold text-slate-900">{rawCTC.toLocaleString('en-IN')}</td>
+                          </tr>
+
+                          {/* PART C: STATUTORY DEDUCTIONS */}
+                          <tr className="bg-slate-100 font-bold text-slate-900">
+                            <td colSpan="3" className="p-1.5 font-bold uppercase tracking-wide text-[9px] bg-slate-100 text-slate-800 border-b border-slate-300">
+                              PART C: STATUTORY DEDUCTIONS & MONTHLY IN-HAND
+                            </td>
+                          </tr>
+                          <tr>
+                            <td className="p-1.5 font-sans font-medium text-slate-800 border-r border-slate-300">
+                              Employee Provident Fund (PF - 12% of Basic)
+                            </td>
+                            <td className="p-1.5 text-right border-r border-slate-300">(-) {monthlyPF.toLocaleString('en-IN')}</td>
+                            <td className="p-1.5 text-right">(-) {annualPF.toLocaleString('en-IN')}</td>
+                          </tr>
+                          <tr>
+                            <td className="p-1.5 font-sans font-medium text-slate-800 border-r border-slate-300">
+                              Professional Tax (PT)
+                            </td>
+                            <td className="p-1.5 text-right border-r border-slate-300">(-) {monthlyPT.toLocaleString('en-IN')}</td>
+                            <td className="p-1.5 text-right">(-) {annualPT.toLocaleString('en-IN')}</td>
+                          </tr>
+                          <tr className="bg-emerald-50/90 font-bold border-t border-slate-400">
+                            <td className="p-1.5 font-bold text-emerald-950 border-r border-slate-300">
+                              NET TAKE-HOME SALARY (MONTHLY IN-HAND) [A - C]
+                            </td>
+                            <td className="p-1.5 text-right border-r border-slate-300 font-bold text-emerald-900">{monthlyInHand.toLocaleString('en-IN')}</td>
+                            <td className="p-1.5 text-right font-bold text-emerald-900">{annualInHand.toLocaleString('en-IN')}</td>
                           </tr>
                         </tbody>
                       </table>
                     </div>
 
-                    {/* Explanatory Compensation Notes to fill page */}
-                    <div className="space-y-1.5 text-[10.5px] text-slate-700 leading-relaxed text-justify mb-3">
+                    {/* Explanatory Compensation Notes */}
+                    <div className="space-y-1 text-[9.5px] text-slate-700 leading-snug text-justify mb-2">
                       <p>
-                        This illustration totals <strong>₹{ctcFormatted}</strong> as gross-pay components and does not separately account for employer contributions or benefits. The final CTC breakup must be confirmed by payroll. Applicable statutory employee deductions may reduce net take-home pay.
+                        * <strong>Deferred Benefits:</strong> Provident Fund is computed under the Employees' Provident Funds and Miscellaneous Provisions Act, 1952. Gratuity accrual is calculated pursuant to the Payment of Gratuity Act, 1972, payable after qualifying continuous service. Deducting these deferred benefits yields your Annual Gross Salary.
                       </p>
-                      <ul className="list-disc pl-5 space-y-1.5 text-slate-600 text-[10px]">
-                        <li><strong>Statutory Withholdings:</strong> Deductions for Employee Provident Fund (EPF), Professional Tax (PT), and Tax Deducted at Source (TDS) under the Income Tax Act will be computed according to applicable statutory rates.</li>
-                        <li><strong>Reimbursement & Allowances:</strong> Fixed allowances such as Traveling, Internet, and Medical components are subject to legitimate voucher claims and prevailing company expense reimbursement policies.</li>
-                        <li><strong>Annual Appraisal:</strong> Compensation is reviewed on an annual cycle based on company performance milestones, individual goal achievement, and peer evaluations.</li>
-                        <li><strong>Gratuity & Retirement Benefits:</strong> Gratuity benefits become payable under the Payment of Gratuity Act, 1972 upon completion of five (5) continuous years of qualifying continuous service with the Company.</li>
-                        <li><strong>Salary Crediting & Bank Schedule:</strong> Monthly net salary disbursements are processed via electronic direct transfer on or before the final working day of each calendar month.</li>
-                        <li><strong>Confidentiality of Remuneration:</strong> Your compensation structure is strictly proprietary and confidential. Any unauthorized disclosure of salary details constitutes grounds for disciplinary action.</li>
-                      </ul>
+                      <p>
+                        * <strong>Net Monthly In-Hand:</strong> Reflects estimated monthly take-home pay after statutory Employee PF and Professional Tax. Income Tax (TDS) withholdings will be deducted based on applicable tax slabs and declared investment exemptions.
+                      </p>
                     </div>
 
                     {/* Dual Signatory Block */}
-                    <div className="pt-3 border-t border-slate-300 grid grid-cols-2 gap-8 text-[11px] font-sans items-end">
+                    <div className="pt-2 border-t border-slate-300 grid grid-cols-2 gap-8 text-[11px] font-sans items-end">
                       <div>
-                        <p className="font-bold text-slate-900 text-[11.5px]">For MARGEY LABS PRIVATE LIMITED</p>
+                        <p className="font-bold text-slate-900 text-[11px]">For MARGEY LABS PRIVATE LIMITED</p>
                         <div className="my-1.5">
-                          <MargeyStamp size={88} showStamp={includeStamp} />
+                          <MargeyStamp size={98} showStamp={includeStamp} />
                         </div>
-                        <div className="pt-1 border-t border-slate-400 w-52">
+                        <div className="pt-1 border-t border-slate-400 w-56">
                           <p className="font-bold text-slate-900 text-[10.5px]">Authorized Signatory</p>
                           <p className="font-medium text-slate-600 text-[10px]">Human Resources Department</p>
                         </div>
@@ -912,11 +1024,13 @@ export default function DocumentViewerModal({ document, company, onClose }) {
                           <div className="pt-2 grid grid-cols-2 gap-8 items-end">
                             <div>
                               <p className="font-bold text-slate-900 text-[10.5px]">For MARGEY LABS PRIVATE LIMITED</p>
-                              <div className="my-1">
-                                <MargeyStamp size={80} showStamp={includeStamp} />
+                              <div className="my-1.5">
+                                <MargeyStamp size={92} showStamp={includeStamp} />
                               </div>
-                              <p className="font-bold text-slate-900 text-[10px]">Authorized Signatory</p>
-                              <p className="text-slate-600 text-[9.5px]">Human Resources Department</p>
+                              <div className="pt-1 border-t border-slate-400 w-52">
+                                <p className="font-bold text-slate-900 text-[10.5px]">Authorized Signatory</p>
+                                <p className="font-medium text-slate-600 text-[9.5px]">Human Resources Department</p>
+                              </div>
                             </div>
                             <div className="flex flex-col items-end">
                               <div className="w-56 text-left">
